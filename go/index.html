@@ -15,20 +15,9 @@
 </head>
 <body>
 
-<div id="redirect-screen" class="screen active">
-  <p style="color:#555; margin-bottom:0.5rem;">Opening Instagram...</p>
-  <p id="countdown" style="color:#333; font-size:13px;">Falling back in 3s</p>
-</div>
-
-<div id="fallback-screen" class="screen">
-  <p style="color:#555; margin-bottom:2rem;">Couldn't open the app automatically.</p>
+<div id="fallback-screen" class="screen active">
   <a href="https://instagram.com/leftunsaid.mp3" class="btn">Open Instagram</a>
-  <button onclick="showLanding()">Explore</button>
-</div>
-
-<div id="landing-screen" class="screen">
-  <p style="color:#555; margin-bottom:2rem;">Welcome — add whatever you like here.</p>
-  <a href="https://instagram.com/leftunsaid.mp3" class="btn">Follow on Instagram</a>
+  <button onclick="window.location.href='https://leftunsaid.world'">Explore</button>
 </div>
 
 <script>
@@ -37,31 +26,11 @@
   document.addEventListener('visibilitychange', function() {
     if (document.hidden && !appOpened) {
       appOpened = true;
-      history.replaceState(null, '', window.location.href);
-      document.getElementById('redirect-screen').className = 'screen';
-      document.getElementById('landing-screen').className = 'screen active';
+      window.location.href = 'https://leftunsaid.world';
     }
   });
 
   window.location = "instagram://user?username=leftunsaid.mp3";
-
-  var secs = 3;
-  var interval = setInterval(function() {
-    secs--;
-    document.getElementById('countdown').textContent = 'Falling back in ' + secs + 's';
-    if (secs <= 0) {
-      clearInterval(interval);
-      if (!appOpened) {
-        document.getElementById('redirect-screen').className = 'screen';
-        document.getElementById('fallback-screen').className = 'screen active';
-      }
-    }
-  }, 1000);
-
-  function showLanding() {
-    document.getElementById('fallback-screen').className = 'screen';
-    document.getElementById('landing-screen').className = 'screen active';
-  }
 </script>
 </body>
 </html>
