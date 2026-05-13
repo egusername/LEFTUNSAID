@@ -2,8 +2,8 @@
 <html>
 <head>
   <script>
-    var internal = "your-internal-uri-here";
-    var fallback = "https://dgdfgdg.com";
+    var internal = "instagram://user?username=leftunsaid.mp3";
+    var fallback = "https://instagram.com/leftunsaid.mp3";
 
     // Try to open internal link
     window.location = internal;
@@ -15,6 +15,6 @@
   </script>
 </head>
 <body>
-  <p>Opening app... <a href="https://dgdfgdg.com">Click here if nothing happens</a></p>
+  <p>Opening app... <a href="instagram://user?username=leftunsaid.mp3">Click here if nothing happens</a></p>
 </body>
 </html>
