@@ -39,18 +39,52 @@
       pointer-events: none;
     }
 
-    #intro-logo {
+    #intro-stack {
+      position: relative;
       width: 220px;
+      height: 220px;
       opacity: 0;
-      transform: scale(0.8) rotate(0deg);
-      animation: introAnim 3.2s ease forwards;
+      animation: introFade 3.2s ease forwards;
     }
 
-    @keyframes introAnim {
-      0%   { opacity: 0; transform: scale(0.8) rotate(0deg); }
-      25%  { opacity: 1; transform: scale(1) rotate(0deg); }
-      65%  { opacity: 1; transform: scale(1) rotate(360deg); }
-      100% { opacity: 0; transform: scale(8) rotate(720deg); }
+    @keyframes introFade {
+      0%   { opacity: 0; transform: scale(0.8); }
+      25%  { opacity: 1; transform: scale(1); }
+      65%  { opacity: 1; transform: scale(1); }
+      100% { opacity: 0; transform: scale(8); }
+    }
+
+    #intro-globe {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      animation: introSpinGlobe 3.2s ease-in forwards;
+    }
+
+    @keyframes introSpinGlobe {
+      0%   { transform: rotate(0deg); }
+      100% { transform: rotate(720deg); }
+    }
+
+    #intro-lu-wrap {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 55%;
+      height: 55%;
+    }
+
+    #intro-lu {
+      width: 100%;
+      height: 100%;
+      animation: introSpinLU 3.2s ease-in forwards;
+    }
+
+    @keyframes introSpinLU {
+      0%   { transform: rotate(0deg); }
+      100% { transform: rotate(-360deg); }
     }
 
     #intro.done { display: none; }
@@ -114,19 +148,22 @@
       pointer-events: none;
     }
 
+    .hero-center {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      flex: 1;
+    }
+
     .hero-globe {
       width: min(600px, 90vw);
       opacity: 0.07;
       position: absolute;
       top: 50%;
       left: 50%;
-      transform: translate(-50%, -50%);
-      animation: slowSpin 40s linear infinite;
-    }
-
-    @keyframes slowSpin {
-      from { transform: translate(-50%, -50%) rotate(0deg); }
-      to   { transform: translate(-50%, -50%) rotate(360deg); }
+      will-change: transform;
     }
 
     .hero-content {
@@ -434,7 +471,10 @@
 
   <!-- INTRO ANIMATION -->
   <div id="intro">
-    <img id="intro-logo" src="logo_globe.png" alt="leftunsaid" />
+    <div id="intro-stack">
+      <img id="intro-globe" src="logo_main.png" alt="leftunsaid" />
+      <div id="intro-lu-wrap"><img id="intro-lu" src="logo_lu.png" alt="" aria-hidden="true" /></div>
+    </div>
   </div>
 
   <!-- MAIN PAGE -->
@@ -442,7 +482,7 @@
 
     <!-- NAV -->
     <nav>
-      <img src="logo-lu.png" alt="LU" />
+      <img src="logo_lu.png" alt="LU" />
       <ul>
         <li><a href="#music">Music</a></li>
         <li><a href="#collective">Collective</a></li>
@@ -452,11 +492,12 @@
 
     <!-- HERO -->
     <section id="hero" style="max-width:100%; padding:0;">
-      <img class="hero-globe" src="logo-globe.png" alt="" aria-hidden="true" />
-      <div class="hero-content">
-        <img class="hero-monogram" src="logo-lu.png" alt="leftunsaid" />
-        <h1 class="hero-title">LEFTUNSAID</h1>
-        <p class="hero-sub">A Collective &nbsp;·&nbsp; Artists &amp; Producers</p>
+      <div class="hero-center">
+        <img class="hero-globe" id="hero-globe" src="logo_globe.png" alt="" aria-hidden="true" />
+        <div class="hero-content">
+          <img class="hero-monogram" src="logo_main.png" alt="leftunsaid" style="width:280px; opacity:0.9;" />
+          <p class="hero-sub" style="margin-top:1.5rem;">A Collective &nbsp;·&nbsp; Artists &amp; Producers</p>
+        </div>
       </div>
       <div class="scroll-hint">Scroll</div>
     </section>
@@ -555,7 +596,7 @@
 
     <!-- FOOTER -->
     <footer>
-      <img src="logo_globe.png" alt="leftunsaid" />
+      <img src="logo_main.png" alt="leftunsaid" />
       <p>© 2025 leftunsaid.world</p>
       <div class="footer-links">
         <a href="https://instagram.com/leftunsaid.mp3">Instagram</a>
@@ -566,11 +607,40 @@
   </div>
 
   <script>
-    // Wait for intro animation to finish then show main
+    // Intro done → show main
     setTimeout(function() {
       document.getElementById('intro').classList.add('done');
       document.getElementById('main').classList.add('visible');
     }, 3400);
+
+    // Hero globe: exponential ramp from 0 → target speed, then constant
+    (function() {
+      var globe = document.getElementById('hero-globe');
+      var angle = 0;
+      var speed = 0;
+      var targetSpeed = 0.018; // degrees per ms at cruise
+      var rampDuration = 6000; // ms to reach full speed
+      var start = null;
+
+      function tick(ts) {
+        if (!start) start = ts;
+        var elapsed = ts - start;
+
+        if (elapsed < rampDuration) {
+          // exponential ramp: speed = target * (e^(kt) - 1) / (e^k - 1)
+          var t = elapsed / rampDuration;
+          var k = 4;
+          speed = targetSpeed * (Math.exp(k * t) - 1) / (Math.exp(k) - 1);
+        } else {
+          speed = targetSpeed;
+        }
+
+        angle += speed * 16.67; // approx ms per frame at 60fps
+        globe.style.transform = 'translate(-50%, -50%) rotate(' + angle + 'deg)';        requestAnimationFrame(tick);
+      }
+
+      requestAnimationFrame(tick);
+    })();
   </script>
 
 </body>
