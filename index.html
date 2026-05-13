@@ -52,18 +52,9 @@
       100% { opacity: 0; transform: scale(8); }
     }
 
-    /*
-      Centering strategy: each image is positioned so its VISUAL center
-      lands at the container's geometric center (50%, 50%).
-
-      logo_globe visual center at 50%, 52.4%
-      → its visual center is 2.4% below geometric center
-      → to align visual center to container center, shift UP by 2.4%
-      → top: calc(50% - 2.4%), left: 50%, then translate(-50%, -50%)
-    */
     #intro-globe-wrap {
       position: absolute;
-      top: calc(50% - 2.4%);
+      top: 50%;
       left: 50%;
       width: 100%;
       height: 100%;
@@ -73,7 +64,7 @@
     #intro-globe {
       width: 100%;
       height: 100%;
-      transform-origin: center center;
+      transform-origin: 50% 52.4%;
       animation: introSpinGlobe 3.2s ease-in forwards;
     }
 
@@ -82,25 +73,19 @@
       100% { transform: rotate(720deg); }
     }
 
-    /*
-      logo_lu visual center at 48.8%, 47.6%
-      → visual center is 1.2% left and 2.4% above geometric center
-      → to align to container center, shift RIGHT 1.2% and DOWN 2.4%
-      → top: calc(50% + 2.4%), left: calc(50% + 1.2%), then translate(-50%, -50%)
-    */
     #intro-lu-wrap {
       position: absolute;
-      top: calc(50% + 2.4%);
-      left: calc(50% + 1.2%);
-      width: 100%;
-      height: 100%;
+      top: 50%;
+      left: 50%;
+      width: 55%;
+      height: 55%;
       transform: translate(-50%, -50%);
     }
 
     #intro-lu {
       width: 100%;
       height: 100%;
-      transform-origin: center center;
+      transform-origin: 48.8% 47.6%;
       animation: introSpinLU 3.2s ease-in forwards;
     }
 
@@ -176,16 +161,13 @@
       flex: 1;
     }
 
-    /*
-      logo_globe hero: visual center at 50%, 52.4%
-      → shift UP by 2.4% of image height in the JS transform
-    */
     .hero-globe {
       width: min(600px, 90vw);
       opacity: 0.07;
       position: absolute;
       top: 50%;
       left: 50%;
+      transform-origin: 50% 52.4%;
       will-change: transform;
     }
 
@@ -633,8 +615,7 @@
         }
 
         angle += speed * 16.67;
-        var offsetY = globe.offsetHeight * 0.024;
-        globe.style.transform = 'translate(-50%, calc(-50% - ' + offsetY + 'px)) rotate(' + angle + 'deg)';
+        globe.style.transform = 'translate(-50%, -50%) rotate(' + angle + 'deg)';
         requestAnimationFrame(tick);
       }
 
