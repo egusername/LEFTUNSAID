@@ -16,9 +16,7 @@
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
-
     html { scroll-behavior: smooth; }
-
     body {
       background: #000;
       color: #fff;
@@ -27,7 +25,7 @@
       overflow-x: hidden;
     }
 
-    /* ── INTRO ANIMATION ── */
+    /* ── INTRO ── */
     #intro {
       position: fixed;
       inset: 0;
@@ -54,12 +52,28 @@
       100% { opacity: 0; transform: scale(8); }
     }
 
-    #intro-globe {
+    /*
+      Centering strategy: each image is positioned so its VISUAL center
+      lands at the container's geometric center (50%, 50%).
+
+      logo_globe visual center at 50%, 52.4%
+      → its visual center is 2.4% below geometric center
+      → to align visual center to container center, shift UP by 2.4%
+      → top: calc(50% - 2.4%), left: 50%, then translate(-50%, -50%)
+    */
+    #intro-globe-wrap {
       position: absolute;
-      inset: 0;
+      top: calc(50% - 2.4%);
+      left: 50%;
       width: 100%;
       height: 100%;
-      transform-origin: 50% 52.4%;
+      transform: translate(-50%, -50%);
+    }
+
+    #intro-globe {
+      width: 100%;
+      height: 100%;
+      transform-origin: center center;
       animation: introSpinGlobe 3.2s ease-in forwards;
     }
 
@@ -68,19 +82,25 @@
       100% { transform: rotate(720deg); }
     }
 
+    /*
+      logo_lu visual center at 48.8%, 47.6%
+      → visual center is 1.2% left and 2.4% above geometric center
+      → to align to container center, shift RIGHT 1.2% and DOWN 2.4%
+      → top: calc(50% + 2.4%), left: calc(50% + 1.2%), then translate(-50%, -50%)
+    */
     #intro-lu-wrap {
       position: absolute;
-      top: 50%;
-      left: 50%;
+      top: calc(50% + 2.4%);
+      left: calc(50% + 1.2%);
+      width: 100%;
+      height: 100%;
       transform: translate(-50%, -50%);
-      width: 55%;
-      height: 55%;
     }
 
     #intro-lu {
       width: 100%;
       height: 100%;
-      transform-origin: 48.8% 47.6%;
+      transform-origin: center center;
       animation: introSpinLU 3.2s ease-in forwards;
     }
 
@@ -92,10 +112,7 @@
     #intro.done { display: none; }
 
     /* ── MAIN CONTENT ── */
-    #main {
-      opacity: 0;
-      transition: opacity 0.8s ease;
-    }
+    #main { opacity: 0; transition: opacity 0.8s ease; }
     #main.visible { opacity: 1; }
 
     /* ── NAV ── */
@@ -110,7 +127,7 @@
       background: linear-gradient(to bottom, rgba(0,0,0,0.9), transparent);
     }
 
-    nav img { height: 38px; opacity: 0.9; }
+    nav a.nav-logo img { height: 68px; opacity: 0.9; display: block; }
 
     nav ul {
       list-style: none;
@@ -159,13 +176,16 @@
       flex: 1;
     }
 
+    /*
+      logo_globe hero: visual center at 50%, 52.4%
+      → shift UP by 2.4% of image height in the JS transform
+    */
     .hero-globe {
       width: min(600px, 90vw);
       opacity: 0.07;
       position: absolute;
       top: 50%;
       left: 50%;
-      transform-origin: 50% 52.4%;
       will-change: transform;
     }
 
@@ -173,21 +193,6 @@
       position: relative;
       text-align: center;
       z-index: 2;
-    }
-
-    .hero-monogram {
-      width: 100px;
-      margin: 0 auto 2rem;
-      opacity: 0.9;
-    }
-
-    .hero-title {
-      font-family: 'Cinzel', serif;
-      font-size: clamp(2.5rem, 8vw, 6rem);
-      font-weight: 400;
-      letter-spacing: 0.15em;
-      line-height: 1;
-      margin-bottom: 1rem;
     }
 
     .hero-sub {
@@ -243,7 +248,7 @@
     .section-title {
       font-family: 'Cinzel', serif;
       font-size: clamp(1.8rem, 4vw, 3rem);
-      font-weight: 400;
+      font-weight: 700;
       letter-spacing: 0.08em;
       margin-bottom: 4rem;
       border-bottom: 1px solid var(--border);
@@ -268,12 +273,7 @@
     }
 
     .spotify-embed:hover { border-color: rgba(255,255,255,0.2); }
-
-    .spotify-embed iframe {
-      display: block;
-      width: 100%;
-      border: none;
-    }
+    .spotify-embed iframe { display: block; width: 100%; border: none; }
 
     /* ── COLLECTIVE ── */
     #collective { border-top: 1px solid var(--border); }
@@ -437,10 +437,7 @@
       letter-spacing: 0.15em;
     }
 
-    .footer-links {
-      display: flex;
-      gap: 2rem;
-    }
+    .footer-links { display: flex; gap: 2rem; }
 
     .footer-links a {
       font-size: 11px;
@@ -458,14 +455,8 @@
       nav { padding: 1.2rem 1.5rem; }
       nav ul { gap: 1.5rem; }
       section { padding: 5rem 1.5rem; }
-
-      .gallery-grid {
-        grid-template-columns: repeat(2, 1fr);
-        grid-template-rows: auto;
-      }
-
+      .gallery-grid { grid-template-columns: repeat(2, 1fr); grid-template-rows: auto; }
       .gallery-item { grid-column: span 1 !important; grid-row: span 1 !important; height: 180px; }
-
       footer { padding: 3rem 1.5rem; flex-direction: column; align-items: flex-start; }
     }
   </style>
@@ -475,8 +466,12 @@
   <!-- INTRO ANIMATION -->
   <div id="intro">
     <div id="intro-stack">
-      <img id="intro-globe" src="logo_main.png" alt="leftunsaid" />
-      <div id="intro-lu-wrap"><img id="intro-lu" src="logo_lu.png" alt="" aria-hidden="true" /></div>
+      <div id="intro-globe-wrap">
+        <img id="intro-globe" src="logo_main.png" alt="leftunsaid" />
+      </div>
+      <div id="intro-lu-wrap">
+        <img id="intro-lu" src="logo_lu.png" alt="" aria-hidden="true" />
+      </div>
     </div>
   </div>
 
@@ -485,7 +480,7 @@
 
     <!-- NAV -->
     <nav>
-      <img src="logo_lu.png" alt="LU" />
+      <a href="/" class="nav-logo"><img src="logo_lu.png" alt="LU" /></a>
       <ul>
         <li><a href="#music">Music</a></li>
         <li><a href="#collective">Collective</a></li>
@@ -498,7 +493,7 @@
       <div class="hero-center">
         <img class="hero-globe" id="hero-globe" src="logo_globe.png" alt="" aria-hidden="true" />
         <div class="hero-content">
-          <img class="hero-monogram" src="logo_main.png" alt="leftunsaid" style="width:280px; opacity:0.9; transform-origin: 49.2% 47.6%;" />
+          <img src="logo_main.png" alt="leftunsaid" style="width:280px; opacity:0.9; display:block; margin:0 auto;" />
           <p class="hero-sub" style="margin-top:1.5rem;">A Collective &nbsp;·&nbsp; Artists &amp; Producers</p>
         </div>
       </div>
@@ -557,7 +552,7 @@
         <div class="member-card">
           <span class="member-number">05</span>
           <div class="member-photo"><div class="member-photo-placeholder">Photo</div></div>
-          <p class="member-name">Hussam Osmani</p>
+          <p class="member-name">HUSSAM OSMANI</p>
           <p class="member-role">The Goat</p>
         </div>
         <div class="member-card">
@@ -616,21 +611,20 @@
       document.getElementById('main').classList.add('visible');
     }, 3400);
 
-    // Hero globe: exponential ramp from 0 → target speed, then constant
+    // Hero globe: exponential ramp, logo_globe visual center at 50%,52.4% → shift up 2.4%
     (function() {
       var globe = document.getElementById('hero-globe');
       var angle = 0;
-      var speed = 0;
-      var targetSpeed = 0.018; // degrees per ms at cruise
-      var rampDuration = 6000; // ms to reach full speed
+      var targetSpeed = 0.018;
+      var rampDuration = 6000;
       var start = null;
 
       function tick(ts) {
         if (!start) start = ts;
         var elapsed = ts - start;
+        var speed;
 
         if (elapsed < rampDuration) {
-          // exponential ramp: speed = target * (e^(kt) - 1) / (e^k - 1)
           var t = elapsed / rampDuration;
           var k = 4;
           speed = targetSpeed * (Math.exp(k * t) - 1) / (Math.exp(k) - 1);
@@ -638,8 +632,10 @@
           speed = targetSpeed;
         }
 
-        angle += speed * 16.67; // approx ms per frame at 60fps
-        globe.style.transform = 'translate(-50%, -50%) rotate(' + angle + 'deg)';        requestAnimationFrame(tick);
+        angle += speed * 16.67;
+        var offsetY = globe.offsetHeight * 0.024;
+        globe.style.transform = 'translate(-50%, calc(-50% - ' + offsetY + 'px)) rotate(' + angle + 'deg)';
+        requestAnimationFrame(tick);
       }
 
       requestAnimationFrame(tick);
