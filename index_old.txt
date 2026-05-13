@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>leftunsaid.world</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Raleway:wght@200;300;400&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --black: #000000;
+      --white: #ffffff;
+      --dim: rgba(255,255,255,0.06);
+      --mid: rgba(255,255,255,0.12);
+      --accent: rgba(255,255,255,0.55);
+      --border: rgba(255,255,255,0.08);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: #000;
+      color: #fff;
+      font-family: 'Raleway', sans-serif;
+      font-weight: 300;
+      overflow-x: hidden;
+    }
+
+    /* ── INTRO ANIMATION ── */
+    #intro {
+      position: fixed;
+      inset: 0;
+      background: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      pointer-events: none;
+    }
+
+    #intro-stack {
+      position: relative;
+      width: 220px;
+      height: 220px;
+      opacity: 0;
+      animation: introFade 3.2s ease forwards;
+    }
+
+    @keyframes introFade {
+      0%   { opacity: 0; transform: scale(0.8); }
+      25%  { opacity: 1; transform: scale(1); }
+      65%  { opacity: 1; transform: scale(1); }
+      100% { opacity: 0; transform: scale(8); }
+    }
+
+    #intro-globe {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      transform-origin: 50% 52.4%;
+      animation: introSpinGlobe 3.2s ease-in forwards;
+    }
+
+    @keyframes introSpinGlobe {
+      0%   { transform: rotate(0deg); }
+      100% { transform: rotate(720deg); }
+    }
+
+    #intro-lu-wrap {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 55%;
+      height: 55%;
+    }
+
+    #intro-lu {
+      width: 100%;
+      height: 100%;
+      transform-origin: 48.8% 47.6%;
+      animation: introSpinLU 3.2s ease-in forwards;
+    }
+
+    @keyframes introSpinLU {
+      0%   { transform: rotate(0deg); }
+      100% { transform: rotate(-360deg); }
+    }
+
+    #intro.done { display: none; }
+
+    /* ── MAIN CONTENT ── */
+    #main {
+      opacity: 0;
+      transition: opacity 0.8s ease;
+    }
+    #main.visible { opacity: 1; }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.5rem 3rem;
+      background: linear-gradient(to bottom, rgba(0,0,0,0.9), transparent);
+    }
+
+    nav img { height: 38px; opacity: 0.9; }
+
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 2.5rem;
+    }
+
+    nav ul li a {
+      color: rgba(255,255,255,0.6);
+      text-decoration: none;
+      font-family: 'Raleway', sans-serif;
+      font-weight: 300;
+      font-size: 12px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      transition: color 0.3s;
+    }
+
+    nav ul li a:hover { color: #fff; }
+
+    /* ── HERO ── */
+    #hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    #hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at center, rgba(255,255,255,0.03) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .hero-center {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      flex: 1;
+    }
+
+    .hero-globe {
+      width: min(600px, 90vw);
+      opacity: 0.07;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform-origin: 50% 52.4%;
+      will-change: transform;
+    }
+
+    .hero-content {
+      position: relative;
+      text-align: center;
+      z-index: 2;
+    }
+
+    .hero-monogram {
+      width: 100px;
+      margin: 0 auto 2rem;
+      opacity: 0.9;
+    }
+
+    .hero-title {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(2.5rem, 8vw, 6rem);
+      font-weight: 400;
+      letter-spacing: 0.15em;
+      line-height: 1;
+      margin-bottom: 1rem;
+    }
+
+    .hero-sub {
+      font-size: 11px;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.4);
+    }
+
+    .scroll-hint {
+      position: absolute;
+      bottom: 2.5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      color: rgba(255,255,255,0.25);
+      font-size: 10px;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+    }
+
+    .scroll-hint::after {
+      content: '';
+      width: 1px;
+      height: 40px;
+      background: linear-gradient(to bottom, rgba(255,255,255,0.25), transparent);
+      animation: scrollPulse 2s ease infinite;
+    }
+
+    @keyframes scrollPulse {
+      0%, 100% { opacity: 0.3; }
+      50% { opacity: 1; }
+    }
+
+    /* ── SECTIONS ── */
+    section {
+      padding: 8rem 3rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .section-label {
+      font-size: 10px;
+      letter-spacing: 0.5em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.3);
+      margin-bottom: 1rem;
+    }
+
+    .section-title {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(1.8rem, 4vw, 3rem);
+      font-weight: 400;
+      letter-spacing: 0.08em;
+      margin-bottom: 4rem;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 1.5rem;
+    }
+
+    /* ── SPOTIFY ── */
+    #music { border-top: 1px solid var(--border); }
+
+    .spotify-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .spotify-embed {
+      border-radius: 12px;
+      overflow: hidden;
+      background: var(--dim);
+      border: 1px solid var(--border);
+      transition: border-color 0.3s;
+    }
+
+    .spotify-embed:hover { border-color: rgba(255,255,255,0.2); }
+
+    .spotify-embed iframe {
+      display: block;
+      width: 100%;
+      border: none;
+    }
+
+    /* ── COLLECTIVE ── */
+    #collective { border-top: 1px solid var(--border); }
+
+    .members-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+    }
+
+    .member-card {
+      background: #000;
+      padding: 2rem;
+      position: relative;
+      overflow: hidden;
+      transition: background 0.4s;
+      cursor: default;
+    }
+
+    .member-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--dim);
+      opacity: 0;
+      transition: opacity 0.4s;
+    }
+
+    .member-card:hover { background: rgba(255,255,255,0.03); }
+    .member-card:hover::before { opacity: 1; }
+
+    .member-photo {
+      width: 100%;
+      aspect-ratio: 1;
+      background: var(--dim);
+      margin-bottom: 1.2rem;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .member-photo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0.8;
+    }
+
+    .member-photo-placeholder {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: rgba(255,255,255,0.1);
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+    }
+
+    .member-name {
+      font-family: 'Cinzel', serif;
+      font-size: 0.95rem;
+      font-weight: 400;
+      letter-spacing: 0.12em;
+      margin-bottom: 0.4rem;
+    }
+
+    .member-role {
+      font-size: 10px;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.35);
+    }
+
+    .member-number {
+      position: absolute;
+      top: 1.5rem;
+      right: 1.5rem;
+      font-size: 10px;
+      color: rgba(255,255,255,0.15);
+      font-family: 'Cinzel', serif;
+    }
+
+    /* ── MEDIA GALLERY ── */
+    #media { border-top: 1px solid var(--border); }
+
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      grid-template-rows: repeat(3, 200px);
+      gap: 3px;
+    }
+
+    .gallery-item {
+      background: var(--dim);
+      overflow: hidden;
+      position: relative;
+      cursor: pointer;
+    }
+
+    .gallery-item:nth-child(1) { grid-column: span 5; grid-row: span 2; }
+    .gallery-item:nth-child(2) { grid-column: span 4; }
+    .gallery-item:nth-child(3) { grid-column: span 3; }
+    .gallery-item:nth-child(4) { grid-column: span 4; }
+    .gallery-item:nth-child(5) { grid-column: span 3; }
+    .gallery-item:nth-child(6) { grid-column: span 4; grid-row: span 2; }
+    .gallery-item:nth-child(7) { grid-column: span 3; }
+    .gallery-item:nth-child(8) { grid-column: span 5; }
+
+    .gallery-item::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.4);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .gallery-item:hover::after { opacity: 1; }
+
+    .gallery-placeholder {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: rgba(255,255,255,0.08);
+      font-size: 10px;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      border: 1px solid var(--border);
+    }
+
+    .gallery-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.6s ease;
+    }
+
+    .gallery-item:hover img { transform: scale(1.04); }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 4rem 3rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 2rem;
+    }
+
+    footer img { height: 32px; opacity: 0.4; }
+
+    footer p {
+      font-size: 11px;
+      color: rgba(255,255,255,0.25);
+      letter-spacing: 0.15em;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 2rem;
+    }
+
+    .footer-links a {
+      font-size: 11px;
+      color: rgba(255,255,255,0.3);
+      text-decoration: none;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      transition: color 0.3s;
+    }
+
+    .footer-links a:hover { color: rgba(255,255,255,0.8); }
+
+    /* ── MOBILE ── */
+    @media (max-width: 768px) {
+      nav { padding: 1.2rem 1.5rem; }
+      nav ul { gap: 1.5rem; }
+      section { padding: 5rem 1.5rem; }
+
+      .gallery-grid {
+        grid-template-columns: repeat(2, 1fr);
+        grid-template-rows: auto;
+      }
+
+      .gallery-item { grid-column: span 1 !important; grid-row: span 1 !important; height: 180px; }
+
+      footer { padding: 3rem 1.5rem; flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- INTRO ANIMATION -->
+  <div id="intro">
+    <div id="intro-stack">
+      <img id="intro-globe" src="logo_main.png" alt="leftunsaid" />
+      <div id="intro-lu-wrap"><img id="intro-lu" src="logo_lu.png" alt="" aria-hidden="true" /></div>
+    </div>
+  </div>
+
+  <!-- MAIN PAGE -->
+  <div id="main">
+
+    <!-- NAV -->
+    <nav>
+      <img src="logo_lu.png" alt="LU" />
+      <ul>
+        <li><a href="#music">Music</a></li>
+        <li><a href="#collective">Collective</a></li>
+        <li><a href="#media">Media</a></li>
+      </ul>
+    </nav>
+
+    <!-- HERO -->
+    <section id="hero" style="max-width:100%; padding:0;">
+      <div class="hero-center">
+        <img class="hero-globe" id="hero-globe" src="logo_globe.png" alt="" aria-hidden="true" />
+        <div class="hero-content">
+          <img class="hero-monogram" src="logo_main.png" alt="leftunsaid" style="width:280px; opacity:0.9; transform-origin: 49.2% 47.6%;" />
+          <p class="hero-sub" style="margin-top:1.5rem;">A Collective &nbsp;·&nbsp; Artists &amp; Producers</p>
+        </div>
+      </div>
+      <div class="scroll-hint">Scroll</div>
+    </section>
+
+    <!-- MUSIC -->
+    <section id="music">
+      <p class="section-label">Featured</p>
+      <h2 class="section-title">Music</h2>
+      <div class="spotify-grid">
+        <div class="spotify-embed">
+          <iframe src="https://open.spotify.com/embed/track/placeholder1?utm_source=generator&theme=0" height="152" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+        </div>
+        <div class="spotify-embed">
+          <iframe src="https://open.spotify.com/embed/track/placeholder2?utm_source=generator&theme=0" height="152" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+        </div>
+        <div class="spotify-embed">
+          <iframe src="https://open.spotify.com/embed/track/placeholder3?utm_source=generator&theme=0" height="152" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+        </div>
+        <div class="spotify-embed">
+          <iframe src="https://open.spotify.com/embed/track/placeholder4?utm_source=generator&theme=0" height="152" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+        </div>
+      </div>
+    </section>
+
+    <!-- COLLECTIVE -->
+    <section id="collective">
+      <p class="section-label">Who We Are</p>
+      <h2 class="section-title">The Collective</h2>
+      <div class="members-grid">
+        <div class="member-card">
+          <span class="member-number">01</span>
+          <div class="member-photo"><img src="/collective/lenard.jpg" alt="LENARD" /></div>
+          <p class="member-name">LENARD</p>
+          <p class="member-role">Artist/Producer</p>
+        </div>
+        <div class="member-card">
+          <span class="member-number">02</span>
+          <div class="member-photo"><img src="/collective/xinsain.jpg" alt="XINSAIN" /></div>
+          <p class="member-name">XINSAIN</p>
+          <p class="member-role">Artist/Producer</p>
+        </div>
+        <div class="member-card">
+          <span class="member-number">03</span>
+          <div class="member-photo"><div class="member-photo-placeholder">Photo</div></div>
+          <p class="member-name">PESOKAIN</p>
+          <p class="member-role">Producer</p>
+        </div>
+        <div class="member-card">
+          <span class="member-number">04</span>
+          <div class="member-photo"><img src="/collective/flxri.jpg" alt="FLXRI" /></div>
+          <p class="member-name">FLXRI</p>
+          <p class="member-role">Producer</p>
+        </div>
+        <div class="member-card">
+          <span class="member-number">05</span>
+          <div class="member-photo"><div class="member-photo-placeholder">Photo</div></div>
+          <p class="member-name">Hussam Osmani</p>
+          <p class="member-role">The Goat</p>
+        </div>
+        <div class="member-card">
+          <span class="member-number">06</span>
+          <div class="member-photo"><img src="/collective/clintong.jpg" alt="CLINTON G" /></div>
+          <p class="member-name">CLINTON G</p>
+          <p class="member-role">Artist</p>
+        </div>
+        <div class="member-card">
+          <span class="member-number">07</span>
+          <div class="member-photo"><img src="/collective/konnie.png" alt="KONNIE" /></div>
+          <p class="member-name">KONNIE</p>
+          <p class="member-role">Artist/Producer</p>
+        </div>
+        <div class="member-card">
+          <span class="member-number">08</span>
+          <div class="member-photo"><img src="/collective/derikM.jpg" alt="DERIK MADRID" /></div>
+          <p class="member-name">DERIK MADRID</p>
+          <p class="member-role">Artist/Photographer</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- MEDIA -->
+    <section id="media">
+      <p class="section-label">Gallery</p>
+      <h2 class="section-title">Media</h2>
+      <div class="gallery-grid">
+        <div class="gallery-item"><div class="gallery-placeholder">Photo</div></div>
+        <div class="gallery-item"><div class="gallery-placeholder">Photo</div></div>
+        <div class="gallery-item"><div class="gallery-placeholder">Photo</div></div>
+        <div class="gallery-item"><div class="gallery-placeholder">Photo</div></div>
+        <div class="gallery-item"><div class="gallery-placeholder">Photo</div></div>
+        <div class="gallery-item"><div class="gallery-placeholder">Photo</div></div>
+        <div class="gallery-item"><div class="gallery-placeholder">Photo</div></div>
+        <div class="gallery-item"><div class="gallery-placeholder">Photo</div></div>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+      <img src="logo_main.png" alt="leftunsaid" />
+      <p>© 2025 leftunsaid.world</p>
+      <div class="footer-links">
+        <a href="https://instagram.com/leftunsaid.mp3">Instagram</a>
+        <a href="https://open.spotify.com">Spotify</a>
+      </div>
+    </footer>
+
+  </div>
+
+  <script>
+    // Intro done → show main
+    setTimeout(function() {
+      document.getElementById('intro').classList.add('done');
+      document.getElementById('main').classList.add('visible');
+    }, 3400);
+
+    // Hero globe: exponential ramp from 0 → target speed, then constant
+    (function() {
+      var globe = document.getElementById('hero-globe');
+      var angle = 0;
+      var speed = 0;
+      var targetSpeed = 0.018; // degrees per ms at cruise
+      var rampDuration = 6000; // ms to reach full speed
+      var start = null;
+
+      function tick(ts) {
+        if (!start) start = ts;
+        var elapsed = ts - start;
+
+        if (elapsed < rampDuration) {
+          // exponential ramp: speed = target * (e^(kt) - 1) / (e^k - 1)
+          var t = elapsed / rampDuration;
+          var k = 4;
+          speed = targetSpeed * (Math.exp(k * t) - 1) / (Math.exp(k) - 1);
+        } else {
+          speed = targetSpeed;
+        }
+
+        angle += speed * 16.67; // approx ms per frame at 60fps
+        globe.style.transform = 'translate(-50%, -50%) rotate(' + angle + 'deg)';        requestAnimationFrame(tick);
+      }
+
+      requestAnimationFrame(tick);
+    })();
+  </script>
+
+</body>
+</html>
