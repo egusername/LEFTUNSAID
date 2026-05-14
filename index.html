@@ -11,11 +11,9 @@
     html { scroll-behavior: auto; }
     body { background: var(--bg); color: #fff; font-family: 'Outfit', sans-serif; font-weight: 300; overflow-x: hidden; cursor: none; }
 
-    /* CURSOR */
     #cursor { position: fixed; width: 8px; height: 8px; background: #fff; border-radius: 50%; pointer-events: none; z-index: 9999; transform: translate(-50%,-50%); transition: width .25s, height .25s; mix-blend-mode: difference; }
     #cursor-ring { position: fixed; width: 34px; height: 34px; border: 1px solid rgba(255,255,255,.35); border-radius: 50%; pointer-events: none; z-index: 9998; transform: translate(-50%,-50%); transition: width .45s cubic-bezier(.25,.46,.45,.94), height .45s cubic-bezier(.25,.46,.45,.94); mix-blend-mode: difference; }
 
-    /* INTRO */
     #intro { position: fixed; inset: 0; background: #000; display: flex; align-items: center; justify-content: center; z-index: 1000; pointer-events: none; }
     #intro-stack { position: relative; width: 220px; height: 220px; opacity: 0; animation: introFade 3.2s ease forwards; }
     @keyframes introFade {
@@ -30,16 +28,13 @@
     #intro.done  { display: none; }
     #intro-lu-wrap { position: absolute; top: 50%; left: 50%; width: 71.5%; height: 71.5%; margin-top: -35.75%; margin-left: -35.75%; }
 
-    /* NOISE */
     #noise { position: fixed; inset: 0; z-index: 1; pointer-events: none; opacity: .022;
       background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
       background-size: 180px; }
 
-    /* MAIN */
     #main { opacity: 0; }
     #main.visible { opacity: 1; transition: opacity .3s ease; }
 
-    /* NAV */
     nav {
       position: fixed; top: 0; left: 0; right: 0; z-index: 100;
       display: flex; align-items: center; justify-content: space-between;
@@ -57,7 +52,6 @@
     }
     nav ul li a:hover { color: #fff; }
 
-    /* HERO */
     #hero {
       min-height: 100vh; display: flex; flex-direction: column;
       align-items: center; justify-content: center;
@@ -69,39 +63,22 @@
       pointer-events: none;
     }
     #hero-canvas { position: absolute; inset: 0; width: 100%; height: 100%; opacity: .1; z-index: 0; }
-
-    .hero-center {
-      position: relative; display: flex; align-items: center;
-      justify-content: center; width: 100%; flex: 1;
-    }
-    .hero-globe {
-      width: min(600px, 90vw); opacity: 0.07;
-      position: absolute; top: 50%; left: 50%;
-      transform-origin: 49.6% 47.2%; will-change: transform;
-    }
+    .hero-center { position: relative; display: flex; align-items: center; justify-content: center; width: 100%; flex: 1; }
+    .hero-globe { width: min(600px, 90vw); opacity: 0.07; position: absolute; top: 50%; left: 50%; transform-origin: 49.6% 47.2%; will-change: transform; }
     .hero-content { position: relative; text-align: center; z-index: 2; }
-    .hero-sub {
-      font-size: 11px; letter-spacing: 0.4em; text-transform: uppercase;
-      color: rgba(255,255,255,0.4);
-    }
+    .hero-sub { font-size: 11px; letter-spacing: 0.4em; text-transform: uppercase; color: rgba(255,255,255,0.4); }
     .scroll-hint {
-      position: absolute; bottom: 2.5rem; left: 50%;
-      transform: translateX(-50%);
+      position: absolute; bottom: 2.5rem; left: 50%; transform: translateX(-50%);
       display: flex; flex-direction: column; align-items: center; gap: 8px;
-      color: rgba(255,255,255,0.25); font-size: 10px;
-      letter-spacing: 0.3em; text-transform: uppercase; z-index: 2;
+      color: rgba(255,255,255,0.25); font-size: 10px; letter-spacing: 0.3em; text-transform: uppercase; z-index: 2;
     }
     .scroll-hint::after {
       content: ''; width: 1px; height: 40px;
       background: linear-gradient(to bottom, rgba(255,255,255,0.25), transparent);
       animation: scrollPulse 2s ease infinite;
     }
-    @keyframes scrollPulse {
-      0%, 100% { opacity: 0.3; }
-      50% { opacity: 1; }
-    }
+    @keyframes scrollPulse { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
 
-    /* REVEAL */
     .reveal { opacity: 0; transform: translateY(36px); transition: opacity .85s cubic-bezier(.16,1,.3,1), transform .85s cubic-bezier(.16,1,.3,1); }
     .reveal.in { opacity: 1; transform: translateY(0); }
     .reveal-delay-1 { transition-delay: .08s; }
@@ -109,21 +86,17 @@
     .reveal-delay-3 { transition-delay: .24s; }
     .reveal-delay-4 { transition-delay: .32s; }
 
-    /* SPLIT TEXT */
     .split-text .char { display: inline-block; opacity: 0; transform: translateY(.9em); transition: opacity .6s cubic-bezier(.16,1,.3,1), transform .6s cubic-bezier(.16,1,.3,1); }
     .split-text.in .char { opacity: 1; transform: translateY(0); }
 
-    /* SECTIONS */
     section { padding: 9rem 4rem; max-width: 1280px; margin: 0 auto; }
     .section-label { font-size: 9px; letter-spacing: .6em; text-transform: uppercase; color: rgba(255,255,255,.22); margin-bottom: 1rem; }
     .section-title { font-family: 'Syne', sans-serif; font-size: clamp(2rem,4.5vw,3.4rem); font-weight: 600; letter-spacing: -.01em; margin-bottom: 4.5rem; padding-bottom: 2rem; border-bottom: 1px solid var(--border); color: rgba(255,255,255,.9); }
 
-    /* GEL LAYER */
     .gel-layer { position: relative; will-change: transform; transform-style: preserve-3d; cursor: grab; transform-origin: 50% 50%; }
     .gel-layer:active { cursor: grabbing; }
     .gel-layer::after { content: 'drag'; position: absolute; right: 0; top: -1.8rem; font-size: 9px; letter-spacing: .4em; text-transform: uppercase; color: rgba(255,255,255,.1); pointer-events: none; }
 
-    /* MUSIC */
     #music { border-top: 1px solid var(--border); }
     .music-coverflow { position: relative; display: flex; align-items: center; gap: 0; }
     .music-arrow { flex-shrink: 0; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; color: rgba(255,255,255,.25); font-size: 18px; font-family: 'Outfit', sans-serif; font-weight: 300; background: none; border: 1px solid rgba(255,255,255,.08); cursor: pointer; z-index: 10; transition: color .3s, border-color .3s; user-select: none; }
@@ -144,7 +117,6 @@
     .platform-label { position: absolute; top: 1rem; right: 1.4rem; font-size: 9px; letter-spacing: .4em; text-transform: uppercase; color: rgba(255,255,255,.2); pointer-events: none; }
     .flip-hint { text-align: center; margin-top: 1.2rem; font-size: 9px; letter-spacing: .35em; text-transform: uppercase; color: rgba(255,255,255,.14); }
 
-    /* COLLECTIVE */
     #collective { border-top: 1px solid var(--border); }
     .members-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px,1fr)); gap: 1px; background: var(--border); border: 1px solid var(--border); }
     .member-card { background: var(--bg); padding: 2.2rem; position: relative; overflow: hidden; transition: background .5s; }
@@ -159,7 +131,6 @@
     .member-role { font-size: 10px; letter-spacing: .3em; text-transform: uppercase; color: rgba(255,255,255,.28); }
     .member-number { position: absolute; top: 2rem; right: 2rem; font-size: 10px; color: rgba(255,255,255,.1); }
 
-    /* MEDIA */
     #media { border-top: 1px solid var(--border); }
     .gallery-grid { display: grid; grid-template-columns: repeat(12,1fr); grid-template-rows: repeat(3,200px); gap: 2px; }
     .gallery-item { background: rgba(255,255,255,.03); overflow: hidden; position: relative; cursor: none; }
@@ -175,7 +146,6 @@
     .gallery-item:hover img { transform: scale(1.06); opacity: 1; }
     .gallery-placeholder { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: rgba(255,255,255,.05); font-size: 9px; letter-spacing: .4em; text-transform: uppercase; border: 1px solid rgba(255,255,255,.035); }
 
-    /* FOOTER */
     footer { border-top: 1px solid var(--border); padding: 4.5rem 4rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 2rem; }
     footer img { height: 28px; opacity: .28; }
     footer p { font-size: 10px; color: rgba(255,255,255,.18); letter-spacing: .2em; }
@@ -183,46 +153,24 @@
     .footer-links a { font-size: 10px; color: rgba(255,255,255,.22); text-decoration: none; letter-spacing: .25em; text-transform: uppercase; transition: color .3s; }
     .footer-links a:hover { color: rgba(255,255,255,.7); }
 
-    /* ── MOBILE ── */
     @media(max-width:768px){
       body { cursor:auto; }
       #cursor,#cursor-ring { display:none; }
-
-      /* nav */
       nav { padding:1rem 1.2rem; }
       nav a.nav-logo img { height:60px; }
       nav ul { gap:1.2rem; }
       nav ul li a { font-size:10px; letter-spacing:.12em; }
-
-      /* sections: tighter padding, no edge-to-edge */
       section { padding:4rem 1.2rem; max-width:100%; }
-
-      /* section title scales down */
       .section-title { font-size:clamp(1.4rem,5vw,2rem); margin-bottom:2.5rem; padding-bottom:1.2rem; }
-
-      /* hero */
-      #hero-logo-float { width:240px; height:240px; }
       #hero { min-height:100svh; }
       .hero-sub { font-size:9px; letter-spacing:.3em; }
       .scroll-hint { bottom:1.8rem; }
-
-      /* ── MEMBERS GRID — 2 cols, proportional cards ── */
-      .members-grid {
-        grid-template-columns: repeat(2,1fr);
-        gap:1px;
-      }
+      .members-grid { grid-template-columns: repeat(2,1fr); gap:1px; }
       .member-card { padding:1rem; }
       .member-name { font-size:.78rem; letter-spacing:.06em; }
       .member-role { font-size:9px; }
       .member-number { top:1rem; right:1rem; font-size:9px; }
-
-      /* ── GALLERY — 3-col mosaic preserved, smaller rows ── */
-      .gallery-grid {
-        grid-template-columns: repeat(6,1fr);
-        grid-template-rows: repeat(3,110px);
-        gap:2px;
-      }
-      /* re-map spans to 6-column grid (halved from 12) */
+      .gallery-grid { grid-template-columns: repeat(6,1fr); grid-template-rows: repeat(3,110px); gap:2px; }
       .gallery-item:nth-child(1){grid-column:span 3;grid-row:span 2}
       .gallery-item:nth-child(2){grid-column:span 2}
       .gallery-item:nth-child(3){grid-column:span 1}
@@ -231,30 +179,19 @@
       .gallery-item:nth-child(6){grid-column:span 2;grid-row:span 2}
       .gallery-item:nth-child(7){grid-column:span 2}
       .gallery-item:nth-child(8){grid-column:span 2}
-
-      /* ── MUSIC ── */
       .music-stage { min-height:200px; }
       .music-arrow { width:34px; height:34px; font-size:16px; }
       .embed-cell { padding:.9rem; }
       .embed-cell iframe { height:130px; }
       .flip-hint { font-size:8px; }
-      .card-face {
-        grid-template-columns: 1fr 1fr;
-      }
-
-      /* footer */
+      .card-face { grid-template-columns: 1fr 1fr; }
       footer { padding:2.5rem 1.2rem; flex-direction:column; align-items:flex-start; gap:1.2rem; }
       footer img { height:22px; }
       .footer-links { gap:1.5rem; }
     }
-
-    /* very small phones */
     @media(max-width:390px){
       .members-grid { grid-template-columns: repeat(2,1fr); }
-      .gallery-grid {
-        grid-template-columns: repeat(4,1fr);
-        grid-template-rows: repeat(3,90px);
-      }
+      .gallery-grid { grid-template-columns: repeat(4,1fr); grid-template-rows: repeat(3,90px); }
       .gallery-item:nth-child(1){grid-column:span 2;grid-row:span 2}
       .gallery-item:nth-child(2){grid-column:span 1}
       .gallery-item:nth-child(3){grid-column:span 1}
@@ -272,19 +209,13 @@
 <div id="cursor-ring"></div>
 <div id="noise"></div>
 
-<!-- INTRO -->
 <div id="intro">
   <div id="intro-stack">
-    <div id="intro-globe-wrap">
-      <img id="intro-globe" src="logo_globe.png" alt="leftunsaid" />
-    </div>
-    <div id="intro-lu-wrap">
-      <img id="intro-lu" src="logo_lu.png" alt="" aria-hidden="true" />
-    </div>
+    <div id="intro-globe-wrap"><img id="intro-globe" src="logo_globe.png" alt="leftunsaid" /></div>
+    <div id="intro-lu-wrap"><img id="intro-lu" src="logo_lu.png" alt="" aria-hidden="true" /></div>
   </div>
 </div>
 
-<!-- MAIN -->
 <div id="main">
   <nav>
     <a href="/" class="nav-logo"><img src="logo_lu.png" alt="LU" /></a>
@@ -408,30 +339,26 @@ function lerp(a,b,t){return a+(b-a)*t;}
 function easeInOut(t){return t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;}
 
 /* INTRO */
-var INTRO_DUR=3200, introStart=null, introDone=false;
+var INTRO_DUR=3200,introStart=null,introDone=false;
 var introGlobe=document.getElementById('intro-globe');
 var introLU=document.getElementById('intro-lu');
 function introEase(t){return t<0.5?2*t*t:-1+(4-2*t)*t;}
 
-/* Hero globe — slow ramp-up spin */
 var heroGlobe=document.getElementById('hero-globe');
-var heroAngle=0, heroSpeed=0;
-var HERO_TARGET_SPEED=0.018, HERO_RAMP=6000, heroRampStart=null;
+var heroAngle=0,heroSpeed=0;
+var HERO_TARGET_SPEED=0.018,HERO_RAMP=6000,heroRampStart=null;
 
 function introTick(ts){
-  if(!introStart) introStart=ts;
+  if(!introStart)introStart=ts;
   var t=Math.min((ts-introStart)/INTRO_DUR,1);
   introGlobe.style.transform='rotate('+(introEase(t)*720)+'deg)';
   introLU.style.transform='rotate('+(introEase(t)*-360)+'deg)';
-
-  /* hero globe ramps up from zero — starts invisible but angle is accumulating */
-  if(!heroRampStart) heroRampStart=ts;
+  if(!heroRampStart)heroRampStart=ts;
   var rampT=Math.min((ts-heroRampStart)/HERO_RAMP,1);
   var k=4;
   heroSpeed=HERO_TARGET_SPEED*(Math.exp(k*rampT)-1)/(Math.exp(k)-1);
   heroAngle+=heroSpeed*16.67;
-  if(heroGlobe) heroGlobe.style.transform='translate(-50%,-50%) rotate('+heroAngle+'deg)';
-
+  if(heroGlobe)heroGlobe.style.transform='translate(-50%,-50%) rotate('+heroAngle+'deg)';
   if(t>=1&&!introDone){
     introDone=true;
     document.getElementById('intro').classList.add('done');
@@ -445,11 +372,11 @@ requestAnimationFrame(introTick);
 /* PARTICLE CANVAS */
 var canvasInited=false;
 function initCanvas(){
-  if(canvasInited)return; canvasInited=true;
+  if(canvasInited)return;canvasInited=true;
   var canvas=document.getElementById('hero-canvas'),ctx=canvas.getContext('2d'),pts=[],CW,CH;
   function rsz(){CW=canvas.width=canvas.offsetWidth;CH=canvas.height=canvas.offsetHeight;}
-  rsz(); window.addEventListener('resize',rsz);
-  for(var i=0;i<55;i++) pts.push({x:Math.random()*CW,y:Math.random()*CH,vx:(Math.random()-.5)*.14,vy:(Math.random()-.5)*.14,a:Math.random()});
+  rsz();window.addEventListener('resize',rsz);
+  for(var i=0;i<55;i++)pts.push({x:Math.random()*CW,y:Math.random()*CH,vx:(Math.random()-.5)*.14,vy:(Math.random()-.5)*.14,a:Math.random()});
   (function dp(){
     ctx.clearRect(0,0,CW,CH);
     pts.forEach(function(p){p.x+=p.vx;p.y+=p.vy;if(p.x<0)p.x=CW;if(p.x>CW)p.x=0;if(p.y<0)p.y=CH;if(p.y>CH)p.y=0;ctx.beginPath();ctx.arc(p.x,p.y,p.a*.9+.2,0,Math.PI*2);ctx.fillStyle='rgba(255,255,255,'+(p.a*.5)+')';ctx.fill();});
@@ -458,39 +385,43 @@ function initCanvas(){
   })();
 }
 
+/* ── PHOTO FALL ──────────────────────────────────────────────────────────────
+   Called with pre-captured snapshots taken at flip moment (before any rotation).
+   Each snapshot: { cx, cy, sz }
+     cx/cy = viewport centre of the photo (from getBoundingClientRect centre)
+     sz    = photo.offsetWidth — the TRUE CSS square size, unaffected by 3D transform
+   This guarantees:
+     1. Perfect square clones  (sz × sz, not the distorted projected rect)
+     2. Exact overlay position (centred at cx,cy)
+     3. 0.3s delay after the flick
+─────────────────────────────────────────────────────────────────────────── */
+function spawnPhotoFall(photos, snaps){
+  photos.forEach(function(photo, i){
+    var s=snaps[i];
+    if(!s||s.sz<1)return;
 
-
-/* ── PHOTO FALL ──
-   Clones each .member-photo and flies the clone.
-   Original stays hidden in place (visibility:hidden) → card keeps its exact size. */
-function spawnPhotoFall(){
-  var grid=document.querySelector('.members-grid');
-  if(!grid)return;
-  var photos=Array.prototype.slice.call(grid.querySelectorAll('.member-photo'));
-  photos.forEach(function(photo,i){
-    var rect=photo.getBoundingClientRect();
-    if(!rect.width)return;
-
-    /* clone first (while still in DOM for accurate rect) */
-    var clone=photo.cloneNode(true);
-    /* hide original in-place — card keeps exact same size, no collapse */
+    /* hide original in-place so card keeps its size */
     photo.style.visibility='hidden';
 
-    /* position clone at exact screen coords */
+    /* clone sized as a perfect square using the true CSS dimension */
+    var clone=photo.cloneNode(true);
+    var startX=(s.cx-s.sz/2);
+    var startY=(s.cy-s.sz/2);
     clone.style.cssText=
       'position:fixed;top:0;left:0;margin:0;pointer-events:none;z-index:800;'+
-      'width:'+rect.width+'px;height:'+rect.height+'px;'+
+      'width:'+s.sz+'px;height:'+s.sz+'px;'+
       'box-sizing:border-box;overflow:hidden;transition:none;visibility:visible;'+
-      'transform:translate('+rect.left.toFixed(1)+'px,'+rect.top.toFixed(1)+'px);';
+      'transform:translate('+startX.toFixed(1)+'px,'+startY.toFixed(1)+'px);';
     document.body.appendChild(clone);
 
-    var x=rect.left,y=rect.top;
+    var x=startX, y=startY;
     var vx=(Math.random()-0.5)*8;
     var vy=-(Math.random()*3+1);
     var grav=0.5+Math.random()*0.3;
     var ang=0,angV=(Math.random()-0.5)*5;
     var op=1;
 
+    /* stagger each photo slightly so they don't all launch at exactly the same frame */
     setTimeout(function(){
       (function fall(){
         vy+=grav;x+=vx;y+=vy;ang+=angV;angV*=0.985;
@@ -501,7 +432,7 @@ function spawnPhotoFall(){
         if(y<innerHeight+400&&op>0)requestAnimationFrame(fall);
         else if(clone.parentNode)clone.parentNode.removeChild(clone);
       })();
-    },i*45+Math.random()*70);
+    }, i*40+Math.random()*50);
   });
 }
 
@@ -575,7 +506,24 @@ gelLayers.forEach(function(layer,idx){
     flipping=true;flipped=!flipped;flipTarget=flipped?180:0;
     if(isCollect){
       jerkY=-18;setTimeout(function(){jerkY=0;},90);
-      if(flipped)setTimeout(spawnPhotoFall,60);
+      if(flipped){
+        /* ── Snapshot photo positions NOW, before the flip rotates anything ──
+           offsetWidth = true CSS square size (ignores 3D transforms)
+           getBoundingClientRect().center = viewport centre (approximately correct
+           even with mild transforms, and the grid is still near-flat at t=0) */
+        var photos=Array.prototype.slice.call(layer.querySelectorAll('.member-photo'));
+        var snaps=photos.map(function(ph){
+          var r=ph.getBoundingClientRect();
+          var sz=ph.offsetWidth;  /* true CSS width — square by aspect-ratio:1 */
+          return{
+            cx: r.left+r.width/2,   /* viewport centre x */
+            cy: r.top +r.height/2,  /* viewport centre y */
+            sz: sz
+          };
+        });
+        /* 300ms delay — user asked for it; snapshots already captured above */
+        setTimeout(function(){spawnPhotoFall(photos,snaps);},300);
+      }
     }
     setTimeout(function(){flipping=false;},800);
   }
