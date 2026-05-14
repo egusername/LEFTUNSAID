@@ -40,51 +40,66 @@
     #main.visible { opacity: 1; transition: opacity .3s ease; }
 
     /* NAV */
-    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; padding: 1.8rem 3.5rem; transition: transform .5s cubic-bezier(.16,1,.3,1); }
-    nav::before { content: ''; position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(0,0,0,.75), transparent); pointer-events: none; }
-    nav a.nav-logo img { height: 90px; opacity: .85; display: block; position: relative; }
-    nav ul { list-style: none; display: flex; gap: 3rem; position: relative; }
-    nav ul li a { color: rgba(255,255,255,.4); text-decoration: none; font-family: 'Outfit', sans-serif; font-weight: 300; font-size: 11px; letter-spacing: .25em; text-transform: uppercase; transition: color .35s; position: relative; }
-    nav ul li a::after { content: ''; position: absolute; bottom: -3px; left: 0; width: 0; height: 1px; background: rgba(255,255,255,.45); transition: width .4s cubic-bezier(.25,.46,.45,.94); }
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.5rem 3rem;
+      background: linear-gradient(to bottom, rgba(0,0,0,0.9), transparent);
+      transition: transform .5s cubic-bezier(.16,1,.3,1);
+    }
+    nav a.nav-logo img { height: 102px; opacity: 0.9; display: block; }
+    nav ul { list-style: none; display: flex; gap: 2.5rem; }
+    nav ul li a {
+      color: rgba(255,255,255,0.6); text-decoration: none;
+      font-family: 'Outfit', sans-serif; font-weight: 300;
+      font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase;
+      transition: color 0.3s;
+    }
     nav ul li a:hover { color: #fff; }
-    nav ul li a:hover::after { width: 100%; }
 
     /* HERO */
-    #hero { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; overflow: hidden; }
+    #hero {
+      min-height: 100vh; display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      position: relative; overflow: hidden;
+    }
+    #hero::before {
+      content: ''; position: absolute; inset: 0;
+      background: radial-gradient(ellipse at center, rgba(255,255,255,0.03) 0%, transparent 70%);
+      pointer-events: none;
+    }
     #hero-canvas { position: absolute; inset: 0; width: 100%; height: 100%; opacity: .1; z-index: 0; }
 
-    /* HERO LOGO — globe big + background, LU flies with wobble */
-    #hero-logo-float {
+    .hero-center {
+      position: relative; display: flex; align-items: center;
+      justify-content: center; width: 100%; flex: 1;
+    }
+    .hero-globe {
+      width: min(600px, 90vw); opacity: 0.07;
       position: absolute; top: 50%; left: 50%;
-      transform: translate(-50%,-50%);
-      width: 460px; height: 460px;
-      will-change: transform, opacity; z-index: 2; pointer-events: none;
+      transform-origin: 49.6% 47.2%; will-change: transform;
     }
-    /* Globe: larger than container, pushed to background at 40% */
-    #hlg {
-      position: absolute;
-      width: 170%; height: 170%;
-      top: 50%; left: 50%;
-      transform: translate(-50%, -50%);
-      opacity: 0.4;
+    .hero-content { position: relative; text-align: center; z-index: 2; }
+    .hero-sub {
+      font-size: 11px; letter-spacing: 0.4em; text-transform: uppercase;
+      color: rgba(255,255,255,0.4);
     }
-    /* LU wrap: perspective context for 3D wobble */
-    #hll-wrap {
-      position: absolute; top: 50%; left: 50%;
-      width: 71.5%; height: 71.5%;
-      margin-top: -35.75%; margin-left: -35.75%;
-      perspective: 500px; perspective-origin: center center;
+    .scroll-hint {
+      position: absolute; bottom: 2.5rem; left: 50%;
+      transform: translateX(-50%);
+      display: flex; flex-direction: column; align-items: center; gap: 8px;
+      color: rgba(255,255,255,0.25); font-size: 10px;
+      letter-spacing: 0.3em; text-transform: uppercase; z-index: 2;
     }
-    /* LU logo: no spinning, driven by JS wobble */
-    #hll { width: 100%; height: 100%; will-change: transform; }
-    #hlw { position: absolute; top: 50%; left: 50%; width: 71%; transform: translate(-50%,-50%); opacity: .9; pointer-events: none; }
-
-    .hero-sub { font-size: 10px; letter-spacing: .45em; text-transform: uppercase; color: rgba(255,255,255,.28); opacity: 0; transform: translateY(10px); transition: opacity .8s ease, transform .8s ease; }
-    .hero-sub.in { opacity: 1; transform: translateY(0); }
-    .scroll-hint { position: absolute; bottom: 2.8rem; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 10px; color: rgba(255,255,255,.18); font-size: 9px; letter-spacing: .4em; text-transform: uppercase; opacity: 0; transition: opacity .8s ease 1.5s; z-index: 2; }
-    .scroll-hint.in { opacity: 1; }
-    .scroll-hint-line { width: 1px; height: 48px; background: linear-gradient(to bottom, rgba(255,255,255,.28), transparent); animation: scrollLine 2.3s ease infinite; }
-    @keyframes scrollLine { 0%{transform:scaleY(0);transform-origin:top;opacity:0} 40%{transform:scaleY(1);transform-origin:top;opacity:1} 60%{transform:scaleY(1);transform-origin:bottom;opacity:1} 100%{transform:scaleY(0);transform-origin:bottom;opacity:0} }
+    .scroll-hint::after {
+      content: ''; width: 1px; height: 40px;
+      background: linear-gradient(to bottom, rgba(255,255,255,0.25), transparent);
+      animation: scrollPulse 2s ease infinite;
+    }
+    @keyframes scrollPulse {
+      0%, 100% { opacity: 0.3; }
+      50% { opacity: 1; }
+    }
 
     /* REVEAL */
     .reveal { opacity: 0; transform: translateY(36px); transition: opacity .85s cubic-bezier(.16,1,.3,1), transform .85s cubic-bezier(.16,1,.3,1); }
@@ -282,18 +297,14 @@
 
   <section id="hero" style="max-width:100%;padding:0;">
     <canvas id="hero-canvas"></canvas>
-    <div id="hero-logo-float">
-      <img id="hlg" src="logo_globe.png" alt="" aria-hidden="true" />
-      <div id="hll-wrap"><img id="hll" src="logo_lu.png" alt="" aria-hidden="true" /></div>
-      <img id="hlw" src="logo_globe.png" alt="leftunsaid" />
+    <div class="hero-center">
+      <img class="hero-globe" id="hero-globe" src="logo_globe.png" alt="" aria-hidden="true" />
+      <div class="hero-content">
+        <img src="logo_main.png" alt="leftunsaid" style="width:280px;opacity:0.9;display:block;margin:0 auto;transform-origin:49.2% 47.6%;" />
+        <p class="hero-sub" style="margin-top:1.5rem;">A Collective &nbsp;&middot;&nbsp; Artists &amp; Producers</p>
+      </div>
     </div>
-    <div style="position:relative;z-index:3;text-align:center;margin-top:290px;">
-      <p class="hero-sub" id="hero-sub">A Collective &nbsp;&middot;&nbsp; Artists &amp; Producers</p>
-    </div>
-    <div class="scroll-hint" id="scroll-hint">
-      <span>Scroll</span>
-      <div class="scroll-hint-line"></div>
-    </div>
+    <div class="scroll-hint">Scroll</div>
   </section>
 
   <section id="music">
@@ -396,54 +407,40 @@ function clamp(v,a,b){return Math.max(a,Math.min(b,v));}
 function lerp(a,b,t){return a+(b-a)*t;}
 function easeInOut(t){return t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;}
 
-/* HERO LOGO REFS */
-var hlGlobe = document.getElementById('hlg');
-var hlLU    = document.getElementById('hll');
-
 /* INTRO */
 var INTRO_DUR=3200, introStart=null, introDone=false;
 var introGlobe=document.getElementById('intro-globe');
 var introLU=document.getElementById('intro-lu');
 function introEase(t){return t<0.5?2*t*t:-1+(4-2*t)*t;}
 
+/* Hero globe — slow ramp-up spin */
+var heroGlobe=document.getElementById('hero-globe');
+var heroAngle=0, heroSpeed=0;
+var HERO_TARGET_SPEED=0.018, HERO_RAMP=6000, heroRampStart=null;
+
 function introTick(ts){
   if(!introStart) introStart=ts;
   var t=Math.min((ts-introStart)/INTRO_DUR,1);
-  /* intro globe + LU spin during the splash screen */
   introGlobe.style.transform='rotate('+(introEase(t)*720)+'deg)';
   introLU.style.transform='rotate('+(introEase(t)*-360)+'deg)';
-  /* NOTE: hero globe (#hlg) and hero LU (#hll) are NOT spun here — see wobble loop below */
+
+  /* hero globe ramps up from zero — starts invisible but angle is accumulating */
+  if(!heroRampStart) heroRampStart=ts;
+  var rampT=Math.min((ts-heroRampStart)/HERO_RAMP,1);
+  var k=4;
+  heroSpeed=HERO_TARGET_SPEED*(Math.exp(k*rampT)-1)/(Math.exp(k)-1);
+  heroAngle+=heroSpeed*16.67;
+  if(heroGlobe) heroGlobe.style.transform='translate(-50%,-50%) rotate('+heroAngle+'deg)';
+
   if(t>=1&&!introDone){
     introDone=true;
     document.getElementById('intro').classList.add('done');
     document.getElementById('main').classList.add('visible');
-    setTimeout(function(){
-      document.getElementById('hero-sub').classList.add('in');
-      document.getElementById('scroll-hint').classList.add('in');
-    },300);
     initCanvas();
   }
   requestAnimationFrame(introTick);
 }
 requestAnimationFrame(introTick);
-
-/* LU WOBBLE — gentle fly + 3D oscillation, no spin */
-(function wobble(ts){
-  var t=(ts||0)*0.001;
-  /* gentle vertical fly — two sine waves for organic feel */
-  var flyY=Math.sin(t*0.65)*11+Math.sin(t*1.1)*4;
-  /* 3D tilt — slow, different frequencies per axis */
-  var tiltX=Math.sin(t*0.48)*5+Math.cos(t*0.9)*2;
-  var tiltY=Math.cos(t*0.37)*4+Math.sin(t*0.7)*1.5;
-  /* subtle scale breath */
-  var sc=1+Math.sin(t*0.55)*0.018;
-  hlLU.style.transform=
-    'translateY('+flyY.toFixed(2)+'px) '+
-    'rotateX('+tiltX.toFixed(2)+'deg) '+
-    'rotateY('+tiltY.toFixed(2)+'deg) '+
-    'scale('+sc.toFixed(4)+')';
-  requestAnimationFrame(wobble);
-})();
 
 /* PARTICLE CANVAS */
 var canvasInited=false;
@@ -461,21 +458,11 @@ function initCanvas(){
   })();
 }
 
-/* HERO FLOAT — CCW arc on scroll */
-var heroFloat=document.getElementById('hero-logo-float'),heroSec=document.getElementById('hero'),sY=0;
-function updateHeroFloat(){
-  var progress=clamp(sY/(heroSec.offsetHeight*0.88),0,1);
-  var angle=progress*(-Math.PI*0.56),R=280;
-  var dx=Math.sin(angle)*R,dy=(1-Math.cos(angle))*R;
-  var sc=lerp(1,0.5,progress),op=lerp(1,0,clamp(progress*1.25,0,1)),rot=progress*-28;
-  heroFloat.style.transform='translate(calc(-50% + '+dx.toFixed(1)+'px), calc(-50% + '+dy.toFixed(1)+'px)) rotate('+rot.toFixed(2)+'deg) scale('+sc.toFixed(3)+')';
-  heroFloat.style.opacity=op.toFixed(3);
-}
-window.addEventListener('scroll',function(){sY=window.scrollY;updateHeroFloat();},{passive:true});
+
 
 /* ── PHOTO FALL ──
-   Only .member-photo divs are ripped out and fall.
-   Cards stay as blank containers. Text stays but photo slot empties. */
+   Clones each .member-photo and flies the clone.
+   Original stays hidden in place (visibility:hidden) → card keeps its exact size. */
 function spawnPhotoFall(){
   var grid=document.querySelector('.members-grid');
   if(!grid)return;
@@ -483,29 +470,36 @@ function spawnPhotoFall(){
   photos.forEach(function(photo,i){
     var rect=photo.getBoundingClientRect();
     if(!rect.width)return;
-    /* rip the actual .member-photo out of its card, re-parent to body at same screen position */
-    photo.parentNode.removeChild(photo);
-    photo.style.cssText=
+
+    /* clone first (while still in DOM for accurate rect) */
+    var clone=photo.cloneNode(true);
+    /* hide original in-place — card keeps exact same size, no collapse */
+    photo.style.visibility='hidden';
+
+    /* position clone at exact screen coords */
+    clone.style.cssText=
       'position:fixed;top:0;left:0;margin:0;pointer-events:none;z-index:800;'+
       'width:'+rect.width+'px;height:'+rect.height+'px;'+
-      'box-sizing:border-box;overflow:hidden;transition:none;'+
+      'box-sizing:border-box;overflow:hidden;transition:none;visibility:visible;'+
       'transform:translate('+rect.left.toFixed(1)+'px,'+rect.top.toFixed(1)+'px);';
-    document.body.appendChild(photo);
+    document.body.appendChild(clone);
+
     var x=rect.left,y=rect.top;
     var vx=(Math.random()-0.5)*8;
     var vy=-(Math.random()*3+1);
     var grav=0.5+Math.random()*0.3;
     var ang=0,angV=(Math.random()-0.5)*5;
     var op=1;
+
     setTimeout(function(){
       (function fall(){
         vy+=grav;x+=vx;y+=vy;ang+=angV;angV*=0.985;
         op=Math.max(0,op-0.012);
-        photo.style.transform='translate('+x.toFixed(1)+'px,'+y.toFixed(1)+'px) rotate('+ang.toFixed(2)+'deg)';
-        photo.style.opacity=op;
-        photo.style.filter='brightness('+Math.max(0,op*0.75).toFixed(3)+')';
+        clone.style.transform='translate('+x.toFixed(1)+'px,'+y.toFixed(1)+'px) rotate('+ang.toFixed(2)+'deg)';
+        clone.style.opacity=op;
+        clone.style.filter='brightness('+Math.max(0,op*0.75).toFixed(3)+')';
         if(y<innerHeight+400&&op>0)requestAnimationFrame(fall);
-        else if(photo.parentNode)photo.parentNode.removeChild(photo);
+        else if(clone.parentNode)clone.parentNode.removeChild(clone);
       })();
     },i*45+Math.random()*70);
   });
