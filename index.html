@@ -15,25 +15,33 @@
     #cursor { position: fixed; width: 8px; height: 8px; background: #fff; border-radius: 50%; pointer-events: none; z-index: 9999; transform: translate(-50%,-50%); transition: width .25s, height .25s; mix-blend-mode: difference; }
     #cursor-ring { position: fixed; width: 34px; height: 34px; border: 1px solid rgba(255,255,255,.35); border-radius: 50%; pointer-events: none; z-index: 9998; transform: translate(-50%,-50%); transition: width .45s cubic-bezier(.25,.46,.45,.94), height .45s cubic-bezier(.25,.46,.45,.94); mix-blend-mode: difference; }
 
-    /* INTRO — full black screen */
-    #intro { position: fixed; inset: 0; background: #000; z-index: 2000; overflow: hidden; }
-
-    /* the two curtain halves that split open */
-    #intro-top { position: absolute; top: 0; left: 0; right: 0; height: 50%; background: #000; z-index: 20; transform-origin: top center; }
-    #intro-bot { position: absolute; bottom: 0; left: 0; right: 0; height: 50%; background: #000; z-index: 20; transform-origin: bottom center; }
-
-    /* main landing logo — centered in intro */
-    #main-logo {
-      position: absolute; top: 50%; left: 50%;
-      width: 340px; height: 340px;
-      transform: translate(-50%, -50%);
-      opacity: 0; z-index: 10;
-      will-change: transform, opacity;
+    /* ── INTRO ── */
+    #intro {
+      position: fixed; inset: 0; background: #000;
+      display: flex; align-items: center; justify-content: center;
+      z-index: 1000; pointer-events: none;
     }
-    #mlg { position: absolute; inset: 0; width: 100%; height: 100%; transform-origin: 49.6% 47.2%; }
-    #mll-wrap { position: absolute; top: 50%; left: 50%; width: 71.5%; height: 71.5%; margin-top: -35.75%; margin-left: -35.75%; }
-    #mll { width: 100%; height: 100%; transform-origin: 48.8% 47.6%; }
-    #mlw { position: absolute; top: 50%; left: 50%; width: 71%; transform: translate(-50%,-50%); opacity: 0; pointer-events: none; }
+    #intro-stack {
+      position: relative; width: 220px; height: 220px;
+      opacity: 0; animation: introFade 3.2s ease forwards;
+    }
+    @keyframes introFade {
+      0%   { opacity: 0; transform: scale(0.8); }
+      25%  { opacity: 1; transform: scale(1); }
+      65%  { opacity: 1; transform: scale(1); }
+      100% { opacity: 0; transform: scale(8); }
+    }
+    #intro-globe-wrap {
+      position: absolute; top: 50%; left: 50%;
+      width: 100%; height: 100%; margin-top: -50%; margin-left: -50%;
+    }
+    #intro-globe { width: 100%; height: 100%; transform-origin: 49.6% 47.2%; }
+    #intro-lu    { width: 100%; height: 100%; transform-origin: 48.8% 47.6%; }
+    #intro.done  { display: none; }
+    #intro-lu-wrap {
+      position: absolute; top: 50%; left: 50%;
+      width: 71.5%; height: 71.5%; margin-top: -35.75%; margin-left: -35.75%;
+    }
 
     /* NOISE */
     #noise { position: fixed; inset: 0; z-index: 1; pointer-events: none; opacity: .022;
@@ -94,12 +102,103 @@
     .gel-layer:active { cursor: grabbing; }
     .gel-layer::after { content: 'drag'; position: absolute; right: 0; top: -1.8rem; font-size: 9px; letter-spacing: .4em; text-transform: uppercase; color: rgba(255,255,255,.1); pointer-events: none; }
 
-    /* MUSIC */
+    /* MUSIC — coverflow carousel + flip card */
     #music { border-top: 1px solid var(--border); }
-    .spotify-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px,1fr)); gap: 1px; background: var(--border); border: 1px solid var(--border); }
-    .spotify-embed { background: var(--bg); padding: 1.5rem; transition: background .4s; }
-    .spotify-embed:hover { background: rgba(255,255,255,.03); }
-    .spotify-embed iframe { display: block; width: 100%; border: none; border-radius: 8px; }
+
+    /* coverflow wrapper */
+    .music-coverflow {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 0;
+    }
+    .music-arrow {
+      flex-shrink: 0;
+      width: 44px; height: 44px;
+      display: flex; align-items: center; justify-content: center;
+      color: rgba(255,255,255,.25);
+      font-size: 18px; font-family: 'Outfit', sans-serif; font-weight: 300;
+      background: none; border: 1px solid rgba(255,255,255,.08);
+      cursor: pointer; z-index: 10;
+      transition: color .3s, border-color .3s;
+      user-select: none;
+    }
+    .music-arrow:hover { color: #fff; border-color: rgba(255,255,255,.3); }
+
+    /* perspective stage */
+    .music-stage {
+      flex: 1;
+      perspective: 1400px;
+      perspective-origin: center center;
+      overflow: hidden;
+      position: relative;
+      min-height: 260px;
+    }
+
+    /* each card is a flip card */
+    .music-card {
+      position: absolute; inset: 0;
+      transform-style: preserve-3d;
+      transition: transform .72s cubic-bezier(.16,1,.3,1), opacity .5s ease;
+      /* coverflow states */
+      opacity: 0; pointer-events: none;
+      transform: translateX(60%) translateZ(-320px) rotateY(-18deg) scale(.82);
+    }
+    .music-card.prev {
+      opacity: .45; pointer-events: none;
+      transform: translateX(-60%) translateZ(-320px) rotateY(18deg) scale(.82);
+    }
+    .music-card.active {
+      opacity: 1; pointer-events: all;
+      transform: translateX(0) translateZ(0) rotateY(0deg) scale(1);
+    }
+    .music-card.next {
+      opacity: .45; pointer-events: none;
+      transform: translateX(60%) translateZ(-320px) rotateY(-18deg) scale(.82);
+    }
+    .music-card.exit-left {
+      opacity: 0; pointer-events: none;
+      transform: translateX(-120%) translateZ(-500px) rotateY(35deg) scale(.6);
+    }
+    .music-card.exit-right {
+      opacity: 0; pointer-events: none;
+      transform: translateX(120%) translateZ(-500px) rotateY(-35deg) scale(.6);
+    }
+
+    /* flip faces */
+    .card-face {
+      position: absolute; inset: 0;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px,1fr));
+      gap: 1px; background: var(--border); border: 1px solid var(--border);
+    }
+    .card-face.back {
+      transform: rotateY(180deg);
+      background: #0a0a0a;
+    }
+
+    /* flipped state */
+    .music-card.flipped { transform: translateX(0) translateZ(0) rotateY(180deg) scale(1); }
+
+    .embed-cell { background: var(--bg); padding: 1.4rem; transition: background .4s; }
+    .embed-cell:hover { background: rgba(255,255,255,.03); }
+    .embed-cell iframe { display: block; width: 100%; border: none; border-radius: 8px; }
+
+    /* platform label on back */
+    .platform-label {
+      position: absolute; top: 1rem; right: 1.4rem;
+      font-size: 9px; letter-spacing: .4em; text-transform: uppercase;
+      color: rgba(255,255,255,.2); pointer-events: none;
+    }
+
+    /* flip hint */
+    .flip-hint {
+      text-align: center; margin-top: 1.2rem;
+      font-size: 9px; letter-spacing: .35em; text-transform: uppercase;
+      color: rgba(255,255,255,.14);
+    }
 
     /* COLLECTIVE */
     #collective { border-top: 1px solid var(--border); }
@@ -159,12 +258,13 @@
 
 <!-- INTRO -->
 <div id="intro">
-  <div id="intro-top"></div>
-  <div id="intro-bot"></div>
-  <div id="main-logo">
-    <img id="mlg" src="logo_globe.png" alt="leftunsaid" />
-    <div id="mll-wrap"><img id="mll" src="logo_lu.png" alt="" aria-hidden="true" /></div>
-    <img id="mlw" src="logo_main.png" alt="leftunsaid" />
+  <div id="intro-stack">
+    <div id="intro-globe-wrap">
+      <img id="intro-globe" src="logo_globe.png" alt="leftunsaid" />
+    </div>
+    <div id="intro-lu-wrap">
+      <img id="intro-lu" src="logo_lu.png" alt="" aria-hidden="true" />
+    </div>
   </div>
 </div>
 
@@ -198,12 +298,55 @@
   <section id="music">
     <p class="section-label reveal">Featured</p>
     <h2 class="section-title split-text">Music</h2>
-    <div class="spotify-grid gel-layer" data-gel="18">
-      <div class="spotify-embed reveal reveal-delay-1"><iframe src="https://open.spotify.com/embed/track/placeholder1?utm_source=generator&theme=0" height="152" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe></div>
-      <div class="spotify-embed reveal reveal-delay-2"><iframe src="https://open.spotify.com/embed/track/placeholder2?utm_source=generator&theme=0" height="152" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe></div>
-      <div class="spotify-embed reveal reveal-delay-3"><iframe src="https://open.spotify.com/embed/track/placeholder3?utm_source=generator&theme=0" height="152" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe></div>
-      <div class="spotify-embed reveal reveal-delay-4"><iframe src="https://open.spotify.com/embed/track/placeholder4?utm_source=generator&theme=0" height="152" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe></div>
+
+    <div class="music-coverflow reveal">
+      <!-- prev arrow -->
+      <button class="music-arrow" id="music-prev" aria-label="Previous">&#8249;</button>
+
+      <!-- coverflow stage -->
+      <div class="music-stage" id="music-stage">
+
+        <!-- CARD 0 — active -->
+        <div class="music-card active" id="mc-0">
+          <div class="card-face front">
+            <div class="embed-cell"><iframe src="https://open.spotify.com/embed/track/placeholder1?utm_source=generator&theme=0" height="152" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe></div>
+            <div class="embed-cell"><iframe src="https://open.spotify.com/embed/track/placeholder2?utm_source=generator&theme=0" height="152" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe></div>
+            <div class="embed-cell"><iframe src="https://open.spotify.com/embed/track/placeholder3?utm_source=generator&theme=0" height="152" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe></div>
+            <div class="embed-cell"><iframe src="https://open.spotify.com/embed/track/placeholder4?utm_source=generator&theme=0" height="152" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe></div>
+          </div>
+          <div class="card-face back">
+            <span class="platform-label">Soundcloud</span>
+            <div class="embed-cell"><iframe width="100%" height="152" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/placeholder1&color=%23111111&auto_play=false&hide_related=true&show_comments=false&show_user=true&show_reposts=false&show_teaser=false"></iframe></div>
+            <div class="embed-cell"><iframe width="100%" height="152" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/placeholder2&color=%23111111&auto_play=false&hide_related=true&show_comments=false&show_user=true&show_reposts=false&show_teaser=false"></iframe></div>
+            <div class="embed-cell"><iframe width="100%" height="152" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/placeholder3&color=%23111111&auto_play=false&hide_related=true&show_comments=false&show_user=true&show_reposts=false&show_teaser=false"></iframe></div>
+            <div class="embed-cell"><iframe width="100%" height="152" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/placeholder4&color=%23111111&auto_play=false&hide_related=true&show_comments=false&show_user=true&show_reposts=false&show_teaser=false"></iframe></div>
+          </div>
+        </div>
+
+        <!-- CARD 1 — next -->
+        <div class="music-card next" id="mc-1">
+          <div class="card-face front">
+            <div class="embed-cell"><iframe src="https://open.spotify.com/embed/track/placeholder5?utm_source=generator&theme=0" height="152" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe></div>
+            <div class="embed-cell"><iframe src="https://open.spotify.com/embed/track/placeholder6?utm_source=generator&theme=0" height="152" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe></div>
+            <div class="embed-cell"><iframe src="https://open.spotify.com/embed/track/placeholder7?utm_source=generator&theme=0" height="152" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe></div>
+            <div class="embed-cell"><iframe src="https://open.spotify.com/embed/track/placeholder8?utm_source=generator&theme=0" height="152" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe></div>
+          </div>
+          <div class="card-face back">
+            <span class="platform-label">Soundcloud</span>
+            <div class="embed-cell"><iframe width="100%" height="152" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/placeholder5&color=%23111111&auto_play=false&hide_related=true&show_comments=false&show_user=true&show_reposts=false&show_teaser=false"></iframe></div>
+            <div class="embed-cell"><iframe width="100%" height="152" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/placeholder6&color=%23111111&auto_play=false&hide_related=true&show_comments=false&show_user=true&show_reposts=false&show_teaser=false"></iframe></div>
+            <div class="embed-cell"><iframe width="100%" height="152" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/placeholder7&color=%23111111&auto_play=false&hide_related=true&show_comments=false&show_user=true&show_reposts=false&show_teaser=false"></iframe></div>
+            <div class="embed-cell"><iframe width="100%" height="152" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/placeholder8&color=%23111111&auto_play=false&hide_related=true&show_comments=false&show_user=true&show_reposts=false&show_teaser=false"></iframe></div>
+          </div>
+        </div>
+
+      </div><!-- /music-stage -->
+
+      <!-- next arrow -->
+      <button class="music-arrow" id="music-next" aria-label="Next">&#8250;</button>
     </div>
+
+    <p class="flip-hint reveal">Flick to flip · Spotify ↔ Soundcloud</p>
   </section>
 
   <section id="collective">
@@ -267,89 +410,43 @@ function easeOut(t){return 1-Math.pow(1-t,3);}
 function easeInOut(t){return t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;}
 function easeIn2(t){return t*t;}
 
-/* ── INTRO SEQUENCE ──
-   Phase A  0.00–0.20  pop-in: scale 0.7→1, opacity 0→1 (fast easeOut)
-   Phase B  0.20–0.58  hold: logo spins, wordmark visible
-   Phase C  0.58–0.84  unroll: top curtain slides UP, bottom slides DOWN, logo fades
-   Phase D  0.84–1.00  complete: main fades in 0.3s
-─────────────────────── */
-var INTRO_DUR = 2000;
-var iStart=null, iDone=false;
-var mlStack = document.getElementById('main-logo');
-var mlGlobe = document.getElementById('mlg');
-var mlLU    = document.getElementById('mll');
-var mlWord  = document.getElementById('mlw');
-var topC    = document.getElementById('intro-top');
-var botC    = document.getElementById('intro-bot');
-var introEl = document.getElementById('intro');
-
-/* hero globe refs for continuous spin */
+/* ── hero globe refs (declared here so introTick can use them) ── */
 var hlGlobe = document.getElementById('hlg');
 var hlLU    = document.getElementById('hll');
 var hAngle  = 0;
 
+/* ── INTRO ── */
+var INTRO_DUR = 3200;
+var introStart = null, introDone = false;
+var introGlobe = document.getElementById('intro-globe');
+var introLU    = document.getElementById('intro-lu');
+
+function introEase(t){ return t < 0.5 ? 2*t*t : -1+(4-2*t)*t; }
+
 function introTick(ts){
-  if(!iStart) iStart=ts;
-  var t = clamp((ts-iStart)/INTRO_DUR, 0, 1);
+  if(!introStart) introStart = ts;
+  var elapsed = ts - introStart;
+  var t = Math.min(elapsed / INTRO_DUR, 1);
 
-  /* globe & LU spin throughout entire intro (mapped to 0→0.80) */
-  var spinT = clamp(t/0.80, 0, 1);
-  var globeDeg =  easeInOut(spinT) * 720;
-  var luDeg    = -easeInOut(spinT) * 360;
-  mlGlobe.style.transform = 'rotate('+globeDeg+'deg)';
-  mlLU.style.transform    = 'rotate('+luDeg+'deg)';
+  /* globe spins 720° clockwise, LU spins 360° counter — JS-driven on top of CSS fade */
+  introGlobe.style.transform = 'rotate(' + (introEase(t)*720) + 'deg)';
+  introLU.style.transform    = 'rotate(' + (introEase(t)*-360) + 'deg)';
 
-  /* curtains always start closed */
-  var curtainUp = 0, curtainDown = 0;
-
-  /* Phase A — pop in */
-  if(t < 0.20){
-    var p = easeOut(t/0.20);
-    mlStack.style.opacity   = p;
-    mlStack.style.transform = 'translate(-50%,-50%) scale('+lerp(0.70,1,p)+')';
-    mlWord.style.opacity    = p * 0.92;
-  }
-  /* Phase B — hold */
-  else if(t < 0.58){
-    mlStack.style.opacity   = 1;
-    mlStack.style.transform = 'translate(-50%,-50%) scale(1)';
-    mlWord.style.opacity    = 0.92;
-  }
-  /* Phase C — unroll */
-  else if(t < 0.84){
-    var u  = easeInOut(remap(t,0.58,0.84,0,1));
-    curtainUp   = u * 100;
-    curtainDown = u * 100;
-    var fade = 1 - easeIn2(remap(t,0.58,0.84,0,1));
-    mlStack.style.opacity   = fade;
-    mlStack.style.transform = 'translate(-50%,-50%) scale('+lerp(1,0.94,1-fade)+')';
-    mlWord.style.opacity    = fade * 0.92;
-  }
-  /* Phase D — done */
-  else{
-    mlStack.style.opacity = 0;
-    curtainUp   = 100;
-    curtainDown = 100;
-    if(!iDone){
-      iDone = true;
-      document.getElementById('main').classList.add('visible');
-      setTimeout(function(){ introEl.style.display='none'; }, 400);
-      setTimeout(function(){
-        document.getElementById('hero-sub').classList.add('in');
-        document.getElementById('scroll-hint').classList.add('in');
-      }, 380);
-      /* init canvas now that #main is visible and has dimensions */
-      initCanvas();
-    }
-  }
-
-  topC.style.transform = 'translateY(-'+curtainUp+'%)';
-  botC.style.transform = 'translateY('+curtainDown+'%)';
-
-  /* continuous hero globe spin */
+  /* continuous hero globe spin (starts immediately so it's ready when main appears) */
   hAngle += 0.013 * 16.67;
   hlGlobe.style.transform = 'rotate('+hAngle+'deg)';
   hlLU.style.transform    = 'rotate('+(-hAngle*0.5)+'deg)';
+
+  if(t >= 1 && !introDone){
+    introDone = true;
+    document.getElementById('intro').classList.add('done');
+    document.getElementById('main').classList.add('visible');
+    setTimeout(function(){
+      document.getElementById('hero-sub').classList.add('in');
+      document.getElementById('scroll-hint').classList.add('in');
+    }, 300);
+    initCanvas();
+  }
 
   requestAnimationFrame(introTick);
 }
@@ -387,115 +484,209 @@ function updateHeroFloat(){
 }
 window.addEventListener('scroll',function(){sY=window.scrollY;updateHeroFloat();},{passive:true});
 
-/* ── GEL LAYERS — omnidirectional drag + 3D chaos scroll-flip ──
-   When mouse is INSIDE a layer:
-     • wheel events are captured + page scroll is blocked
-     • the layer spins 3× per scroll unit on a random 3D axis — no clamp, infinite
-     • rotation decays slowly so it keeps spinning after you stop (inertia)
-   When mouse is OUTSIDE: normal page scroll, no interference.
+/* ── GEL LAYERS — velocity flip + omnidirectional drag ──
+   Slow drag  → translates / warps (gel feel)
+   Fast flick → flips once (180°), springs back if flicked again
+   Music card → flips Spotify ↔ Soundcloud
+   No wheel/scroll spin on any layer
 ── */
-document.querySelectorAll('.gel-layer').forEach(function(layer){
-  var depth = parseFloat(layer.dataset.gel)||20;
+var gelLayers  = Array.prototype.slice.call(document.querySelectorAll('.gel-layer'));
+var gelStates  = gelLayers.map(function(){ return { cY:0 }; });
+var FLIP_VEL   = 9;   /* px/frame velocity threshold to trigger a flip */
+
+gelLayers.forEach(function(layer, idx){
+  var depth   = parseFloat(layer.dataset.gel)||20;
+  var isMusic = layer.classList.contains('spotify-grid') ||
+                layer.closest && layer.closest('#music') !== null;
+  /* translation */
   var tX=0,cX=0, tY=0,cY=0;
-  /* rotation — unclamped, accumulates freely */
-  var tRX=0,cRX=0, tRY=0,cRY=0;
-  /* random axis per layer */
-  var axA=Math.random()*Math.PI*2, ax=Math.cos(axA), ay=Math.sin(axA);
-  /* spin velocity — decays with inertia */
-  var velRX=0, velRY=0;
+  /* rotation — only goes to 0 or 180, no free spin */
+  var tRY=0, cRY=0;
+  var flipped = false, animating = false;
+  /* drag state */
   var drag=false, dsx=0,dsy=0, dtx=0,dty=0;
-  var hovered=false;
+  var grabNX=0, grabNY=0;
+  var warpRX=0,cWarpRX=0, warpRY_w=0,cWarpRY_w=0;
+  /* velocity tracking */
+  var velSamples=[], lastMX=0, lastMY=0;
+  /* neighbor push */
+  var pushY=0, cPushY=0;
 
-  /* ── hover tracking ── */
-  layer.addEventListener('mouseenter',function(){ hovered=true; });
-  layer.addEventListener('mouseleave',function(){ hovered=false; });
-
-  /* ── WHEEL — intercept when hovered, block page scroll, spin like hell ── */
-  layer.addEventListener('wheel',function(e){
-    if(!hovered) return;
-    e.preventDefault(); /* stops page from scrolling */
-    e.stopPropagation();
-
-    /* raw pixel delta — normalise across wheel modes */
-    var raw = e.deltaY;
-    if(e.deltaMode===1) raw *= 20;   /* line mode */
-    if(e.deltaMode===2) raw *= 400;  /* page mode */
-
-    /* 3 full rotations (1080 deg) per ~100px of scroll delta,
-       split across the random axis — this is the "break the site" amount */
-    var spin = raw * 10.8;
-    velRX += spin * ax;
-    velRY += spin * ay;
-  },{ passive: false }); /* must NOT be passive to call preventDefault */
-
-  /* ── MOUSE DRAG — omnidirectional ── */
+  /* ── DRAG ── */
   layer.addEventListener('mousedown',function(e){
+    if(animating) return;
     drag=true; dsx=e.clientX; dsy=e.clientY; dtx=tX; dty=tY;
+    lastMX=e.clientX; lastMY=e.clientY; velSamples=[];
+    var r=layer.getBoundingClientRect();
+    grabNX=((e.clientX-r.left)/r.width -0.5)*2;
+    grabNY=((e.clientY-r.top) /r.height-0.5)*2;
+    var ox=((1-(grabNX+1)/2)*100), oy=((1-(grabNY+1)/2)*100);
+    layer.style.transformOrigin=ox+'% '+oy+'%';
     e.preventDefault();
   });
+
   document.addEventListener('mousemove',function(e){
     if(!drag) return;
-    var lim=depth*5;
-    tX=clamp(dtx+(e.clientX-dsx),-lim,lim);
-    tY=clamp(dty+(e.clientY-dsy),-lim*.65,lim*.65);
+    var dx=e.clientX-dsx, dy=e.clientY-dsy, lim=depth*5;
+    tX=clamp(dtx+dx,-lim,lim);
+    tY=clamp(dty+dy,-lim*.7,lim*.7);
+    warpRX=clamp(-dy*grabNY*0.18*Math.abs(grabNY)*(Math.abs(grabNX)>.45&&Math.abs(grabNY)>.45?1.6:1),-55,55);
+    warpRY_w=clamp(dx*grabNX*0.18*Math.abs(grabNX)*(Math.abs(grabNX)>.45&&Math.abs(grabNY)>.45?1.6:1),-55,55);
+    /* track velocity */
+    velSamples.push({ vx: e.clientX-lastMX, vy: e.clientY-lastMY });
+    if(velSamples.length>6) velSamples.shift();
+    lastMX=e.clientX; lastMY=e.clientY;
   });
-  document.addEventListener('mouseup',function(){ drag=false; });
 
-  /* ── TOUCH DRAG ── */
+  document.addEventListener('mouseup',function(){
+    if(!drag) return; drag=false;
+    setTimeout(function(){ layer.style.transformOrigin='50% 50%'; },600);
+    /* compute avg velocity */
+    if(!velSamples.length) return;
+    var avx=0,avy=0;
+    velSamples.forEach(function(s){ avx+=s.vx; avy+=s.vy; });
+    avx/=velSamples.length; avy/=velSamples.length;
+    var speed=Math.sqrt(avx*avx+avy*avy);
+    if(speed >= FLIP_VEL && !animating){
+      doFlip(avx < 0 ? -1 : 1);
+    }
+  });
+
+  /* touch */
   layer.addEventListener('touchstart',function(e){
+    if(animating)return;
     drag=true; dsx=e.touches[0].clientX; dsy=e.touches[0].clientY; dtx=tX; dty=tY;
+    lastMX=dsx; lastMY=dsy; velSamples=[];
+    var r=layer.getBoundingClientRect();
+    grabNX=((e.touches[0].clientX-r.left)/r.width-0.5)*2;
+    grabNY=((e.touches[0].clientY-r.top)/r.height-0.5)*2;
   },{passive:true});
   document.addEventListener('touchmove',function(e){
-    if(!drag) return;
-    tX=clamp(dtx+(e.touches[0].clientX-dsx),-depth*4,depth*4);
-    tY=clamp(dty+(e.touches[0].clientY-dsy),-depth*3,depth*3);
+    if(!drag)return;
+    var tx=e.touches[0].clientX,ty=e.touches[0].clientY;
+    tX=clamp(dtx+(tx-dsx),-depth*4,depth*4);
+    tY=clamp(dty+(ty-dsy),-depth*3,depth*3);
+    velSamples.push({vx:tx-lastMX,vy:ty-lastMY});
+    if(velSamples.length>6)velSamples.shift();
+    lastMX=tx; lastMY=ty;
   },{passive:true});
-  document.addEventListener('touchend',function(){ drag=false; });
+  document.addEventListener('touchend',function(){
+    if(!drag)return; drag=false;
+    if(!velSamples.length)return;
+    var avx=0; velSamples.forEach(function(s){avx+=s.vx;}); avx/=velSamples.length;
+    var avy=0; velSamples.forEach(function(s){avy+=s.vy;}); avy/=velSamples.length;
+    var speed=Math.sqrt(avx*avx+avy*avy);
+    if(speed>=FLIP_VEL && !animating) doFlip(avx<0?-1:1);
+  });
 
-  /* ── NORMAL SCROLL — only for parallax Y when NOT hovered ── */
+  /* scroll parallax Y — translation only, no spin */
   window.addEventListener('scroll',function(){
-    if(hovered) return; /* hovered = wheel is active, skip */
     var r=layer.getBoundingClientRect();
     tY=clamp(-((r.top+r.height/2-innerHeight/2)*depth/800),-depth*3,depth*3);
   },{passive:true});
 
+  /* ── FLIP ── once to 180, once back to 0 */
+  function doFlip(dir){
+    animating=true;
+    flipped=!flipped;
+    tRY = flipped ? 180 : 0;
+    /* update music card visual state */
+    if(isMusic){
+      var mc=layer.closest ? layer.closest('.music-card') : null;
+      if(!mc) mc=document.querySelector('.music-card.active');
+      if(mc){ if(flipped) mc.classList.add('flipped'); else mc.classList.remove('flipped'); }
+    }
+    setTimeout(function(){ animating=false; }, 800);
+  }
+
   /* ── SPRING LOOP ── */
   (function loop(){
-    /* translate spring-back */
     if(!drag){ tX*=.86; if(Math.abs(tX)<.3)tX=0; }
+    if(!drag){ warpRX*=.82; warpRY_w*=.82; }
 
-    /* spin inertia — decays at 97% per frame so it coasts after scrolling */
-    velRX*=.97; velRY*=.97;
-    if(Math.abs(velRX)<0.01) velRX=0;
-    if(Math.abs(velRY)<0.01) velRY=0;
-    tRX+=velRX; tRY+=velRY;
+    /* snap rotation to target (0 or 180) */
+    cRY += (tRY - cRY) * .1;
 
-    /* slowly drift back to upright when not spinning */
-    if(!hovered){
-      tRX*=.96;
-      tRY*=.96;
-    }
+    /* neighbor push */
+    pushY=0;
+    var myRect=layer.getBoundingClientRect();
+    var myC=myRect.top+myRect.height/2;
+    gelStates.forEach(function(st,j){
+      if(j===idx)return;
+      var or=gelLayers[j].getBoundingClientRect();
+      var oc=or.top+or.height/2;
+      var sd=oc-myC, ad=Math.abs(sd)+1;
+      var inf=clamp(1-ad/1200,0,1);
+      if(inf<.01)return;
+      var push=st.cY*inf*0.35;
+      pushY+=(sd>0?-push:push);
+    });
+    cPushY+=(pushY-cPushY)*.018;
 
     var lf=drag?.17:.065;
     cX+=(tX-cX)*lf;
-    cY+=(tY-cY)*(drag?lf:.055);
-    /* rotation lerp — fast enough to feel responsive */
-    cRX+=(tRX-cRX)*.12;
-    cRY+=(tRY-cRY)*.12;
+    cY+=(tY+cPushY-cY)*(drag?lf:.055);
+    gelStates[idx].cY=cY;
 
-    var skX=clamp((tX-cX)*.04,-4,4);
-    var skY=clamp((tY-cY)*.025,-2.5,2.5);
+    cWarpRX+=(warpRX-cWarpRX)*.22;
+    cWarpRY_w+=(warpRY_w-cWarpRY_w)*.22;
+
+    var skX=clamp((tX-cX)*.06,-7,7);
+    var skY=clamp((tY-cY)*.04,-5,5);
 
     layer.style.transform=
       'translate3d('+cX.toFixed(2)+'px,'+cY.toFixed(2)+'px,0) '+
-      'rotateX('+cRX.toFixed(2)+'deg) '+
-      'rotateY('+cRY.toFixed(2)+'deg) '+
-      'skewX('+skX.toFixed(2)+'deg) '+
-      'skewY('+skY.toFixed(2)+'deg)';
+      'rotateX('+(cWarpRX).toFixed(2)+'deg) '+
+      'rotateY('+(cRY+cWarpRY_w).toFixed(2)+'deg) '+
+      'skewX('+skX.toFixed(2)+'deg) skewY('+skY.toFixed(2)+'deg)';
 
     requestAnimationFrame(loop);
   })();
 });
+
+/* ── MUSIC COVERFLOW ── */
+(function(){
+  var cards = Array.prototype.slice.call(document.querySelectorAll('.music-card'));
+  if(!cards.length) return;
+  var current = 0, total = cards.length, busy = false;
+
+  function setState(idx, cls){
+    cards[idx].className = 'music-card ' + cls;
+  }
+
+  function navigate(dir){
+    if(busy || total < 2) return;
+    busy = true;
+    var next = (current + dir + total) % total;
+    var exitCls = dir > 0 ? 'exit-left' : 'exit-right';
+    var enterFrom = dir > 0 ? 'next' : 'prev';
+
+    /* 1. set incoming card to its off-screen start position (instant, no transition) */
+    cards[next].style.transition = 'none';
+    setState(next, enterFrom);
+    /* force reflow */
+    cards[next].offsetHeight;
+    cards[next].style.transition = '';
+
+    /* 2. animate current out */
+    setState(current, exitCls);
+    /* 3. animate next to active */
+    setState(next, 'active');
+
+    /* 4. hide old after transition */
+    var old = current;
+    setTimeout(function(){
+      cards[old].className = 'music-card'; /* reset to hidden default */
+      busy = false;
+    }, 750);
+    current = next;
+  }
+
+  var prevBtn = document.getElementById('music-prev');
+  var nextBtn = document.getElementById('music-next');
+  if(prevBtn) prevBtn.addEventListener('click', function(){ navigate(-1); });
+  if(nextBtn) nextBtn.addEventListener('click', function(){ navigate(1); });
+})();
 
 /* ── SCROLL REVEAL ── */
 var obs=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');obs.unobserve(e.target);}});},{threshold:.1,rootMargin:'0px 0px -50px 0px'});
