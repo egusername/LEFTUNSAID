@@ -6,322 +6,148 @@
   <title>leftunsaid.world</title>
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700&family=Outfit:wght@200;300;400;500&display=swap" rel="stylesheet">
   <style>
-    :root {
-      --border: rgba(255,255,255,0.07);
-      --dim: rgba(255,255,255,0.05);
-      --bg: #050505;
-    }
+    :root { --border: rgba(255,255,255,0.07); --dim: rgba(255,255,255,0.05); --bg: #050505; }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: auto; }
-    body {
-      background: var(--bg);
-      color: #fff;
-      font-family: 'Outfit', sans-serif;
-      font-weight: 300;
-      overflow-x: hidden;
-      cursor: none;
-    }
+    body { background: var(--bg); color: #fff; font-family: 'Outfit', sans-serif; font-weight: 300; overflow-x: hidden; cursor: none; }
 
-    /* ── CURSOR ── */
-    #cursor {
-      position: fixed; width: 8px; height: 8px;
-      background: #fff; border-radius: 50%;
-      pointer-events: none; z-index: 9999;
-      transform: translate(-50%,-50%);
-      transition: width 0.25s, height 0.25s;
-      mix-blend-mode: difference;
-    }
-    #cursor-ring {
-      position: fixed; width: 34px; height: 34px;
-      border: 1px solid rgba(255,255,255,0.35); border-radius: 50%;
-      pointer-events: none; z-index: 9998;
-      transform: translate(-50%,-50%);
-      transition: width 0.45s cubic-bezier(0.25,0.46,0.45,0.94),
-                  height 0.45s cubic-bezier(0.25,0.46,0.45,0.94);
-      mix-blend-mode: difference;
-    }
+    /* CURSOR */
+    #cursor { position: fixed; width: 8px; height: 8px; background: #fff; border-radius: 50%; pointer-events: none; z-index: 9999; transform: translate(-50%,-50%); transition: width .25s, height .25s; mix-blend-mode: difference; }
+    #cursor-ring { position: fixed; width: 34px; height: 34px; border: 1px solid rgba(255,255,255,.35); border-radius: 50%; pointer-events: none; z-index: 9998; transform: translate(-50%,-50%); transition: width .45s cubic-bezier(.25,.46,.45,.94), height .45s cubic-bezier(.25,.46,.45,.94); mix-blend-mode: difference; }
 
-    /* ── INTRO ── */
-    #intro {
-      position: fixed; inset: 0; background: #000;
-      display: flex; align-items: center; justify-content: center;
-      z-index: 2000; overflow: hidden;
-    }
-    #intro-top-half {
-      position: absolute; top: 0; left: 0; right: 0; height: 50%;
-      background: #000; z-index: 10; transform: translateY(0);
-    }
-    #intro-bot-half {
-      position: absolute; bottom: 0; left: 0; right: 0; height: 50%;
-      background: #000; z-index: 10; transform: translateY(0);
-    }
+    /* INTRO — full black screen */
+    #intro { position: fixed; inset: 0; background: #000; z-index: 2000; overflow: hidden; }
 
-    /* main landing logo */
+    /* the two curtain halves that split open */
+    #intro-top { position: absolute; top: 0; left: 0; right: 0; height: 50%; background: #000; z-index: 20; transform-origin: top center; }
+    #intro-bot { position: absolute; bottom: 0; left: 0; right: 0; height: 50%; background: #000; z-index: 20; transform-origin: bottom center; }
+
+    /* main landing logo — centered in intro */
     #main-logo {
-      position: relative; width: 340px; height: 340px;
-      opacity: 0; will-change: transform, opacity;
-      z-index: 5;
-    }
-    #main-logo-globe { width: 100%; height: 100%; transform-origin: 49.6% 47.2%; }
-    #main-logo-lu-wrap {
       position: absolute; top: 50%; left: 50%;
-      width: 71.5%; height: 71.5%;
-      margin-top: -35.75%; margin-left: -35.75%;
+      width: 340px; height: 340px;
+      transform: translate(-50%, -50%);
+      opacity: 0; z-index: 10;
+      will-change: transform, opacity;
     }
-    #main-logo-lu { width: 100%; height: 100%; transform-origin: 48.8% 47.6%; }
-    #intro-wordmark {
-      position: absolute; top: 50%; left: 50%; width: 71%;
-      transform: translate(-50%,-50%); opacity: 0; pointer-events: none;
-    }
+    #mlg { position: absolute; inset: 0; width: 100%; height: 100%; transform-origin: 49.6% 47.2%; }
+    #mll-wrap { position: absolute; top: 50%; left: 50%; width: 71.5%; height: 71.5%; margin-top: -35.75%; margin-left: -35.75%; }
+    #mll { width: 100%; height: 100%; transform-origin: 48.8% 47.6%; }
+    #mlw { position: absolute; top: 50%; left: 50%; width: 71%; transform: translate(-50%,-50%); opacity: 0; pointer-events: none; }
 
-    /* ── NOISE ── */
-    #noise {
-      position: fixed; inset: 0; z-index: 1; pointer-events: none; opacity: 0.022;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-      background-size: 180px;
-    }
+    /* NOISE */
+    #noise { position: fixed; inset: 0; z-index: 1; pointer-events: none; opacity: .022;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-size: 180px; }
 
-    /* ── MAIN ── */
+    /* MAIN */
     #main { opacity: 0; }
-    #main.visible { opacity: 1; transition: opacity 0.3s ease; }
+    #main.visible { opacity: 1; transition: opacity .3s ease; }
 
-    /* ── NAV ── */
-    nav {
-      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 1.8rem 3.5rem;
-      transition: transform 0.5s cubic-bezier(0.16,1,0.3,1);
-    }
-    nav::before {
-      content: ''; position: absolute; inset: 0;
-      background: linear-gradient(to bottom, rgba(0,0,0,0.75), transparent);
-      pointer-events: none;
-    }
-    nav a.nav-logo img { height: 90px; opacity: 0.85; display: block; position: relative; }
+    /* NAV */
+    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; padding: 1.8rem 3.5rem; transition: transform .5s cubic-bezier(.16,1,.3,1); }
+    nav::before { content: ''; position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(0,0,0,.75), transparent); pointer-events: none; }
+    nav a.nav-logo img { height: 90px; opacity: .85; display: block; position: relative; }
     nav ul { list-style: none; display: flex; gap: 3rem; position: relative; }
-    nav ul li a {
-      color: rgba(255,255,255,0.4); text-decoration: none;
-      font-family: 'Outfit', sans-serif; font-weight: 300;
-      font-size: 11px; letter-spacing: 0.25em; text-transform: uppercase;
-      transition: color 0.35s; position: relative;
-    }
-    nav ul li a::after {
-      content: ''; position: absolute; bottom: -3px; left: 0;
-      width: 0; height: 1px; background: rgba(255,255,255,0.45);
-      transition: width 0.4s cubic-bezier(0.25,0.46,0.45,0.94);
-    }
+    nav ul li a { color: rgba(255,255,255,.4); text-decoration: none; font-family: 'Outfit', sans-serif; font-weight: 300; font-size: 11px; letter-spacing: .25em; text-transform: uppercase; transition: color .35s; position: relative; }
+    nav ul li a::after { content: ''; position: absolute; bottom: -3px; left: 0; width: 0; height: 1px; background: rgba(255,255,255,.45); transition: width .4s cubic-bezier(.25,.46,.45,.94); }
     nav ul li a:hover { color: #fff; }
     nav ul li a:hover::after { width: 100%; }
 
-    /* ── HERO ── */
-    #hero {
-      min-height: 100vh; display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      position: relative; overflow: hidden;
-    }
-    #hero-canvas {
-      position: absolute; inset: 0; width: 100%; height: 100%;
-      opacity: 0.1; z-index: 0;
-    }
+    /* HERO */
+    #hero { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; overflow: hidden; }
+    #hero-canvas { position: absolute; inset: 0; width: 100%; height: 100%; opacity: .1; z-index: 0; }
 
-    /* hero floating logo */
-    #hero-logo-float {
-      position: absolute; top: 50%; left: 50%;
-      transform: translate(-50%, -50%);
-      width: 420px; height: 420px;
-      will-change: transform, opacity;
-      z-index: 2; pointer-events: none;
-    }
-    #hero-logo-float-lu-wrap {
-      position: absolute; top: 50%; left: 50%;
-      width: 71.5%; height: 71.5%;
-      margin-top: -35.75%; margin-left: -35.75%;
-    }
-    #float-wordmark {
-      position: absolute; top: 50%; left: 50%; width: 71%;
-      transform: translate(-50%,-50%); opacity: 0.9; pointer-events: none;
-    }
+    /* floating logo in hero — moves CCW left-down on scroll */
+    #hero-logo-float { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 420px; height: 420px; will-change: transform, opacity; z-index: 2; pointer-events: none; }
+    #hlg { position: absolute; inset: 0; width: 100%; height: 100%; transform-origin: 49.6% 47.2%; }
+    #hll-wrap { position: absolute; top: 50%; left: 50%; width: 71.5%; height: 71.5%; margin-top: -35.75%; margin-left: -35.75%; }
+    #hll { width: 100%; height: 100%; transform-origin: 48.8% 47.6%; }
+    #hlw { position: absolute; top: 50%; left: 50%; width: 71%; transform: translate(-50%,-50%); opacity: .9; pointer-events: none; }
 
-    .hero-sub {
-      font-size: 10px; letter-spacing: 0.45em; text-transform: uppercase;
-      color: rgba(255,255,255,0.28);
-      opacity: 0; transform: translateY(10px);
-      transition: opacity 0.8s ease, transform 0.8s ease;
-    }
+    .hero-sub { font-size: 10px; letter-spacing: .45em; text-transform: uppercase; color: rgba(255,255,255,.28); opacity: 0; transform: translateY(10px); transition: opacity .8s ease, transform .8s ease; }
     .hero-sub.in { opacity: 1; transform: translateY(0); }
-
-    .scroll-hint {
-      position: absolute; bottom: 2.8rem; left: 50%;
-      transform: translateX(-50%);
-      display: flex; flex-direction: column; align-items: center; gap: 10px;
-      color: rgba(255,255,255,0.18); font-size: 9px;
-      letter-spacing: 0.4em; text-transform: uppercase;
-      opacity: 0; transition: opacity 0.8s ease 1.5s; z-index: 2;
-    }
+    .scroll-hint { position: absolute; bottom: 2.8rem; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 10px; color: rgba(255,255,255,.18); font-size: 9px; letter-spacing: .4em; text-transform: uppercase; opacity: 0; transition: opacity .8s ease 1.5s; z-index: 2; }
     .scroll-hint.in { opacity: 1; }
-    .scroll-hint-line {
-      width: 1px; height: 48px;
-      background: linear-gradient(to bottom, rgba(255,255,255,0.28), transparent);
-      animation: scrollLine 2.3s ease infinite;
-    }
-    @keyframes scrollLine {
-      0%   { transform: scaleY(0); transform-origin: top; opacity: 0; }
-      40%  { transform: scaleY(1); transform-origin: top; opacity: 1; }
-      60%  { transform: scaleY(1); transform-origin: bottom; opacity: 1; }
-      100% { transform: scaleY(0); transform-origin: bottom; opacity: 0; }
-    }
+    .scroll-hint-line { width: 1px; height: 48px; background: linear-gradient(to bottom, rgba(255,255,255,.28), transparent); animation: scrollLine 2.3s ease infinite; }
+    @keyframes scrollLine { 0%{transform:scaleY(0);transform-origin:top;opacity:0} 40%{transform:scaleY(1);transform-origin:top;opacity:1} 60%{transform:scaleY(1);transform-origin:bottom;opacity:1} 100%{transform:scaleY(0);transform-origin:bottom;opacity:0} }
 
-    /* ── REVEAL ── */
-    .reveal {
-      opacity: 0; transform: translateY(36px);
-      transition: opacity 0.85s cubic-bezier(0.16,1,0.3,1),
-                  transform 0.85s cubic-bezier(0.16,1,0.3,1);
-    }
+    /* REVEAL */
+    .reveal { opacity: 0; transform: translateY(36px); transition: opacity .85s cubic-bezier(.16,1,.3,1), transform .85s cubic-bezier(.16,1,.3,1); }
     .reveal.in { opacity: 1; transform: translateY(0); }
-    .reveal-delay-1 { transition-delay: 0.08s; }
-    .reveal-delay-2 { transition-delay: 0.16s; }
-    .reveal-delay-3 { transition-delay: 0.24s; }
-    .reveal-delay-4 { transition-delay: 0.32s; }
+    .reveal-delay-1 { transition-delay: .08s; }
+    .reveal-delay-2 { transition-delay: .16s; }
+    .reveal-delay-3 { transition-delay: .24s; }
+    .reveal-delay-4 { transition-delay: .32s; }
 
-    /* ── SPLIT TEXT ── */
-    .split-text .char {
-      display: inline-block; opacity: 0; transform: translateY(0.9em);
-      transition: opacity 0.6s cubic-bezier(0.16,1,0.3,1),
-                  transform 0.6s cubic-bezier(0.16,1,0.3,1);
-    }
+    /* SPLIT TEXT */
+    .split-text .char { display: inline-block; opacity: 0; transform: translateY(.9em); transition: opacity .6s cubic-bezier(.16,1,.3,1), transform .6s cubic-bezier(.16,1,.3,1); }
     .split-text.in .char { opacity: 1; transform: translateY(0); }
 
-    /* ── SECTIONS ── */
-    section { padding: 9rem 4rem; max-width: 1280px; margin: 0 auto; }
-    .section-label {
-      font-size: 9px; letter-spacing: 0.6em; text-transform: uppercase;
-      color: rgba(255,255,255,0.22); margin-bottom: 1rem;
-    }
-    .section-title {
-      font-family: 'Syne', sans-serif;
-      font-size: clamp(2rem, 4.5vw, 3.4rem);
-      font-weight: 600; letter-spacing: -0.01em;
-      margin-bottom: 4.5rem; padding-bottom: 2rem;
-      border-bottom: 1px solid var(--border);
-      color: rgba(255,255,255,0.9);
-    }
+    /* SECTIONS */
+    section { padding: 9rem 4rem; max-width: 1280px; margin: 0 auto; perspective: 900px; perspective-origin: center center; }
+    .section-label { font-size: 9px; letter-spacing: .6em; text-transform: uppercase; color: rgba(255,255,255,.22); margin-bottom: 1rem; }
+    .section-title { font-family: 'Syne', sans-serif; font-size: clamp(2rem,4.5vw,3.4rem); font-weight: 600; letter-spacing: -.01em; margin-bottom: 4.5rem; padding-bottom: 2rem; border-bottom: 1px solid var(--border); color: rgba(255,255,255,.9); }
 
-    /* ── MUSIC ── */
+    /* GEL LAYER */
+    .gel-layer { position: relative; will-change: transform; transform-style: preserve-3d; cursor: grab; }
+    .gel-layer:active { cursor: grabbing; }
+    .gel-layer::after { content: 'drag'; position: absolute; right: 0; top: -1.8rem; font-size: 9px; letter-spacing: .4em; text-transform: uppercase; color: rgba(255,255,255,.1); pointer-events: none; }
+
+    /* MUSIC */
     #music { border-top: 1px solid var(--border); }
-    .spotify-grid {
-      display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 1px; background: var(--border); border: 1px solid var(--border);
-    }
-    .spotify-embed { background: var(--bg); padding: 1.5rem; transition: background 0.4s; }
-    .spotify-embed:hover { background: rgba(255,255,255,0.03); }
+    .spotify-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px,1fr)); gap: 1px; background: var(--border); border: 1px solid var(--border); }
+    .spotify-embed { background: var(--bg); padding: 1.5rem; transition: background .4s; }
+    .spotify-embed:hover { background: rgba(255,255,255,.03); }
     .spotify-embed iframe { display: block; width: 100%; border: none; border-radius: 8px; }
 
-    /* ── COLLECTIVE ── */
+    /* COLLECTIVE */
     #collective { border-top: 1px solid var(--border); }
-    .members-grid {
-      display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-      gap: 1px; background: var(--border); border: 1px solid var(--border);
-    }
-    .member-card {
-      background: var(--bg); padding: 2.2rem;
-      position: relative; overflow: hidden; transition: background 0.5s;
-    }
-    .member-card:hover { background: rgba(255,255,255,0.025); }
-    .member-card::after {
-      content: ''; position: absolute; left: 0; bottom: 0;
-      width: 0; height: 1px; background: rgba(255,255,255,0.12);
-      transition: width 0.6s cubic-bezier(0.16,1,0.3,1);
-    }
+    .members-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px,1fr)); gap: 1px; background: var(--border); border: 1px solid var(--border); }
+    .member-card { background: var(--bg); padding: 2.2rem; position: relative; overflow: hidden; transition: background .5s; }
+    .member-card:hover { background: rgba(255,255,255,.025); }
+    .member-card::after { content: ''; position: absolute; left: 0; bottom: 0; width: 0; height: 1px; background: rgba(255,255,255,.12); transition: width .6s cubic-bezier(.16,1,.3,1); }
     .member-card:hover::after { width: 100%; }
-    .member-photo {
-      width: 100%; aspect-ratio: 1; background: rgba(255,255,255,0.04);
-      margin-bottom: 1.4rem; overflow: hidden;
-    }
-    .member-photo img {
-      width: 100%; height: 100%; object-fit: cover; opacity: 0.72;
-      transition: opacity 0.5s, transform 0.7s cubic-bezier(0.16,1,0.3,1);
-    }
+    .member-photo { width: 100%; aspect-ratio: 1; background: rgba(255,255,255,.04); margin-bottom: 1.4rem; overflow: hidden; }
+    .member-photo img { width: 100%; height: 100%; object-fit: cover; opacity: .72; transition: opacity .5s, transform .7s cubic-bezier(.16,1,.3,1); }
     .member-card:hover .member-photo img { opacity: 1; transform: scale(1.04); }
-    .member-photo-placeholder {
-      width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;
-      color: rgba(255,255,255,0.07); font-size: 9px; letter-spacing: 0.3em; text-transform: uppercase;
-    }
-    .member-name {
-      font-family: 'Syne', sans-serif; font-size: 0.88rem; font-weight: 600;
-      letter-spacing: 0.08em; margin-bottom: 0.4rem; color: rgba(255,255,255,0.88);
-    }
-    .member-role {
-      font-size: 10px; letter-spacing: 0.3em; text-transform: uppercase;
-      color: rgba(255,255,255,0.28);
-    }
-    .member-number {
-      position: absolute; top: 2rem; right: 2rem;
-      font-size: 10px; color: rgba(255,255,255,0.1);
-    }
+    .member-photo-placeholder { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: rgba(255,255,255,.07); font-size: 9px; letter-spacing: .3em; text-transform: uppercase; }
+    .member-name { font-family: 'Syne', sans-serif; font-size: .88rem; font-weight: 600; letter-spacing: .08em; margin-bottom: .4rem; color: rgba(255,255,255,.88); }
+    .member-role { font-size: 10px; letter-spacing: .3em; text-transform: uppercase; color: rgba(255,255,255,.28); }
+    .member-number { position: absolute; top: 2rem; right: 2rem; font-size: 10px; color: rgba(255,255,255,.1); }
 
-    /* ── MEDIA ── */
+    /* MEDIA */
     #media { border-top: 1px solid var(--border); }
-    .gallery-grid {
-      display: grid; grid-template-columns: repeat(12, 1fr);
-      grid-template-rows: repeat(3, 200px); gap: 2px;
-    }
-    .gallery-item {
-      background: rgba(255,255,255,0.03); overflow: hidden;
-      position: relative; cursor: none;
-    }
-    .gallery-item:nth-child(1) { grid-column: span 5; grid-row: span 2; }
-    .gallery-item:nth-child(2) { grid-column: span 4; }
-    .gallery-item:nth-child(3) { grid-column: span 3; }
-    .gallery-item:nth-child(4) { grid-column: span 4; }
-    .gallery-item:nth-child(5) { grid-column: span 3; }
-    .gallery-item:nth-child(6) { grid-column: span 4; grid-row: span 2; }
-    .gallery-item:nth-child(7) { grid-column: span 3; }
-    .gallery-item:nth-child(8) { grid-column: span 5; }
-    .gallery-item img {
-      width: 100%; height: 100%; object-fit: cover; opacity: 0.65;
-      transition: transform 0.8s cubic-bezier(0.16,1,0.3,1), opacity 0.4s;
-    }
+    .gallery-grid { display: grid; grid-template-columns: repeat(12,1fr); grid-template-rows: repeat(3,200px); gap: 2px; }
+    .gallery-item { background: rgba(255,255,255,.03); overflow: hidden; position: relative; cursor: none; }
+    .gallery-item:nth-child(1){grid-column:span 5;grid-row:span 2}
+    .gallery-item:nth-child(2){grid-column:span 4}
+    .gallery-item:nth-child(3){grid-column:span 3}
+    .gallery-item:nth-child(4){grid-column:span 4}
+    .gallery-item:nth-child(5){grid-column:span 3}
+    .gallery-item:nth-child(6){grid-column:span 4;grid-row:span 2}
+    .gallery-item:nth-child(7){grid-column:span 3}
+    .gallery-item:nth-child(8){grid-column:span 5}
+    .gallery-item img { width: 100%; height: 100%; object-fit: cover; opacity: .65; transition: transform .8s cubic-bezier(.16,1,.3,1), opacity .4s; }
     .gallery-item:hover img { transform: scale(1.06); opacity: 1; }
-    .gallery-placeholder {
-      width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;
-      color: rgba(255,255,255,0.05); font-size: 9px; letter-spacing: 0.4em; text-transform: uppercase;
-      border: 1px solid rgba(255,255,255,0.035);
-    }
+    .gallery-placeholder { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: rgba(255,255,255,.05); font-size: 9px; letter-spacing: .4em; text-transform: uppercase; border: 1px solid rgba(255,255,255,.035); }
 
-    /* ── FOOTER ── */
-    footer {
-      border-top: 1px solid var(--border); padding: 4.5rem 4rem;
-      display: flex; align-items: center; justify-content: space-between;
-      flex-wrap: wrap; gap: 2rem;
-    }
-    footer img { height: 28px; opacity: 0.28; }
-    footer p { font-size: 10px; color: rgba(255,255,255,0.18); letter-spacing: 0.2em; }
+    /* FOOTER */
+    footer { border-top: 1px solid var(--border); padding: 4.5rem 4rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 2rem; }
+    footer img { height: 28px; opacity: .28; }
+    footer p { font-size: 10px; color: rgba(255,255,255,.18); letter-spacing: .2em; }
     .footer-links { display: flex; gap: 2.5rem; }
-    .footer-links a {
-      font-size: 10px; color: rgba(255,255,255,0.22); text-decoration: none;
-      letter-spacing: 0.25em; text-transform: uppercase; transition: color 0.3s;
-    }
-    .footer-links a:hover { color: rgba(255,255,255,0.7); }
+    .footer-links a { font-size: 10px; color: rgba(255,255,255,.22); text-decoration: none; letter-spacing: .25em; text-transform: uppercase; transition: color .3s; }
+    .footer-links a:hover { color: rgba(255,255,255,.7); }
 
-    /* gel drag hint */
-    .gel-layer { position: relative; will-change: transform; transform-style: preserve-3d; }
-    section { perspective: 900px; perspective-origin: center center; }
-    .gel-layer::after {
-      content: 'drag'; position: absolute; right: 0; top: -1.8rem;
-      font-size: 9px; letter-spacing: 0.4em; text-transform: uppercase;
-      color: rgba(255,255,255,0.1); pointer-events: none;
-    }
-
-    @media (max-width: 768px) {
-      body { cursor: auto; }
-      #cursor, #cursor-ring { display: none; }
-      nav { padding: 1.2rem 1.5rem; }
-      nav ul { gap: 1.5rem; }
-      section { padding: 5rem 1.5rem; }
-      .gallery-grid { grid-template-columns: repeat(2,1fr); grid-template-rows: auto; }
-      .gallery-item { grid-column: span 1 !important; grid-row: span 1 !important; height: 180px; }
-      footer { padding: 3rem 1.5rem; flex-direction: column; align-items: flex-start; }
-      #hero-logo-float { width: 280px; height: 280px; }
+    @media(max-width:768px){
+      body{cursor:auto} #cursor,#cursor-ring{display:none}
+      nav{padding:1.2rem 1.5rem} nav ul{gap:1.5rem}
+      section{padding:5rem 1.5rem}
+      .gallery-grid{grid-template-columns:repeat(2,1fr);grid-template-rows:auto}
+      .gallery-item{grid-column:span 1!important;grid-row:span 1!important;height:180px}
+      footer{padding:3rem 1.5rem;flex-direction:column;align-items:flex-start}
+      #hero-logo-float{width:260px;height:260px}
     }
   </style>
 </head>
@@ -331,22 +157,19 @@
 <div id="cursor-ring"></div>
 <div id="noise"></div>
 
-<!-- ═══════ INTRO ═══════ -->
+<!-- INTRO -->
 <div id="intro">
-  <div id="intro-top-half"></div>
-  <div id="intro-bot-half"></div>
+  <div id="intro-top"></div>
+  <div id="intro-bot"></div>
   <div id="main-logo">
-    <img id="main-logo-globe" src="logo_globe.png" alt="leftunsaid" />
-    <div id="main-logo-lu-wrap">
-      <img id="main-logo-lu" src="logo_lu.png" alt="" aria-hidden="true" />
-    </div>
-    <img id="intro-wordmark" src="logo_main.png" alt="leftunsaid" />
+    <img id="mlg" src="logo_globe.png" alt="leftunsaid" />
+    <div id="mll-wrap"><img id="mll" src="logo_lu.png" alt="" aria-hidden="true" /></div>
+    <img id="mlw" src="logo_main.png" alt="leftunsaid" />
   </div>
 </div>
 
-<!-- ═══════ MAIN ═══════ -->
+<!-- MAIN -->
 <div id="main">
-
   <nav>
     <a href="/" class="nav-logo"><img src="logo_lu.png" alt="LU" /></a>
     <ul>
@@ -356,99 +179,48 @@
     </ul>
   </nav>
 
-  <!-- HERO -->
   <section id="hero" style="max-width:100%;padding:0;">
     <canvas id="hero-canvas"></canvas>
-
     <div id="hero-logo-float">
-      <img id="hero-logo-float-globe" src="logo_globe.png" alt="" aria-hidden="true"
-        style="width:100%;height:100%;transform-origin:49.6% 47.2%;" />
-      <div id="hero-logo-float-lu-wrap">
-        <img id="hero-logo-float-lu" src="logo_lu.png" alt="" aria-hidden="true"
-          style="width:100%;height:100%;transform-origin:48.8% 47.6%;" />
-      </div>
-      <img id="float-wordmark" src="logo_main.png" alt="leftunsaid" />
+      <img id="hlg" src="logo_globe.png" alt="" aria-hidden="true" />
+      <div id="hll-wrap"><img id="hll" src="logo_lu.png" alt="" aria-hidden="true" /></div>
+      <img id="hlw" src="logo_main.png" alt="leftunsaid" />
     </div>
-
-    <div style="position:relative;z-index:3;text-align:center;margin-top:280px;">
+    <div style="position:relative;z-index:3;text-align:center;margin-top:290px;">
       <p class="hero-sub" id="hero-sub">A Collective &nbsp;·&nbsp; Artists &amp; Producers</p>
     </div>
-
     <div class="scroll-hint" id="scroll-hint">
       <span>Scroll</span>
       <div class="scroll-hint-line"></div>
     </div>
   </section>
 
-  <!-- MUSIC -->
   <section id="music">
     <p class="section-label reveal">Featured</p>
     <h2 class="section-title split-text">Music</h2>
     <div class="spotify-grid gel-layer" data-gel="18">
-      <div class="spotify-embed reveal reveal-delay-1">
-        <iframe src="https://open.spotify.com/embed/track/placeholder1?utm_source=generator&theme=0" height="152" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
-      </div>
-      <div class="spotify-embed reveal reveal-delay-2">
-        <iframe src="https://open.spotify.com/embed/track/placeholder2?utm_source=generator&theme=0" height="152" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
-      </div>
-      <div class="spotify-embed reveal reveal-delay-3">
-        <iframe src="https://open.spotify.com/embed/track/placeholder3?utm_source=generator&theme=0" height="152" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
-      </div>
-      <div class="spotify-embed reveal reveal-delay-4">
-        <iframe src="https://open.spotify.com/embed/track/placeholder4?utm_source=generator&theme=0" height="152" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
-      </div>
+      <div class="spotify-embed reveal reveal-delay-1"><iframe src="https://open.spotify.com/embed/track/placeholder1?utm_source=generator&theme=0" height="152" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe></div>
+      <div class="spotify-embed reveal reveal-delay-2"><iframe src="https://open.spotify.com/embed/track/placeholder2?utm_source=generator&theme=0" height="152" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe></div>
+      <div class="spotify-embed reveal reveal-delay-3"><iframe src="https://open.spotify.com/embed/track/placeholder3?utm_source=generator&theme=0" height="152" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe></div>
+      <div class="spotify-embed reveal reveal-delay-4"><iframe src="https://open.spotify.com/embed/track/placeholder4?utm_source=generator&theme=0" height="152" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe></div>
     </div>
   </section>
 
-  <!-- COLLECTIVE -->
   <section id="collective">
     <p class="section-label reveal">Who We Are</p>
     <h2 class="section-title split-text">The Collective</h2>
     <div class="members-grid gel-layer" data-gel="24">
-      <div class="member-card reveal reveal-delay-1">
-        <span class="member-number">01</span>
-        <div class="member-photo"><img src="/collective/lenard.jpg" alt="LENARD" /></div>
-        <p class="member-name">LENARD</p><p class="member-role">Artist / Producer</p>
-      </div>
-      <div class="member-card reveal reveal-delay-2">
-        <span class="member-number">02</span>
-        <div class="member-photo"><img src="/collective/xinsain.jpg" alt="XINSAIN" /></div>
-        <p class="member-name">XINSAIN</p><p class="member-role">Artist / Producer</p>
-      </div>
-      <div class="member-card reveal reveal-delay-3">
-        <span class="member-number">03</span>
-        <div class="member-photo"><div class="member-photo-placeholder">Photo</div></div>
-        <p class="member-name">PESOKAIN</p><p class="member-role">Producer</p>
-      </div>
-      <div class="member-card reveal reveal-delay-4">
-        <span class="member-number">04</span>
-        <div class="member-photo"><img src="/collective/flxri.jpg" alt="FLXRI" /></div>
-        <p class="member-name">FLXRI</p><p class="member-role">Producer</p>
-      </div>
-      <div class="member-card reveal reveal-delay-1">
-        <span class="member-number">05</span>
-        <div class="member-photo"><div class="member-photo-placeholder">Photo</div></div>
-        <p class="member-name">HUSSAM OSMANI</p><p class="member-role">The Goat</p>
-      </div>
-      <div class="member-card reveal reveal-delay-2">
-        <span class="member-number">06</span>
-        <div class="member-photo"><img src="/collective/clintong.jpg" alt="CLINTON G" /></div>
-        <p class="member-name">CLINTON G</p><p class="member-role">Artist</p>
-      </div>
-      <div class="member-card reveal reveal-delay-3">
-        <span class="member-number">07</span>
-        <div class="member-photo"><img src="/collective/konnie.png" alt="KONNIE" /></div>
-        <p class="member-name">KONNIE</p><p class="member-role">Artist / Producer</p>
-      </div>
-      <div class="member-card reveal reveal-delay-4">
-        <span class="member-number">08</span>
-        <div class="member-photo"><img src="/collective/derikM.jpg" alt="DERIK MADRID" /></div>
-        <p class="member-name">DERIK MADRID</p><p class="member-role">Artist / Photographer</p>
-      </div>
+      <div class="member-card reveal reveal-delay-1"><span class="member-number">01</span><div class="member-photo"><img src="/collective/lenard.jpg" alt="LENARD" /></div><p class="member-name">LENARD</p><p class="member-role">Artist / Producer</p></div>
+      <div class="member-card reveal reveal-delay-2"><span class="member-number">02</span><div class="member-photo"><img src="/collective/xinsain.jpg" alt="XINSAIN" /></div><p class="member-name">XINSAIN</p><p class="member-role">Artist / Producer</p></div>
+      <div class="member-card reveal reveal-delay-3"><span class="member-number">03</span><div class="member-photo"><div class="member-photo-placeholder">Photo</div></div><p class="member-name">PESOKAIN</p><p class="member-role">Producer</p></div>
+      <div class="member-card reveal reveal-delay-4"><span class="member-number">04</span><div class="member-photo"><img src="/collective/flxri.jpg" alt="FLXRI" /></div><p class="member-name">FLXRI</p><p class="member-role">Producer</p></div>
+      <div class="member-card reveal reveal-delay-1"><span class="member-number">05</span><div class="member-photo"><div class="member-photo-placeholder">Photo</div></div><p class="member-name">HUSSAM OSMANI</p><p class="member-role">The Goat</p></div>
+      <div class="member-card reveal reveal-delay-2"><span class="member-number">06</span><div class="member-photo"><img src="/collective/clintong.jpg" alt="CLINTON G" /></div><p class="member-name">CLINTON G</p><p class="member-role">Artist</p></div>
+      <div class="member-card reveal reveal-delay-3"><span class="member-number">07</span><div class="member-photo"><img src="/collective/konnie.png" alt="KONNIE" /></div><p class="member-name">KONNIE</p><p class="member-role">Artist / Producer</p></div>
+      <div class="member-card reveal reveal-delay-4"><span class="member-number">08</span><div class="member-photo"><img src="/collective/derikM.jpg" alt="DERIK MADRID" /></div><p class="member-name">DERIK MADRID</p><p class="member-role">Artist / Photographer</p></div>
     </div>
   </section>
 
-  <!-- MEDIA -->
   <section id="media">
     <p class="section-label reveal">Gallery</p>
     <h2 class="section-title split-text">Media</h2>
@@ -472,263 +244,249 @@
       <a href="https://open.spotify.com">Spotify</a>
     </div>
   </footer>
-
 </div>
 
 <script>
 (function(){
 
-/* ─── CURSOR ─── */
-var cursor = document.getElementById('cursor');
-var ring   = document.getElementById('cursor-ring');
-var mx=innerWidth/2, my=innerHeight/2, rx=mx, ry=my;
-document.addEventListener('mousemove',function(e){ mx=e.clientX; my=e.clientY; cursor.style.left=mx+'px'; cursor.style.top=my+'px'; });
-(function rl(){ rx+=(mx-rx)*0.09; ry+=(my-ry)*0.09; ring.style.left=rx+'px'; ring.style.top=ry+'px'; requestAnimationFrame(rl); })();
+/* ── CURSOR ── */
+var cur=document.getElementById('cursor'),rng=document.getElementById('cursor-ring');
+var mx=innerWidth/2,my=innerHeight/2,rx=mx,ry=my;
+document.addEventListener('mousemove',function(e){mx=e.clientX;my=e.clientY;cur.style.left=mx+'px';cur.style.top=my+'px';});
+(function rl(){rx+=(mx-rx)*.09;ry+=(my-ry)*.09;rng.style.left=rx+'px';rng.style.top=ry+'px';requestAnimationFrame(rl);})();
 document.querySelectorAll('a,.member-card,.gallery-item').forEach(function(el){
-  el.addEventListener('mouseenter',function(){ cursor.style.width='5px'; cursor.style.height='5px'; ring.style.width='54px'; ring.style.height='54px'; });
-  el.addEventListener('mouseleave',function(){ cursor.style.width='8px'; cursor.style.height='8px'; ring.style.width='34px'; ring.style.height='34px'; });
+  el.addEventListener('mouseenter',function(){cur.style.width='5px';cur.style.height='5px';rng.style.width='54px';rng.style.height='54px';});
+  el.addEventListener('mouseleave',function(){cur.style.width='8px';cur.style.height='8px';rng.style.width='34px';rng.style.height='34px';});
 });
 
-/* ─── PARTICLES ─── */
-var canvas=document.getElementById('hero-canvas'), ctx=canvas.getContext('2d'), pts=[], CW, CH;
-function rsz(){ CW=canvas.width=canvas.offsetWidth; CH=canvas.height=canvas.offsetHeight; }
-rsz(); window.addEventListener('resize',rsz);
-for(var i=0;i<55;i++) pts.push({x:Math.random()*2000,y:Math.random()*1200,vx:(Math.random()-.5)*.14,vy:(Math.random()-.5)*.14,a:Math.random()});
-(function dp(){
-  ctx.clearRect(0,0,CW,CH);
-  pts.forEach(function(p){ p.x+=p.vx; p.y+=p.vy; if(p.x<0)p.x=CW; if(p.x>CW)p.x=0; if(p.y<0)p.y=CH; if(p.y>CH)p.y=0; ctx.beginPath(); ctx.arc(p.x,p.y,p.a*.9+.2,0,Math.PI*2); ctx.fillStyle='rgba(255,255,255,'+(p.a*.5)+')'; ctx.fill(); });
-  for(var a=0;a<pts.length;a++) for(var b=a+1;b<pts.length;b++){ var dx=pts[a].x-pts[b].x,dy=pts[a].y-pts[b].y,d=Math.sqrt(dx*dx+dy*dy); if(d<115){ ctx.beginPath(); ctx.moveTo(pts[a].x,pts[a].y); ctx.lineTo(pts[b].x,pts[b].y); ctx.strokeStyle='rgba(255,255,255,'+(0.032*(1-d/115))+')'; ctx.lineWidth=.5; ctx.stroke(); } }
-  requestAnimationFrame(dp);
-})();
+/* ── HELPERS ── */
+function clamp(v,a,b){return Math.max(a,Math.min(b,v));}
+function lerp(a,b,t){return a+(b-a)*t;}
+function remap(v,ia,ib,oa,ob){return lerp(oa,ob,clamp((v-ia)/(ib-ia),0,1));}
+function easeOut(t){return 1-Math.pow(1-t,3);}
+function easeInOut(t){return t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;}
+function easeIn2(t){return t*t;}
 
-/* ─── HELPERS ─── */
-function clamp(v,a,b){ return Math.max(a,Math.min(b,v)); }
-function lerp(a,b,t){ return a+(b-a)*t; }
-function remap(v,ia,ib,oa,ob){ return lerp(oa,ob,clamp((v-ia)/(ib-ia),0,1)); }
-function easeOut3(t){ return 1-Math.pow(1-t,3); }
-function easeInOut3(t){ return t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2; }
-function easeIn2(t){ return t*t; }
-
-/* ─── INTRO SEQUENCE ───
-   t 0.00–0.18  pop-fade in  (scale 0.7→1, opacity 0→1, fast)
-   t 0.18–0.55  hold + spin
-   t 0.55–0.82  scroll-unroll: top half up, bot half down; logo fades
-   t 0.82–1.00  halves fully open; site fades in 0.3s
+/* ── INTRO SEQUENCE ──
+   Phase A  0.00–0.20  pop-in: scale 0.7→1, opacity 0→1 (fast easeOut)
+   Phase B  0.20–0.58  hold: logo spins, wordmark visible
+   Phase C  0.58–0.84  unroll: top curtain slides UP, bottom slides DOWN, logo fades
+   Phase D  0.84–1.00  complete: main fades in 0.3s
 ─────────────────────── */
-var INTRO_DUR = 2200;
-var introStart=null, introComplete=false;
-var mlGlobe  = document.getElementById('main-logo-globe');
-var mlLU     = document.getElementById('main-logo-lu');
-var mlStack  = document.getElementById('main-logo');
-var mlWord   = document.getElementById('intro-wordmark');
-var topHalf  = document.getElementById('intro-top-half');
-var botHalf  = document.getElementById('intro-bot-half');
-var introEl  = document.getElementById('intro');
+var INTRO_DUR = 2000;
+var iStart=null, iDone=false;
+var mlStack = document.getElementById('main-logo');
+var mlGlobe = document.getElementById('mlg');
+var mlLU    = document.getElementById('mll');
+var mlWord  = document.getElementById('mlw');
+var topC    = document.getElementById('intro-top');
+var botC    = document.getElementById('intro-bot');
+var introEl = document.getElementById('intro');
 
-var hfGlobe  = document.getElementById('hero-logo-float-globe');
-var hfLU     = document.getElementById('hero-logo-float-lu');
-var heroAngle = 0;
+/* hero globe refs for continuous spin */
+var hlGlobe = document.getElementById('hlg');
+var hlLU    = document.getElementById('hll');
+var hAngle  = 0;
 
 function introTick(ts){
-  if(!introStart) introStart=ts;
-  var el=ts-introStart, t=clamp(el/INTRO_DUR,0,1);
+  if(!iStart) iStart=ts;
+  var t = clamp((ts-iStart)/INTRO_DUR, 0, 1);
 
-  /* spinning — runs full animation */
-  var spinT = remap(t,0,0.78,0,1);
-  mlGlobe.style.transform='rotate('+(easeInOut3(spinT)*720)+'deg)';
-  mlLU.style.transform   ='rotate('+(easeInOut3(spinT)*-360)+'deg)';
+  /* globe & LU spin throughout entire intro (mapped to 0→0.80) */
+  var spinT = clamp(t/0.80, 0, 1);
+  var globeDeg =  easeInOut(spinT) * 720;
+  var luDeg    = -easeInOut(spinT) * 360;
+  mlGlobe.style.transform = 'rotate('+globeDeg+'deg)';
+  mlLU.style.transform    = 'rotate('+luDeg+'deg)';
 
-  /* pop fade in */
-  if(t<0.18){
-    var p=easeOut3(t/0.18);
-    mlStack.style.opacity=p;
-    mlStack.style.transform='scale('+lerp(0.72,1,p)+')';
-    mlWord.style.opacity=p*0.92;
-    topHalf.style.transform='translateY(0)';
-    botHalf.style.transform='translateY(0)';
+  /* curtains always start closed */
+  var curtainUp = 0, curtainDown = 0;
+
+  /* Phase A — pop in */
+  if(t < 0.20){
+    var p = easeOut(t/0.20);
+    mlStack.style.opacity   = p;
+    mlStack.style.transform = 'translate(-50%,-50%) scale('+lerp(0.70,1,p)+')';
+    mlWord.style.opacity    = p * 0.92;
   }
-  /* hold */
-  else if(t<0.55){
-    mlStack.style.opacity=1; mlStack.style.transform='scale(1)';
-    mlWord.style.opacity=0.92;
-    topHalf.style.transform='translateY(0)';
-    botHalf.style.transform='translateY(0)';
+  /* Phase B — hold */
+  else if(t < 0.58){
+    mlStack.style.opacity   = 1;
+    mlStack.style.transform = 'translate(-50%,-50%) scale(1)';
+    mlWord.style.opacity    = 0.92;
   }
-  /* scroll-unroll */
-  else if(t<0.82){
-    var u=easeInOut3(remap(t,0.55,0.82,0,1));
-    topHalf.style.transform='translateY(-'+(u*100)+'%)';
-    botHalf.style.transform='translateY('+(u*100)+'%)';
-    var lf=1-easeIn2(remap(t,0.55,0.82,0,1));
-    mlStack.style.opacity=lf;
-    mlStack.style.transform='scale('+lerp(1,0.95,remap(t,0.55,0.82,0,1))+')';
-    mlWord.style.opacity=lf*.92;
+  /* Phase C — unroll */
+  else if(t < 0.84){
+    var u  = easeInOut(remap(t,0.58,0.84,0,1));
+    curtainUp   = u * 100;
+    curtainDown = u * 100;
+    var fade = 1 - easeIn2(remap(t,0.58,0.84,0,1));
+    mlStack.style.opacity   = fade;
+    mlStack.style.transform = 'translate(-50%,-50%) scale('+lerp(1,0.94,1-fade)+')';
+    mlWord.style.opacity    = fade * 0.92;
   }
-  /* reveal */
+  /* Phase D — done */
   else{
-    mlStack.style.opacity=0;
-    topHalf.style.transform='translateY(-100%)';
-    botHalf.style.transform='translateY(100%)';
-    if(!introComplete){
-      introComplete=true;
+    mlStack.style.opacity = 0;
+    curtainUp   = 100;
+    curtainDown = 100;
+    if(!iDone){
+      iDone = true;
       document.getElementById('main').classList.add('visible');
-      setTimeout(function(){ introEl.style.display='none'; },420);
+      setTimeout(function(){ introEl.style.display='none'; }, 400);
       setTimeout(function(){
         document.getElementById('hero-sub').classList.add('in');
         document.getElementById('scroll-hint').classList.add('in');
-      },380);
+      }, 380);
+      /* init canvas now that #main is visible and has dimensions */
+      initCanvas();
     }
   }
 
-  /* hero globe spin (continuous) */
-  heroAngle+=0.013*16.67;
-  hfGlobe.style.transform='rotate('+heroAngle+'deg)';
-  hfLU.style.transform='rotate('+(-heroAngle*.5)+'deg)';
+  topC.style.transform = 'translateY(-'+curtainUp+'%)';
+  botC.style.transform = 'translateY('+curtainDown+'%)';
+
+  /* continuous hero globe spin */
+  hAngle += 0.013 * 16.67;
+  hlGlobe.style.transform = 'rotate('+hAngle+'deg)';
+  hlLU.style.transform    = 'rotate('+(-hAngle*0.5)+'deg)';
 
   requestAnimationFrame(introTick);
 }
 requestAnimationFrame(introTick);
 
-/* ─── HERO LOGO — scroll left-down CCW arc ─── */
+/* ── PARTICLE CANVAS — init after main is visible ── */
+var canvasInited = false;
+function initCanvas(){
+  if(canvasInited) return; canvasInited=true;
+  var canvas=document.getElementById('hero-canvas');
+  var ctx=canvas.getContext('2d');
+  var pts=[], CW, CH;
+  function rsz(){ CW=canvas.width=canvas.offsetWidth; CH=canvas.height=canvas.offsetHeight; }
+  rsz(); window.addEventListener('resize',rsz);
+  for(var i=0;i<55;i++) pts.push({x:Math.random()*CW,y:Math.random()*CH,vx:(Math.random()-.5)*.14,vy:(Math.random()-.5)*.14,a:Math.random()});
+  (function dp(){
+    ctx.clearRect(0,0,CW,CH);
+    pts.forEach(function(p){ p.x+=p.vx; p.y+=p.vy; if(p.x<0)p.x=CW; if(p.x>CW)p.x=0; if(p.y<0)p.y=CH; if(p.y>CH)p.y=0; ctx.beginPath(); ctx.arc(p.x,p.y,p.a*.9+.2,0,Math.PI*2); ctx.fillStyle='rgba(255,255,255,'+(p.a*.5)+')'; ctx.fill(); });
+    for(var a=0;a<pts.length;a++) for(var b=a+1;b<pts.length;b++){ var dx=pts[a].x-pts[b].x,dy=pts[a].y-pts[b].y,d=Math.sqrt(dx*dx+dy*dy); if(d<115){ ctx.beginPath(); ctx.moveTo(pts[a].x,pts[a].y); ctx.lineTo(pts[b].x,pts[b].y); ctx.strokeStyle='rgba(255,255,255,'+(0.032*(1-d/115))+')'; ctx.lineWidth=.5; ctx.stroke(); } }
+    requestAnimationFrame(dp);
+  })();
+}
+
+/* ── HERO LOGO — CCW arc on scroll ── */
 var heroFloat = document.getElementById('hero-logo-float');
 var heroSec   = document.getElementById('hero');
-var sY=0;
-
+var sY = 0;
 function updateHeroFloat(){
   var progress = clamp(sY/(heroSec.offsetHeight*0.88),0,1);
-  /* CCW arc: angle swings from 0 to -100deg */
   var angle = progress * (-Math.PI*0.56);
-  var R=280;
-  var dx = Math.sin(angle)*R;           /* left  */
-  var dy = (1-Math.cos(angle))*R;       /* down  */
-  var sc = lerp(1,0.5,progress);
-  var op = lerp(1,0,clamp(progress*1.25,0,1));
-  var rot= progress*-28;
-  heroFloat.style.transform=
-    'translate(calc(-50% + '+dx.toFixed(1)+'px), calc(-50% + '+dy.toFixed(1)+'px)) '+
-    'rotate('+rot.toFixed(2)+'deg) scale('+sc.toFixed(3)+')';
+  var R=280, dx=Math.sin(angle)*R, dy=(1-Math.cos(angle))*R;
+  var sc=lerp(1,0.5,progress), op=lerp(1,0,clamp(progress*1.25,0,1)), rot=progress*-28;
+  heroFloat.style.transform='translate(calc(-50% + '+dx.toFixed(1)+'px), calc(-50% + '+dy.toFixed(1)+'px)) rotate('+rot.toFixed(2)+'deg) scale('+sc.toFixed(3)+')';
   heroFloat.style.opacity=op.toFixed(3);
 }
-window.addEventListener('scroll',function(){ sY=window.scrollY; updateHeroFloat(); },{passive:true});
+window.addEventListener('scroll',function(){sY=window.scrollY;updateHeroFloat();},{passive:true});
 
-/* ─── GEL DRAGGABLE FIELDS — omnidirectional + 3D scroll-flip ─── */
-
-/* Each layer gets its own random 3D flip axis so scrolling over it spins
-   it on a unique axis at 2× scroll delta speed, with gel spring-back. */
+/* ── GEL LAYERS — omnidirectional drag + 3D chaos scroll-flip ──
+   When mouse is INSIDE a layer:
+     • wheel events are captured + page scroll is blocked
+     • the layer spins 3× per scroll unit on a random 3D axis — no clamp, infinite
+     • rotation decays slowly so it keeps spinning after you stop (inertia)
+   When mouse is OUTSIDE: normal page scroll, no interference.
+── */
 document.querySelectorAll('.gel-layer').forEach(function(layer){
   var depth = parseFloat(layer.dataset.gel)||20;
-
-  /* translate targets / current */
   var tX=0,cX=0, tY=0,cY=0;
-  /* 3D rotation targets / current */
+  /* rotation — unclamped, accumulates freely */
   var tRX=0,cRX=0, tRY=0,cRY=0;
-  /* random flip axis direction per layer: unit vector (ax, ay) */
-  var axAngle = Math.random()*Math.PI*2;
-  var ax = Math.cos(axAngle); /* blend of rotateX and rotateY */
-  var ay = Math.sin(axAngle);
+  /* random axis per layer */
+  var axA=Math.random()*Math.PI*2, ax=Math.cos(axA), ay=Math.sin(axA);
+  /* spin velocity — decays with inertia */
+  var velRX=0, velRY=0;
+  var drag=false, dsx=0,dsy=0, dtx=0,dty=0;
+  var hovered=false;
 
-  /* drag state */
-  var drag=false, dsx=0,dsy=0, dtx=0,dty=0, px=0,py=0;
-  var lastScrollY=window.scrollY, isHovered=false;
+  /* ── hover tracking ── */
+  layer.addEventListener('mouseenter',function(){ hovered=true; });
+  layer.addEventListener('mouseleave',function(){ hovered=false; });
 
-  /* perspective on parent so 3D works */
-  var parent=layer.parentElement;
-  if(parent && parent.style.perspective==='') parent.style.perspective='900px';
+  /* ── WHEEL — intercept when hovered, block page scroll, spin like hell ── */
+  layer.addEventListener('wheel',function(e){
+    if(!hovered) return;
+    e.preventDefault(); /* stops page from scrolling */
+    e.stopPropagation();
 
-  layer.style.cursor='grab';
-  layer.style.transformStyle='preserve-3d';
+    /* raw pixel delta — normalise across wheel modes */
+    var raw = e.deltaY;
+    if(e.deltaMode===1) raw *= 20;   /* line mode */
+    if(e.deltaMode===2) raw *= 400;  /* page mode */
 
-  /* ── MOUSE drag (omnidirectional) ── */
+    /* 3 full rotations (1080 deg) per ~100px of scroll delta,
+       split across the random axis — this is the "break the site" amount */
+    var spin = raw * 10.8;
+    velRX += spin * ax;
+    velRY += spin * ay;
+  },{ passive: false }); /* must NOT be passive to call preventDefault */
+
+  /* ── MOUSE DRAG — omnidirectional ── */
   layer.addEventListener('mousedown',function(e){
-    drag=true;
-    dsx=e.clientX; dsy=e.clientY;
-    dtx=tX; dty=tY;
-    px=e.clientX; py=e.clientY;
-    layer.style.cursor='grabbing';
+    drag=true; dsx=e.clientX; dsy=e.clientY; dtx=tX; dty=tY;
     e.preventDefault();
   });
   document.addEventListener('mousemove',function(e){
     if(!drag) return;
     var lim=depth*5;
     tX=clamp(dtx+(e.clientX-dsx),-lim,lim);
-    tY=clamp(dty+(e.clientY-dsy),-lim*0.6,lim*0.6);
-    px=e.clientX; py=e.clientY;
+    tY=clamp(dty+(e.clientY-dsy),-lim*.65,lim*.65);
   });
-  document.addEventListener('mouseup',function(){
-    if(!drag) return;
-    drag=false;
-    layer.style.cursor='grab';
-  });
+  document.addEventListener('mouseup',function(){ drag=false; });
 
-  /* ── HOVER detection for scroll-flip ── */
-  layer.addEventListener('mouseenter',function(){ isHovered=true; lastScrollY=window.scrollY; });
-  layer.addEventListener('mouseleave',function(){ isHovered=false; });
-
-  /* ── SCROLL: parallax Y + 3D flip when hovered ── */
-  window.addEventListener('scroll',function(){
-    var sy=window.scrollY;
-    var delta=sy-lastScrollY;
-    lastScrollY=sy;
-
-    /* passive Y parallax from scroll position */
-    var r=layer.getBoundingClientRect();
-    tY=clamp(-((r.top+r.height/2-innerHeight/2)*depth/800),-depth*3,depth*3);
-
-    /* 3D flip only when mouse is over the layer */
-    if(isHovered){
-      /* 2× scroll speed, mapped onto the random axis */
-      var spin=delta*2;
-      tRX += spin * ax * 1.1;
-      tRY += spin * ay * 1.1;
-      /* clamp total rotation so it doesn't spin forever */
-      tRX = clamp(tRX,-180,180);
-      tRY = clamp(tRY,-180,180);
-    }
-  },{passive:true});
-
-  /* ── TOUCH drag (omnidirectional) ── */
+  /* ── TOUCH DRAG ── */
   layer.addEventListener('touchstart',function(e){
-    drag=true;
-    dsx=e.touches[0].clientX; dsy=e.touches[0].clientY;
-    dtx=tX; dty=tY;
-    px=dsx; py=dsy;
+    drag=true; dsx=e.touches[0].clientX; dsy=e.touches[0].clientY; dtx=tX; dty=tY;
   },{passive:true});
   document.addEventListener('touchmove',function(e){
     if(!drag) return;
-    var lim=depth*4;
-    tX=clamp(dtx+(e.touches[0].clientX-dsx),-lim,lim);
-    tY=clamp(dty+(e.touches[0].clientY-dsy),-lim*0.7,lim*0.7);
-    px=e.touches[0].clientX; py=e.touches[0].clientY;
+    tX=clamp(dtx+(e.touches[0].clientX-dsx),-depth*4,depth*4);
+    tY=clamp(dty+(e.touches[0].clientY-dsy),-depth*3,depth*3);
   },{passive:true});
   document.addEventListener('touchend',function(){ drag=false; });
+
+  /* ── NORMAL SCROLL — only for parallax Y when NOT hovered ── */
+  window.addEventListener('scroll',function(){
+    if(hovered) return; /* hovered = wheel is active, skip */
+    var r=layer.getBoundingClientRect();
+    tY=clamp(-((r.top+r.height/2-innerHeight/2)*depth/800),-depth*3,depth*3);
+  },{passive:true});
 
   /* ── SPRING LOOP ── */
   (function loop(){
     /* translate spring-back */
-    if(!drag){
-      tX*=0.86; if(Math.abs(tX)<0.3) tX=0;
-      /* Y only spring-back from drag, not from scroll parallax */
-      if(!isHovered){ tY*=0.9; if(Math.abs(tY)<0.3) tY=0; }
+    if(!drag){ tX*=.86; if(Math.abs(tX)<.3)tX=0; }
+
+    /* spin inertia — decays at 97% per frame so it coasts after scrolling */
+    velRX*=.97; velRY*=.97;
+    if(Math.abs(velRX)<0.01) velRX=0;
+    if(Math.abs(velRY)<0.01) velRY=0;
+    tRX+=velRX; tRY+=velRY;
+
+    /* slowly drift back to upright when not spinning */
+    if(!hovered){
+      tRX*=.96;
+      tRY*=.96;
     }
 
-    /* 3D rotation springs back to 0 when not scrolling over */
-    tRX *= 0.88; if(Math.abs(tRX)<0.1) tRX=0;
-    tRY *= 0.88; if(Math.abs(tRY)<0.1) tRY=0;
+    var lf=drag?.17:.065;
+    cX+=(tX-cX)*lf;
+    cY+=(tY-cY)*(drag?lf:.055);
+    /* rotation lerp — fast enough to feel responsive */
+    cRX+=(tRX-cRX)*.12;
+    cRY+=(tRY-cRY)*.12;
 
-    /* gel lerp factors */
-    var lf = drag ? 0.17 : 0.065;
-    var rf = 0.08; /* rotation lerp — slightly snappier */
+    var skX=clamp((tX-cX)*.04,-4,4);
+    var skY=clamp((tY-cY)*.025,-2.5,2.5);
 
-    cX  += (tX  - cX)  * lf;
-    cY  += (tY  - cY)  * (drag ? lf : 0.055);
-    cRX += (tRX - cRX) * rf;
-    cRY += (tRY - cRY) * rf;
-
-    /* skew on X from horizontal stretch, skew on Y from vertical stretch */
-    var skX = clamp((tX-cX)*0.04, -3.5, 3.5);
-    var skY = clamp((tY-cY)*0.025,-2.0, 2.0);
-
-    layer.style.transform =
+    layer.style.transform=
       'translate3d('+cX.toFixed(2)+'px,'+cY.toFixed(2)+'px,0) '+
       'rotateX('+cRX.toFixed(2)+'deg) '+
       'rotateY('+cRY.toFixed(2)+'deg) '+
@@ -739,28 +497,25 @@ document.querySelectorAll('.gel-layer').forEach(function(layer){
   })();
 });
 
-/* ─── SCROLL REVEAL ─── */
-var obs=new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); obs.unobserve(e.target); } }); },{threshold:0.1,rootMargin:'0px 0px -50px 0px'});
-document.querySelectorAll('.reveal').forEach(function(el){ obs.observe(el); });
+/* ── SCROLL REVEAL ── */
+var obs=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');obs.unobserve(e.target);}});},{threshold:.1,rootMargin:'0px 0px -50px 0px'});
+document.querySelectorAll('.reveal').forEach(function(el){obs.observe(el);});
 
-/* ─── SPLIT TEXT ─── */
+/* ── SPLIT TEXT ── */
 document.querySelectorAll('.split-text').forEach(function(el){
   var txt=el.textContent; el.textContent='';
-  txt.split('').forEach(function(ch,i){
-    var s=document.createElement('span'); s.className='char';
-    s.textContent=ch===' '?'\u00a0':ch; s.style.transitionDelay=(i*0.038)+'s'; el.appendChild(s);
-  });
-  var so=new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); so.unobserve(e.target); } }); },{threshold:0.25});
+  txt.split('').forEach(function(ch,i){var s=document.createElement('span');s.className='char';s.textContent=ch===' '?'\u00a0':ch;s.style.transitionDelay=(i*.038)+'s';el.appendChild(s);});
+  var so=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');so.unobserve(e.target);}});},{threshold:.25});
   so.observe(el);
 });
 
-/* ─── NAV HIDE ─── */
-var nav=document.querySelector('nav'), lsy=0;
-window.addEventListener('scroll',function(){ var c=window.scrollY; nav.style.transform=(c>lsy&&c>100)?'translateY(-100%)':'translateY(0)'; lsy=c; },{passive:true});
+/* ── NAV HIDE ── */
+var nav=document.querySelector('nav'),lsy=0;
+window.addEventListener('scroll',function(){var c=window.scrollY;nav.style.transform=(c>lsy&&c>100)?'translateY(-100%)':'translateY(0)';lsy=c;},{passive:true});
 
-/* ─── SMOOTH ANCHORS ─── */
+/* ── SMOOTH ANCHORS ── */
 document.querySelectorAll('a[href^="#"]').forEach(function(a){
-  a.addEventListener('click',function(e){ e.preventDefault(); var t=document.querySelector(a.getAttribute('href')); if(t) t.scrollIntoView({behavior:'smooth',block:'start'}); });
+  a.addEventListener('click',function(e){e.preventDefault();var t=document.querySelector(a.getAttribute('href'));if(t)t.scrollIntoView({behavior:'smooth',block:'start'});});
 });
 
 })();
