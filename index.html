@@ -15,33 +15,20 @@
     #cursor { position: fixed; width: 8px; height: 8px; background: #fff; border-radius: 50%; pointer-events: none; z-index: 9999; transform: translate(-50%,-50%); transition: width .25s, height .25s; mix-blend-mode: difference; }
     #cursor-ring { position: fixed; width: 34px; height: 34px; border: 1px solid rgba(255,255,255,.35); border-radius: 50%; pointer-events: none; z-index: 9998; transform: translate(-50%,-50%); transition: width .45s cubic-bezier(.25,.46,.45,.94), height .45s cubic-bezier(.25,.46,.45,.94); mix-blend-mode: difference; }
 
-    /* ── INTRO ── */
-    #intro {
-      position: fixed; inset: 0; background: #000;
-      display: flex; align-items: center; justify-content: center;
-      z-index: 1000; pointer-events: none;
-    }
-    #intro-stack {
-      position: relative; width: 220px; height: 220px;
-      opacity: 0; animation: introFade 3.2s ease forwards;
-    }
+    /* INTRO */
+    #intro { position: fixed; inset: 0; background: #000; display: flex; align-items: center; justify-content: center; z-index: 1000; pointer-events: none; }
+    #intro-stack { position: relative; width: 220px; height: 220px; opacity: 0; animation: introFade 3.2s ease forwards; }
     @keyframes introFade {
       0%   { opacity: 0; transform: scale(0.8); }
       25%  { opacity: 1; transform: scale(1); }
       65%  { opacity: 1; transform: scale(1); }
       100% { opacity: 0; transform: scale(8); }
     }
-    #intro-globe-wrap {
-      position: absolute; top: 50%; left: 50%;
-      width: 100%; height: 100%; margin-top: -50%; margin-left: -50%;
-    }
+    #intro-globe-wrap { position: absolute; top: 50%; left: 50%; width: 100%; height: 100%; margin-top: -50%; margin-left: -50%; }
     #intro-globe { width: 100%; height: 100%; transform-origin: 49.6% 47.2%; }
     #intro-lu    { width: 100%; height: 100%; transform-origin: 48.8% 47.6%; }
     #intro.done  { display: none; }
-    #intro-lu-wrap {
-      position: absolute; top: 50%; left: 50%;
-      width: 71.5%; height: 71.5%; margin-top: -35.75%; margin-left: -35.75%;
-    }
+    #intro-lu-wrap { position: absolute; top: 50%; left: 50%; width: 71.5%; height: 71.5%; margin-top: -35.75%; margin-left: -35.75%; }
 
     /* NOISE */
     #noise { position: fixed; inset: 0; z-index: 1; pointer-events: none; opacity: .022;
@@ -66,11 +53,30 @@
     #hero { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; overflow: hidden; }
     #hero-canvas { position: absolute; inset: 0; width: 100%; height: 100%; opacity: .1; z-index: 0; }
 
-    /* floating logo in hero — moves CCW left-down on scroll */
-    #hero-logo-float { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 420px; height: 420px; will-change: transform, opacity; z-index: 2; pointer-events: none; }
-    #hlg { position: absolute; inset: 0; width: 100%; height: 100%; transform-origin: 49.6% 47.2%; }
-    #hll-wrap { position: absolute; top: 50%; left: 50%; width: 71.5%; height: 71.5%; margin-top: -35.75%; margin-left: -35.75%; }
-    #hll { width: 100%; height: 100%; transform-origin: 48.8% 47.6%; }
+    /* HERO LOGO — globe big + background, LU flies with wobble */
+    #hero-logo-float {
+      position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%,-50%);
+      width: 460px; height: 460px;
+      will-change: transform, opacity; z-index: 2; pointer-events: none;
+    }
+    /* Globe: larger than container, pushed to background at 40% */
+    #hlg {
+      position: absolute;
+      width: 170%; height: 170%;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      opacity: 0.4;
+    }
+    /* LU wrap: perspective context for 3D wobble */
+    #hll-wrap {
+      position: absolute; top: 50%; left: 50%;
+      width: 71.5%; height: 71.5%;
+      margin-top: -35.75%; margin-left: -35.75%;
+      perspective: 500px; perspective-origin: center center;
+    }
+    /* LU logo: no spinning, driven by JS wobble */
+    #hll { width: 100%; height: 100%; will-change: transform; }
     #hlw { position: absolute; top: 50%; left: 50%; width: 71%; transform: translate(-50%,-50%); opacity: .9; pointer-events: none; }
 
     .hero-sub { font-size: 10px; letter-spacing: .45em; text-transform: uppercase; color: rgba(255,255,255,.28); opacity: 0; transform: translateY(10px); transition: opacity .8s ease, transform .8s ease; }
@@ -102,103 +108,26 @@
     .gel-layer:active { cursor: grabbing; }
     .gel-layer::after { content: 'drag'; position: absolute; right: 0; top: -1.8rem; font-size: 9px; letter-spacing: .4em; text-transform: uppercase; color: rgba(255,255,255,.1); pointer-events: none; }
 
-    /* MUSIC — coverflow carousel + flip card */
+    /* MUSIC */
     #music { border-top: 1px solid var(--border); }
-
-    /* coverflow wrapper */
-    .music-coverflow {
-      position: relative;
-      display: flex;
-      align-items: center;
-      gap: 0;
-    }
-    .music-arrow {
-      flex-shrink: 0;
-      width: 44px; height: 44px;
-      display: flex; align-items: center; justify-content: center;
-      color: rgba(255,255,255,.25);
-      font-size: 18px; font-family: 'Outfit', sans-serif; font-weight: 300;
-      background: none; border: 1px solid rgba(255,255,255,.08);
-      cursor: pointer; z-index: 10;
-      transition: color .3s, border-color .3s;
-      user-select: none;
-    }
+    .music-coverflow { position: relative; display: flex; align-items: center; gap: 0; }
+    .music-arrow { flex-shrink: 0; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; color: rgba(255,255,255,.25); font-size: 18px; font-family: 'Outfit', sans-serif; font-weight: 300; background: none; border: 1px solid rgba(255,255,255,.08); cursor: pointer; z-index: 10; transition: color .3s, border-color .3s; user-select: none; }
     .music-arrow:hover { color: #fff; border-color: rgba(255,255,255,.3); }
-
-    /* perspective stage */
-    .music-stage {
-      flex: 1;
-      perspective: 1400px;
-      perspective-origin: center center;
-      overflow: hidden;
-      position: relative;
-      min-height: 260px;
-    }
-
-    /* each card is a flip card */
-    .music-card {
-      position: absolute; inset: 0;
-      transform-style: preserve-3d;
-      transition: transform .72s cubic-bezier(.16,1,.3,1), opacity .5s ease;
-      /* coverflow states */
-      opacity: 0; pointer-events: none;
-      transform: translateX(60%) translateZ(-320px) rotateY(-18deg) scale(.82);
-    }
-    .music-card.prev {
-      opacity: .45; pointer-events: none;
-      transform: translateX(-60%) translateZ(-320px) rotateY(18deg) scale(.82);
-    }
-    .music-card.active {
-      opacity: 1; pointer-events: all;
-      transform: translateX(0) translateZ(0) rotateY(0deg) scale(1);
-    }
-    .music-card.next {
-      opacity: .45; pointer-events: none;
-      transform: translateX(60%) translateZ(-320px) rotateY(-18deg) scale(.82);
-    }
-    .music-card.exit-left {
-      opacity: 0; pointer-events: none;
-      transform: translateX(-120%) translateZ(-500px) rotateY(35deg) scale(.6);
-    }
-    .music-card.exit-right {
-      opacity: 0; pointer-events: none;
-      transform: translateX(120%) translateZ(-500px) rotateY(-35deg) scale(.6);
-    }
-
-    /* flip faces */
-    .card-face {
-      position: absolute; inset: 0;
-      backface-visibility: hidden;
-      -webkit-backface-visibility: hidden;
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px,1fr));
-      gap: 1px; background: var(--border); border: 1px solid var(--border);
-    }
-    .card-face.back {
-      transform: rotateX(180deg);
-      background: #0a0a0a;
-    }
-
-    /* flipped state */
+    .music-stage { flex: 1; perspective: 1400px; perspective-origin: center center; overflow: hidden; position: relative; min-height: 260px; }
+    .music-card { position: absolute; inset: 0; transform-style: preserve-3d; transition: transform .72s cubic-bezier(.16,1,.3,1), opacity .5s ease; opacity: 0; pointer-events: none; transform: translateX(60%) translateZ(-320px) rotateY(-18deg) scale(.82); }
+    .music-card.prev { opacity: .45; pointer-events: none; transform: translateX(-60%) translateZ(-320px) rotateY(18deg) scale(.82); }
+    .music-card.active { opacity: 1; pointer-events: all; transform: translateX(0) translateZ(0) rotateY(0deg) scale(1); }
+    .music-card.next { opacity: .45; pointer-events: none; transform: translateX(60%) translateZ(-320px) rotateY(-18deg) scale(.82); }
+    .music-card.exit-left { opacity: 0; pointer-events: none; transform: translateX(-120%) translateZ(-500px) rotateY(35deg) scale(.6); }
+    .music-card.exit-right { opacity: 0; pointer-events: none; transform: translateX(120%) translateZ(-500px) rotateY(-35deg) scale(.6); }
+    .card-face { position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden; display: grid; grid-template-columns: repeat(auto-fit, minmax(280px,1fr)); gap: 1px; background: var(--border); border: 1px solid var(--border); }
+    .card-face.back { transform: rotateX(180deg); background: #0a0a0a; }
     .music-card.flipped { transform: translateX(0) translateZ(0) rotateY(0deg) rotateX(180deg) scale(1); }
-
     .embed-cell { background: var(--bg); padding: 1.4rem; transition: background .4s; }
     .embed-cell:hover { background: rgba(255,255,255,.03); }
     .embed-cell iframe { display: block; width: 100%; border: none; border-radius: 8px; }
-
-    /* platform label on back */
-    .platform-label {
-      position: absolute; top: 1rem; right: 1.4rem;
-      font-size: 9px; letter-spacing: .4em; text-transform: uppercase;
-      color: rgba(255,255,255,.2); pointer-events: none;
-    }
-
-    /* flip hint */
-    .flip-hint {
-      text-align: center; margin-top: 1.2rem;
-      font-size: 9px; letter-spacing: .35em; text-transform: uppercase;
-      color: rgba(255,255,255,.14);
-    }
+    .platform-label { position: absolute; top: 1rem; right: 1.4rem; font-size: 9px; letter-spacing: .4em; text-transform: uppercase; color: rgba(255,255,255,.2); pointer-events: none; }
+    .flip-hint { text-align: center; margin-top: 1.2rem; font-size: 9px; letter-spacing: .35em; text-transform: uppercase; color: rgba(255,255,255,.14); }
 
     /* COLLECTIVE */
     #collective { border-top: 1px solid var(--border); }
@@ -239,14 +168,86 @@
     .footer-links a { font-size: 10px; color: rgba(255,255,255,.22); text-decoration: none; letter-spacing: .25em; text-transform: uppercase; transition: color .3s; }
     .footer-links a:hover { color: rgba(255,255,255,.7); }
 
+    /* ── MOBILE ── */
     @media(max-width:768px){
-      body{cursor:auto} #cursor,#cursor-ring{display:none}
-      nav{padding:1.2rem 1.5rem} nav ul{gap:1.5rem}
-      section{padding:5rem 1.5rem}
-      .gallery-grid{grid-template-columns:repeat(2,1fr);grid-template-rows:auto}
-      .gallery-item{grid-column:span 1!important;grid-row:span 1!important;height:180px}
-      footer{padding:3rem 1.5rem;flex-direction:column;align-items:flex-start}
-      #hero-logo-float{width:260px;height:260px}
+      body { cursor:auto; }
+      #cursor,#cursor-ring { display:none; }
+
+      /* nav */
+      nav { padding:1rem 1.2rem; }
+      nav a.nav-logo img { height:60px; }
+      nav ul { gap:1.2rem; }
+      nav ul li a { font-size:10px; letter-spacing:.12em; }
+
+      /* sections: tighter padding, no edge-to-edge */
+      section { padding:4rem 1.2rem; max-width:100%; }
+
+      /* section title scales down */
+      .section-title { font-size:clamp(1.4rem,5vw,2rem); margin-bottom:2.5rem; padding-bottom:1.2rem; }
+
+      /* hero */
+      #hero-logo-float { width:240px; height:240px; }
+      #hero { min-height:100svh; }
+      .hero-sub { font-size:9px; letter-spacing:.3em; }
+      .scroll-hint { bottom:1.8rem; }
+
+      /* ── MEMBERS GRID — 2 cols, proportional cards ── */
+      .members-grid {
+        grid-template-columns: repeat(2,1fr);
+        gap:1px;
+      }
+      .member-card { padding:1rem; }
+      .member-name { font-size:.78rem; letter-spacing:.06em; }
+      .member-role { font-size:9px; }
+      .member-number { top:1rem; right:1rem; font-size:9px; }
+
+      /* ── GALLERY — 3-col mosaic preserved, smaller rows ── */
+      .gallery-grid {
+        grid-template-columns: repeat(6,1fr);
+        grid-template-rows: repeat(3,110px);
+        gap:2px;
+      }
+      /* re-map spans to 6-column grid (halved from 12) */
+      .gallery-item:nth-child(1){grid-column:span 3;grid-row:span 2}
+      .gallery-item:nth-child(2){grid-column:span 2}
+      .gallery-item:nth-child(3){grid-column:span 1}
+      .gallery-item:nth-child(4){grid-column:span 2}
+      .gallery-item:nth-child(5){grid-column:span 1}
+      .gallery-item:nth-child(6){grid-column:span 2;grid-row:span 2}
+      .gallery-item:nth-child(7){grid-column:span 2}
+      .gallery-item:nth-child(8){grid-column:span 2}
+
+      /* ── MUSIC ── */
+      .music-stage { min-height:200px; }
+      .music-arrow { width:34px; height:34px; font-size:16px; }
+      .embed-cell { padding:.9rem; }
+      .embed-cell iframe { height:130px; }
+      .flip-hint { font-size:8px; }
+      .card-face {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      /* footer */
+      footer { padding:2.5rem 1.2rem; flex-direction:column; align-items:flex-start; gap:1.2rem; }
+      footer img { height:22px; }
+      .footer-links { gap:1.5rem; }
+    }
+
+    /* very small phones */
+    @media(max-width:390px){
+      .members-grid { grid-template-columns: repeat(2,1fr); }
+      .gallery-grid {
+        grid-template-columns: repeat(4,1fr);
+        grid-template-rows: repeat(3,90px);
+      }
+      .gallery-item:nth-child(1){grid-column:span 2;grid-row:span 2}
+      .gallery-item:nth-child(2){grid-column:span 1}
+      .gallery-item:nth-child(3){grid-column:span 1}
+      .gallery-item:nth-child(4){grid-column:span 1}
+      .gallery-item:nth-child(5){grid-column:span 1}
+      .gallery-item:nth-child(6){grid-column:span 2;grid-row:span 2}
+      .gallery-item:nth-child(7){grid-column:span 1}
+      .gallery-item:nth-child(8){grid-column:span 1}
     }
   </style>
 </head>
@@ -287,7 +288,7 @@
       <img id="hlw" src="logo_globe.png" alt="leftunsaid" />
     </div>
     <div style="position:relative;z-index:3;text-align:center;margin-top:290px;">
-      <p class="hero-sub" id="hero-sub">A Collective &nbsp;·&nbsp; Artists &amp; Producers</p>
+      <p class="hero-sub" id="hero-sub">A Collective &nbsp;&middot;&nbsp; Artists &amp; Producers</p>
     </div>
     <div class="scroll-hint" id="scroll-hint">
       <span>Scroll</span>
@@ -298,15 +299,9 @@
   <section id="music">
     <p class="section-label reveal">Featured</p>
     <h2 class="section-title split-text">Music</h2>
-
     <div class="music-coverflow reveal">
-      <!-- prev arrow -->
       <button class="music-arrow" id="music-prev" aria-label="Previous">&#8249;</button>
-
-      <!-- coverflow stage -->
       <div class="music-stage" id="music-stage">
-
-        <!-- CARD 0 — active -->
         <div class="music-card active" id="mc-0">
           <div class="card-face front">
             <div class="embed-cell"><iframe src="https://open.spotify.com/embed/track/placeholder1?utm_source=generator&theme=0" height="152" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe></div>
@@ -322,8 +317,6 @@
             <div class="embed-cell"><iframe width="100%" height="152" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/placeholder4&color=%23111111&auto_play=false&hide_related=true&show_comments=false&show_user=true&show_reposts=false&show_teaser=false"></iframe></div>
           </div>
         </div>
-
-        <!-- CARD 1 — next -->
         <div class="music-card next" id="mc-1">
           <div class="card-face front">
             <div class="embed-cell"><iframe src="https://open.spotify.com/embed/track/placeholder5?utm_source=generator&theme=0" height="152" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe></div>
@@ -339,14 +332,10 @@
             <div class="embed-cell"><iframe width="100%" height="152" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/placeholder8&color=%23111111&auto_play=false&hide_related=true&show_comments=false&show_user=true&show_reposts=false&show_teaser=false"></iframe></div>
           </div>
         </div>
-
-      </div><!-- /music-stage -->
-
-      <!-- next arrow -->
+      </div>
       <button class="music-arrow" id="music-next" aria-label="Next">&#8250;</button>
     </div>
-
-    <p class="flip-hint reveal">Flick to flip · Spotify ↔ Soundcloud</p>
+    <p class="flip-hint reveal">Flick to flip &middot; Spotify &harr; Soundcloud</p>
   </section>
 
   <section id="collective">
@@ -381,7 +370,7 @@
 
   <footer>
     <img src="logo_main.png" alt="leftunsaid" class="reveal" />
-    <p class="reveal">© 2025 leftunsaid.world</p>
+    <p class="reveal">&copy; 2025 leftunsaid.world</p>
     <div class="footer-links reveal">
       <a href="https://instagram.com/leftunsaid.mp3">Instagram</a>
       <a href="https://open.spotify.com">Spotify</a>
@@ -392,7 +381,7 @@
 <script>
 (function(){
 
-/* ── CURSOR ── */
+/* CURSOR */
 var cur=document.getElementById('cursor'),rng=document.getElementById('cursor-ring');
 var mx=innerWidth/2,my=innerHeight/2,rx=mx,ry=my;
 document.addEventListener('mousemove',function(e){mx=e.clientX;my=e.clientY;cur.style.left=mx+'px';cur.style.top=my+'px';});
@@ -402,331 +391,263 @@ document.querySelectorAll('a,.member-card,.gallery-item').forEach(function(el){
   el.addEventListener('mouseleave',function(){cur.style.width='8px';cur.style.height='8px';rng.style.width='34px';rng.style.height='34px';});
 });
 
-/* ── HELPERS ── */
+/* HELPERS */
 function clamp(v,a,b){return Math.max(a,Math.min(b,v));}
 function lerp(a,b,t){return a+(b-a)*t;}
-function remap(v,ia,ib,oa,ob){return lerp(oa,ob,clamp((v-ia)/(ib-ia),0,1));}
-function easeOut(t){return 1-Math.pow(1-t,3);}
 function easeInOut(t){return t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;}
-function easeIn2(t){return t*t;}
 
-/* ── hero globe refs (declared here so introTick can use them) ── */
+/* HERO LOGO REFS */
 var hlGlobe = document.getElementById('hlg');
 var hlLU    = document.getElementById('hll');
-var hAngle  = 0;
 
-/* ── INTRO ── */
-var INTRO_DUR = 3200;
-var introStart = null, introDone = false;
-var introGlobe = document.getElementById('intro-globe');
-var introLU    = document.getElementById('intro-lu');
-
-function introEase(t){ return t < 0.5 ? 2*t*t : -1+(4-2*t)*t; }
+/* INTRO */
+var INTRO_DUR=3200, introStart=null, introDone=false;
+var introGlobe=document.getElementById('intro-globe');
+var introLU=document.getElementById('intro-lu');
+function introEase(t){return t<0.5?2*t*t:-1+(4-2*t)*t;}
 
 function introTick(ts){
-  if(!introStart) introStart = ts;
-  var elapsed = ts - introStart;
-  var t = Math.min(elapsed / INTRO_DUR, 1);
-
-  /* globe spins 720° clockwise, LU spins 360° counter — JS-driven on top of CSS fade */
-  introGlobe.style.transform = 'rotate(' + (introEase(t)*720) + 'deg)';
-  introLU.style.transform    = 'rotate(' + (introEase(t)*-360) + 'deg)';
-
-  /* continuous hero globe spin (starts immediately so it's ready when main appears) */
-  hAngle += 0.013 * 16.67;
-  hlGlobe.style.transform = 'rotate('+hAngle+'deg)';
-  hlLU.style.transform    = 'rotate('+(-hAngle*0.5)+'deg)';
-
-  if(t >= 1 && !introDone){
-    introDone = true;
+  if(!introStart) introStart=ts;
+  var t=Math.min((ts-introStart)/INTRO_DUR,1);
+  /* intro globe + LU spin during the splash screen */
+  introGlobe.style.transform='rotate('+(introEase(t)*720)+'deg)';
+  introLU.style.transform='rotate('+(introEase(t)*-360)+'deg)';
+  /* NOTE: hero globe (#hlg) and hero LU (#hll) are NOT spun here — see wobble loop below */
+  if(t>=1&&!introDone){
+    introDone=true;
     document.getElementById('intro').classList.add('done');
     document.getElementById('main').classList.add('visible');
     setTimeout(function(){
       document.getElementById('hero-sub').classList.add('in');
       document.getElementById('scroll-hint').classList.add('in');
-    }, 300);
+    },300);
     initCanvas();
   }
-
   requestAnimationFrame(introTick);
 }
 requestAnimationFrame(introTick);
 
-/* ── PARTICLE CANVAS — init after main is visible ── */
-var canvasInited = false;
+/* LU WOBBLE — gentle fly + 3D oscillation, no spin */
+(function wobble(ts){
+  var t=(ts||0)*0.001;
+  /* gentle vertical fly — two sine waves for organic feel */
+  var flyY=Math.sin(t*0.65)*11+Math.sin(t*1.1)*4;
+  /* 3D tilt — slow, different frequencies per axis */
+  var tiltX=Math.sin(t*0.48)*5+Math.cos(t*0.9)*2;
+  var tiltY=Math.cos(t*0.37)*4+Math.sin(t*0.7)*1.5;
+  /* subtle scale breath */
+  var sc=1+Math.sin(t*0.55)*0.018;
+  hlLU.style.transform=
+    'translateY('+flyY.toFixed(2)+'px) '+
+    'rotateX('+tiltX.toFixed(2)+'deg) '+
+    'rotateY('+tiltY.toFixed(2)+'deg) '+
+    'scale('+sc.toFixed(4)+')';
+  requestAnimationFrame(wobble);
+})();
+
+/* PARTICLE CANVAS */
+var canvasInited=false;
 function initCanvas(){
-  if(canvasInited) return; canvasInited=true;
-  var canvas=document.getElementById('hero-canvas');
-  var ctx=canvas.getContext('2d');
-  var pts=[], CW, CH;
-  function rsz(){ CW=canvas.width=canvas.offsetWidth; CH=canvas.height=canvas.offsetHeight; }
+  if(canvasInited)return; canvasInited=true;
+  var canvas=document.getElementById('hero-canvas'),ctx=canvas.getContext('2d'),pts=[],CW,CH;
+  function rsz(){CW=canvas.width=canvas.offsetWidth;CH=canvas.height=canvas.offsetHeight;}
   rsz(); window.addEventListener('resize',rsz);
   for(var i=0;i<55;i++) pts.push({x:Math.random()*CW,y:Math.random()*CH,vx:(Math.random()-.5)*.14,vy:(Math.random()-.5)*.14,a:Math.random()});
   (function dp(){
     ctx.clearRect(0,0,CW,CH);
-    pts.forEach(function(p){ p.x+=p.vx; p.y+=p.vy; if(p.x<0)p.x=CW; if(p.x>CW)p.x=0; if(p.y<0)p.y=CH; if(p.y>CH)p.y=0; ctx.beginPath(); ctx.arc(p.x,p.y,p.a*.9+.2,0,Math.PI*2); ctx.fillStyle='rgba(255,255,255,'+(p.a*.5)+')'; ctx.fill(); });
-    for(var a=0;a<pts.length;a++) for(var b=a+1;b<pts.length;b++){ var dx=pts[a].x-pts[b].x,dy=pts[a].y-pts[b].y,d=Math.sqrt(dx*dx+dy*dy); if(d<115){ ctx.beginPath(); ctx.moveTo(pts[a].x,pts[a].y); ctx.lineTo(pts[b].x,pts[b].y); ctx.strokeStyle='rgba(255,255,255,'+(0.032*(1-d/115))+')'; ctx.lineWidth=.5; ctx.stroke(); } }
+    pts.forEach(function(p){p.x+=p.vx;p.y+=p.vy;if(p.x<0)p.x=CW;if(p.x>CW)p.x=0;if(p.y<0)p.y=CH;if(p.y>CH)p.y=0;ctx.beginPath();ctx.arc(p.x,p.y,p.a*.9+.2,0,Math.PI*2);ctx.fillStyle='rgba(255,255,255,'+(p.a*.5)+')';ctx.fill();});
+    for(var a=0;a<pts.length;a++)for(var b=a+1;b<pts.length;b++){var dx=pts[a].x-pts[b].x,dy=pts[a].y-pts[b].y,d=Math.sqrt(dx*dx+dy*dy);if(d<115){ctx.beginPath();ctx.moveTo(pts[a].x,pts[a].y);ctx.lineTo(pts[b].x,pts[b].y);ctx.strokeStyle='rgba(255,255,255,'+(0.032*(1-d/115))+')';ctx.lineWidth=.5;ctx.stroke();}}
     requestAnimationFrame(dp);
   })();
 }
 
-/* ── HERO LOGO — CCW arc on scroll ── */
-var heroFloat = document.getElementById('hero-logo-float');
-var heroSec   = document.getElementById('hero');
-var sY = 0;
+/* HERO FLOAT — CCW arc on scroll */
+var heroFloat=document.getElementById('hero-logo-float'),heroSec=document.getElementById('hero'),sY=0;
 function updateHeroFloat(){
-  var progress = clamp(sY/(heroSec.offsetHeight*0.88),0,1);
-  var angle = progress * (-Math.PI*0.56);
-  var R=280, dx=Math.sin(angle)*R, dy=(1-Math.cos(angle))*R;
-  var sc=lerp(1,0.5,progress), op=lerp(1,0,clamp(progress*1.25,0,1)), rot=progress*-28;
+  var progress=clamp(sY/(heroSec.offsetHeight*0.88),0,1);
+  var angle=progress*(-Math.PI*0.56),R=280;
+  var dx=Math.sin(angle)*R,dy=(1-Math.cos(angle))*R;
+  var sc=lerp(1,0.5,progress),op=lerp(1,0,clamp(progress*1.25,0,1)),rot=progress*-28;
   heroFloat.style.transform='translate(calc(-50% + '+dx.toFixed(1)+'px), calc(-50% + '+dy.toFixed(1)+'px)) rotate('+rot.toFixed(2)+'deg) scale('+sc.toFixed(3)+')';
   heroFloat.style.opacity=op.toFixed(3);
 }
 window.addEventListener('scroll',function(){sY=window.scrollY;updateHeroFloat();},{passive:true});
 
-/* ── GEL LAYERS ──
-   transformOrigin is ALWAYS 50% 50% — flip NEVER moves off center.
-   Drag: translate only (moves element off anchor while held, springs back).
-   Fast vertical flick: flip once (rotateX 0↔180). Resets to center on trigger.
-   Fisheye: perspective shrinks with drag distance, tilt adds barrel warp.
-   Collective flip: photos fall with gravity + container jerks up.
-── */
-
-/* Photo fall — fires when collective flips */
+/* ── PHOTO FALL ──
+   Only .member-photo divs are ripped out and fall.
+   Cards stay as blank containers. Text stays but photo slot empties. */
 function spawnPhotoFall(){
-  var photos = document.querySelectorAll('.members-grid .member-photo');
-  photos.forEach(function(photo, i){
-    var rect = photo.getBoundingClientRect();
-    if(!rect.width) return;
-    var el = document.createElement('div');
-    el.style.cssText =
-      'position:fixed;top:0;left:0;pointer-events:none;z-index:800;overflow:hidden;'+
+  var grid=document.querySelector('.members-grid');
+  if(!grid)return;
+  var photos=Array.prototype.slice.call(grid.querySelectorAll('.member-photo'));
+  photos.forEach(function(photo,i){
+    var rect=photo.getBoundingClientRect();
+    if(!rect.width)return;
+    /* rip the actual .member-photo out of its card, re-parent to body at same screen position */
+    photo.parentNode.removeChild(photo);
+    photo.style.cssText=
+      'position:fixed;top:0;left:0;margin:0;pointer-events:none;z-index:800;'+
       'width:'+rect.width+'px;height:'+rect.height+'px;'+
+      'box-sizing:border-box;overflow:hidden;transition:none;'+
       'transform:translate('+rect.left.toFixed(1)+'px,'+rect.top.toFixed(1)+'px);';
-    var inner = photo.cloneNode(true);
-    inner.style.cssText='width:100%;height:100%;margin:0;';
-    el.appendChild(inner);
-    document.body.appendChild(el);
-
-    var x=rect.left, y=rect.top;
-    var vx=(Math.random()-0.5)*7;
-    var vy=-(Math.random()*3+0.5);
-    var grav=0.48+Math.random()*0.28;
-    var ang=0, angV=(Math.random()-0.5)*5;
+    document.body.appendChild(photo);
+    var x=rect.left,y=rect.top;
+    var vx=(Math.random()-0.5)*8;
+    var vy=-(Math.random()*3+1);
+    var grav=0.5+Math.random()*0.3;
+    var ang=0,angV=(Math.random()-0.5)*5;
     var op=1;
-
     setTimeout(function(){
       (function fall(){
-        vy+=grav; x+=vx; y+=vy; ang+=angV; angV*=0.985;
-        op=Math.max(0,op-0.013);
-        el.style.transform='translate('+x.toFixed(1)+'px,'+y.toFixed(1)+'px) rotate('+ang.toFixed(2)+'deg)';
-        el.style.opacity=op;
-        el.style.filter='brightness('+Math.max(0,(op*0.8)).toFixed(3)+')';
-        if(y<innerHeight+300&&op>0) requestAnimationFrame(fall);
-        else if(el.parentNode) el.parentNode.removeChild(el);
+        vy+=grav;x+=vx;y+=vy;ang+=angV;angV*=0.985;
+        op=Math.max(0,op-0.012);
+        photo.style.transform='translate('+x.toFixed(1)+'px,'+y.toFixed(1)+'px) rotate('+ang.toFixed(2)+'deg)';
+        photo.style.opacity=op;
+        photo.style.filter='brightness('+Math.max(0,op*0.75).toFixed(3)+')';
+        if(y<innerHeight+400&&op>0)requestAnimationFrame(fall);
+        else if(photo.parentNode)photo.parentNode.removeChild(photo);
       })();
-    }, i*55+Math.random()*80);
+    },i*45+Math.random()*70);
   });
 }
 
-var gelLayers = Array.prototype.slice.call(document.querySelectorAll('.gel-layer'));
-var gelStates = gelLayers.map(function(){ return {cY:0}; });
-var FLIP_VEL  = 6;
+/* GEL LAYERS */
+var gelLayers=Array.prototype.slice.call(document.querySelectorAll('.gel-layer'));
+var gelStates=gelLayers.map(function(){return{cY:0};});
+var FLIP_VEL=6;
 
-gelLayers.forEach(function(layer, idx){
-  var depth      = parseFloat(layer.dataset.gel)||20;
-  var isCollect  = layer.classList.contains('members-grid');
-
-  /* translate — drag only, always springs back to 0 */
-  var dragX=0, cX=0, dragY=0, cDragY=0;
-  /* parallax from scroll — additive, never touches drag */
-  var parallaxY=0;
-  /* flip rotation — 0 or 180, always around 50% 50% */
-  var flipTarget=0, cFlipRX=0, flipped=false, flipping=false;
-  /* warp (fisheye tilt — NOT from changing transformOrigin) */
-  var warpRX=0,cWarpRX=0, warpRY=0,cWarpRY=0;
-  /* jerk — quick upward snap on collective flip */
-  var jerkY=0, cJerkY=0;
-  /* drag state */
-  var drag=false, dsx=0,dsy=0, dtx=0,dty=0;
-  var velSamples=[], lastMY=0, lastMX=0;
-  /* neighbor push */
-  var pushY=0, cPushY=0;
-
-  /* lock transform-origin to center — belt and suspenders */
+gelLayers.forEach(function(layer,idx){
+  var depth=parseFloat(layer.dataset.gel)||20;
+  var isCollect=layer.classList.contains('members-grid');
+  var dragX=0,cX=0,dragY=0,cDragY=0,parallaxY=0;
+  var flipTarget=0,cFlipRX=0,flipped=false,flipping=false;
+  var warpRX=0,cWarpRX=0,warpRY=0,cWarpRY=0;
+  var jerkY=0,cJerkY=0;
+  var drag=false,dsx=0,dsy=0,dtx=0,dty=0;
+  var velSamples=[],lastMY=0,lastMX=0;
+  var pushY=0,cPushY=0;
   layer.style.transformOrigin='50% 50%';
 
-  /* ── MOUSEDOWN ── */
   layer.addEventListener('mousedown',function(e){
-    drag=true;
-    dsx=e.clientX; dsy=e.clientY;
-    dtx=dragX; dty=dragY;
-    lastMX=e.clientX; lastMY=e.clientY;
-    velSamples=[];
-    /* transformOrigin stays 50% 50% — always */
-    e.preventDefault();
+    drag=true;dsx=e.clientX;dsy=e.clientY;dtx=dragX;dty=dragY;
+    lastMX=e.clientX;lastMY=e.clientY;velSamples=[];e.preventDefault();
   });
-
-  /* ── MOUSEMOVE ── */
   document.addEventListener('mousemove',function(e){
-    if(!drag) return;
-    var dx=e.clientX-dsx, dy=e.clientY-dsy;
-    var lim=depth*5;
-    dragX=clamp(dtx+dx,-lim,lim);
-    dragY=clamp(dty+dy,-lim*.7,lim*.7);
-    /* warp tilt — creates fisheye-like distortion from center, no origin change */
-    warpRX=clamp(dy*0.045,-14,14);
-    warpRY=clamp(dx*0.045,-14,14);
-    velSamples.push({vx:e.clientX-lastMX, vy:e.clientY-lastMY});
-    if(velSamples.length>6) velSamples.shift();
-    lastMX=e.clientX; lastMY=e.clientY;
+    if(!drag)return;
+    var dx=e.clientX-dsx,dy=e.clientY-dsy,lim=depth*5;
+    dragX=clamp(dtx+dx,-lim,lim);dragY=clamp(dty+dy,-lim*.7,lim*.7);
+    warpRX=clamp(dy*0.045,-14,14);warpRY=clamp(dx*0.045,-14,14);
+    velSamples.push({vx:e.clientX-lastMX,vy:e.clientY-lastMY});
+    if(velSamples.length>6)velSamples.shift();
+    lastMX=e.clientX;lastMY=e.clientY;
   });
-
-  /* ── MOUSEUP — vertical fast flick = flip, else spring back ── */
   document.addEventListener('mouseup',function(){
-    if(!drag) return; drag=false;
-    if(!velSamples.length){ dragX=0; dragY=0; return; }
+    if(!drag)return;drag=false;
+    if(!velSamples.length){dragX=0;dragY=0;return;}
     var avx=0,avy=0;
     velSamples.forEach(function(s){avx+=s.vx;avy+=s.vy;});
-    avx/=velSamples.length; avy/=velSamples.length;
-    /* flip: Y-dominant and fast */
-    if(Math.abs(avy)>=FLIP_VEL && Math.abs(avy)>Math.abs(avx)*0.75 && !flipping){
-      /* snap back to center before flipping */
-      dragX=0; dragY=0;
-      triggerFlip();
-    } else {
-      dragX=0; dragY=0;
-    }
+    avx/=velSamples.length;avy/=velSamples.length;
+    if(Math.abs(avy)>=FLIP_VEL&&Math.abs(avy)>Math.abs(avx)*0.75&&!flipping){
+      dragX=0;dragY=0;triggerFlip();
+    }else{dragX=0;dragY=0;}
   });
-
-  /* ── TOUCH ── */
   layer.addEventListener('touchstart',function(e){
-    drag=true; dsx=e.touches[0].clientX; dsy=e.touches[0].clientY;
-    dtx=dragX; dty=dragY; lastMX=dsx; lastMY=dsy; velSamples=[];
+    drag=true;dsx=e.touches[0].clientX;dsy=e.touches[0].clientY;
+    dtx=dragX;dty=dragY;lastMX=dsx;lastMY=dsy;velSamples=[];
   },{passive:true});
   document.addEventListener('touchmove',function(e){
     if(!drag)return;
     var tx=e.touches[0].clientX,ty=e.touches[0].clientY;
-    dragX=clamp(dtx+(tx-dsx),-depth*4,depth*4);
-    dragY=clamp(dty+(ty-dsy),-depth*3,depth*3);
-    warpRX=clamp((ty-dsy)*0.045,-14,14);
-    warpRY=clamp((tx-dsx)*0.045,-14,14);
+    dragX=clamp(dtx+(tx-dsx),-depth*4,depth*4);dragY=clamp(dty+(ty-dsy),-depth*3,depth*3);
+    warpRX=clamp((ty-dsy)*0.045,-14,14);warpRY=clamp((tx-dsx)*0.045,-14,14);
     velSamples.push({vx:tx-lastMX,vy:ty-lastMY});
     if(velSamples.length>6)velSamples.shift();
     lastMX=tx;lastMY=ty;
   },{passive:true});
   document.addEventListener('touchend',function(){
-    if(!drag)return; drag=false;
+    if(!drag)return;drag=false;
     var avy=0,avx=0;
     velSamples.forEach(function(s){avy+=s.vy;avx+=s.vx;});
     if(velSamples.length){avy/=velSamples.length;avx/=velSamples.length;}
-    if(Math.abs(avy)>=FLIP_VEL&&Math.abs(avy)>Math.abs(avx)*0.75&&!flipping){
-      dragX=0; dragY=0; triggerFlip();
-    } else { dragX=0; dragY=0; }
+    if(Math.abs(avy)>=FLIP_VEL&&Math.abs(avy)>Math.abs(avx)*0.75&&!flipping){dragX=0;dragY=0;triggerFlip();}
+    else{dragX=0;dragY=0;}
   });
-
-  /* ── SCROLL — parallax only, never resets drag ── */
   window.addEventListener('scroll',function(){
     var r=layer.getBoundingClientRect();
     parallaxY=clamp(-((r.top+r.height/2-innerHeight/2)*depth/900),-depth*2.5,depth*2.5);
   },{passive:true});
 
-  /* ── FLIP ── */
   function triggerFlip(){
-    flipping=true; flipped=!flipped;
-    flipTarget=flipped?180:0;
-    /* jerk up — slight upward snap, then spring back */
+    flipping=true;flipped=!flipped;flipTarget=flipped?180:0;
     if(isCollect){
-      jerkY=-18;
-      setTimeout(function(){ jerkY=0; },90);
-      if(flipped) setTimeout(spawnPhotoFall,60);
+      jerkY=-18;setTimeout(function(){jerkY=0;},90);
+      if(flipped)setTimeout(spawnPhotoFall,60);
     }
-    setTimeout(function(){ flipping=false; },800);
+    setTimeout(function(){flipping=false;},800);
   }
 
-  /* ── SPRING LOOP ── */
   (function loop(){
-    /* warp decays when not dragging */
-    if(!drag){ warpRX*=.78; warpRY*=.78; }
-
-    /* flip springs to target — 0.13 lerp feels snappy not instant */
+    if(!drag){warpRX*=.78;warpRY*=.78;}
     cFlipRX+=(flipTarget-cFlipRX)*0.13;
-
-    /* jerk — fast lerp so the snap is immediate, return is damped */
     cJerkY+=(jerkY-cJerkY)*0.28;
-
-    /* neighbor push */
     pushY=0;
     var myR=layer.getBoundingClientRect(),myC=myR.top+myR.height/2;
     gelStates.forEach(function(st,j){
       if(j===idx)return;
       var oR=gelLayers[j].getBoundingClientRect(),oC=oR.top+oR.height/2;
-      var sd=oC-myC,ad=Math.abs(sd)+1;
-      var inf=clamp(1-ad/1200,0,1); if(inf<.01)return;
+      var sd=oC-myC,ad=Math.abs(sd)+1,inf=clamp(1-ad/1200,0,1);
+      if(inf<.01)return;
       pushY+=(sd>0?-1:1)*st.cY*inf*0.32;
     });
     cPushY+=(pushY-cPushY)*0.018;
-
-    /* translate */
     var lf=drag?0.17:0.08;
-    cX    +=(dragX-cX)*lf;
-    cDragY+=(dragY-cDragY)*lf;
+    cX+=(dragX-cX)*lf;cDragY+=(dragY-cDragY)*lf;
     var totalY=cDragY+parallaxY+cPushY+cJerkY;
     gelStates[idx].cY=totalY;
-
-    /* warp */
-    cWarpRX+=(warpRX-cWarpRX)*0.22;
-    cWarpRY+=(warpRY-cWarpRY)*0.22;
-
-    /* fisheye: perspective shrinks as drag distance grows */
+    cWarpRX+=(warpRX-cWarpRX)*0.22;cWarpRY+=(warpRY-cWarpRY)*0.22;
     var dragMag=Math.sqrt(cX*cX+cDragY*cDragY);
-    var perspPx=drag ? Math.max(220,750-dragMag*2.2) : 750;
-
-    /* skew from stretch — wider than before for the drag distort feel */
-    var skX=clamp((dragX-cX)*0.07,-9,9);
-    var skY=clamp((dragY-cDragY)*0.05,-6,6);
-
+    var perspPx=drag?Math.max(220,750-dragMag*2.2):750;
+    var skX=clamp((dragX-cX)*0.07,-9,9),skY=clamp((dragY-cDragY)*0.05,-6,6);
     layer.style.transform=
       'perspective('+perspPx.toFixed(0)+'px) '+
       'translate3d('+cX.toFixed(2)+'px,'+totalY.toFixed(2)+'px,0) '+
       'rotateX('+(cFlipRX+cWarpRX).toFixed(2)+'deg) '+
       'rotateY('+cWarpRY.toFixed(2)+'deg) '+
       'skewX('+skX.toFixed(2)+'deg) skewY('+skY.toFixed(2)+'deg)';
-
     requestAnimationFrame(loop);
   })();
 });
 
-/* ── MUSIC CARD — vertical flick to flip Spotify↔SoundCloud ── */
+/* MUSIC CARD FLIP */
 (function(){
-  var stage=document.getElementById('music-stage'); if(!stage)return;
+  var stage=document.getElementById('music-stage');if(!stage)return;
   var flipRX=0,cFlipRX=0,flipped=false,flipping=false;
   var drag=false,velSamples=[],lastMY=0;
   var FLIP_V=6;
-  function activeCard(){ return stage.querySelector('.music-card.active'); }
-  function triggerMusicFlip(){ flipping=true; flipped=!flipped; flipRX=flipped?180:0; setTimeout(function(){flipping=false;},750); }
-  stage.addEventListener('mousedown',function(e){ drag=true; lastMY=e.clientY; velSamples=[]; e.preventDefault(); });
-  document.addEventListener('mousemove',function(e){ if(!drag)return; velSamples.push(e.clientY-lastMY); if(velSamples.length>6)velSamples.shift(); lastMY=e.clientY; });
-  document.addEventListener('mouseup',function(){ if(!drag)return; drag=false; var avy=velSamples.length?velSamples.reduce(function(a,v){return a+v;},0)/velSamples.length:0; if(Math.abs(avy)>=FLIP_V&&!flipping)triggerMusicFlip(); });
-  stage.addEventListener('touchstart',function(e){ drag=true; lastMY=e.touches[0].clientY; velSamples=[]; },{passive:true});
-  document.addEventListener('touchmove',function(e){ if(!drag)return; velSamples.push(e.touches[0].clientY-lastMY); if(velSamples.length>6)velSamples.shift(); lastMY=e.touches[0].clientY; },{passive:true});
-  document.addEventListener('touchend',function(){ if(!drag)return; drag=false; var avy=velSamples.length?velSamples.reduce(function(a,v){return a+v;},0)/velSamples.length:0; if(Math.abs(avy)>=FLIP_V&&!flipping)triggerMusicFlip(); });
+  function activeCard(){return stage.querySelector('.music-card.active');}
+  function triggerMusicFlip(){flipping=true;flipped=!flipped;flipRX=flipped?180:0;setTimeout(function(){flipping=false;},750);}
+  stage.addEventListener('mousedown',function(e){drag=true;lastMY=e.clientY;velSamples=[];e.preventDefault();});
+  document.addEventListener('mousemove',function(e){if(!drag)return;velSamples.push(e.clientY-lastMY);if(velSamples.length>6)velSamples.shift();lastMY=e.clientY;});
+  document.addEventListener('mouseup',function(){if(!drag)return;drag=false;var avy=velSamples.length?velSamples.reduce(function(a,v){return a+v;},0)/velSamples.length:0;if(Math.abs(avy)>=FLIP_V&&!flipping)triggerMusicFlip();});
+  stage.addEventListener('touchstart',function(e){drag=true;lastMY=e.touches[0].clientY;velSamples=[];},{passive:true});
+  document.addEventListener('touchmove',function(e){if(!drag)return;velSamples.push(e.touches[0].clientY-lastMY);if(velSamples.length>6)velSamples.shift();lastMY=e.touches[0].clientY;},{passive:true});
+  document.addEventListener('touchend',function(){if(!drag)return;drag=false;var avy=velSamples.length?velSamples.reduce(function(a,v){return a+v;},0)/velSamples.length:0;if(Math.abs(avy)>=FLIP_V&&!flipping)triggerMusicFlip();});
   (function loop(){
     cFlipRX+=(flipRX-cFlipRX)*0.13;
     var mc=activeCard();
-    if(mc) mc.style.transform='translateX(0) translateZ(0) rotateY(0deg) rotateX('+cFlipRX.toFixed(2)+'deg) scale(1)';
+    if(mc)mc.style.transform='translateX(0) translateZ(0) rotateY(0deg) rotateX('+cFlipRX.toFixed(2)+'deg) scale(1)';
     requestAnimationFrame(loop);
   })();
 })();
 
-/* ── MUSIC COVERFLOW ── */
+/* MUSIC COVERFLOW */
 (function(){
   var cards=Array.prototype.slice.call(document.querySelectorAll('.music-card'));
   if(!cards.length)return;
   var current=0,total=cards.length,busy=false;
-  function setState(i,cls){ cards[i].className='music-card '+cls; cards[i].style.transform=''; }
+  function setState(i,cls){cards[i].className='music-card '+cls;cards[i].style.transform='';}
   function navigate(dir){
-    if(busy||total<2)return; busy=true;
+    if(busy||total<2)return;busy=true;
     var next=(current+dir+total)%total;
     cards[next].style.transition='none';
     setState(next,dir>0?'next':'prev');
@@ -735,31 +656,31 @@ gelLayers.forEach(function(layer, idx){
     setState(current,dir>0?'exit-left':'exit-right');
     setState(next,'active');
     var old=current;
-    setTimeout(function(){ cards[old].className='music-card'; busy=false; },750);
+    setTimeout(function(){cards[old].className='music-card';busy=false;},750);
     current=next;
   }
   var pb=document.getElementById('music-prev'),nb=document.getElementById('music-next');
-  if(pb) pb.addEventListener('click',function(){navigate(-1);});
-  if(nb) nb.addEventListener('click',function(){navigate(1);});
+  if(pb)pb.addEventListener('click',function(){navigate(-1);});
+  if(nb)nb.addEventListener('click',function(){navigate(1);});
 })();
 
-/* ── SCROLL REVEAL ── */
+/* SCROLL REVEAL */
 var obs=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');obs.unobserve(e.target);}});},{threshold:.1,rootMargin:'0px 0px -50px 0px'});
 document.querySelectorAll('.reveal').forEach(function(el){obs.observe(el);});
 
-/* ── SPLIT TEXT ── */
+/* SPLIT TEXT */
 document.querySelectorAll('.split-text').forEach(function(el){
-  var txt=el.textContent; el.textContent='';
+  var txt=el.textContent;el.textContent='';
   txt.split('').forEach(function(ch,i){var s=document.createElement('span');s.className='char';s.textContent=ch===' '?'\u00a0':ch;s.style.transitionDelay=(i*.038)+'s';el.appendChild(s);});
   var so=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');so.unobserve(e.target);}});},{threshold:.25});
   so.observe(el);
 });
 
-/* ── NAV HIDE ── */
+/* NAV HIDE */
 var nav=document.querySelector('nav'),lsy=0;
 window.addEventListener('scroll',function(){var c=window.scrollY;nav.style.transform=(c>lsy&&c>100)?'translateY(-100%)':'translateY(0)';lsy=c;},{passive:true});
 
-/* ── SMOOTH ANCHORS ── */
+/* SMOOTH ANCHORS */
 document.querySelectorAll('a[href^="#"]').forEach(function(a){
   a.addEventListener('click',function(e){e.preventDefault();var t=document.querySelector(a.getAttribute('href'));if(t)t.scrollIntoView({behavior:'smooth',block:'start'});});
 });
