@@ -93,12 +93,12 @@
     .split-text.in .char { opacity: 1; transform: translateY(0); }
 
     /* SECTIONS */
-    section { padding: 9rem 4rem; max-width: 1280px; margin: 0 auto; perspective: 900px; perspective-origin: center center; }
+    section { padding: 9rem 4rem; max-width: 1280px; margin: 0 auto; }
     .section-label { font-size: 9px; letter-spacing: .6em; text-transform: uppercase; color: rgba(255,255,255,.22); margin-bottom: 1rem; }
     .section-title { font-family: 'Syne', sans-serif; font-size: clamp(2rem,4.5vw,3.4rem); font-weight: 600; letter-spacing: -.01em; margin-bottom: 4.5rem; padding-bottom: 2rem; border-bottom: 1px solid var(--border); color: rgba(255,255,255,.9); }
 
     /* GEL LAYER */
-    .gel-layer { position: relative; will-change: transform; transform-style: preserve-3d; cursor: grab; }
+    .gel-layer { position: relative; will-change: transform; transform-style: preserve-3d; cursor: grab; transform-origin: 50% 50%; }
     .gel-layer:active { cursor: grabbing; }
     .gel-layer::after { content: 'drag'; position: absolute; right: 0; top: -1.8rem; font-size: 9px; letter-spacing: .4em; text-transform: uppercase; color: rgba(255,255,255,.1); pointer-events: none; }
 
@@ -485,165 +485,209 @@ function updateHeroFloat(){
 window.addEventListener('scroll',function(){sY=window.scrollY;updateHeroFloat();},{passive:true});
 
 /* ── GEL LAYERS ──
-   Horizontal drag = translate X/Y (gel).
-   Fast VERTICAL flick = flip once (rotateX 0↔180, vertical over-the-top).
-   Scroll updates parallaxY separately — never resets drag position.
-   Music section: same drag/flip logic, driven on the music stage directly.
+   transformOrigin is ALWAYS 50% 50% — flip NEVER moves off center.
+   Drag: translate only (moves element off anchor while held, springs back).
+   Fast vertical flick: flip once (rotateX 0↔180). Resets to center on trigger.
+   Fisheye: perspective shrinks with drag distance, tilt adds barrel warp.
+   Collective flip: photos fall with gravity + container jerks up.
 ── */
+
+/* Photo fall — fires when collective flips */
+function spawnPhotoFall(){
+  var photos = document.querySelectorAll('.members-grid .member-photo');
+  photos.forEach(function(photo, i){
+    var rect = photo.getBoundingClientRect();
+    if(!rect.width) return;
+    var el = document.createElement('div');
+    el.style.cssText =
+      'position:fixed;top:0;left:0;pointer-events:none;z-index:800;overflow:hidden;'+
+      'width:'+rect.width+'px;height:'+rect.height+'px;'+
+      'transform:translate('+rect.left.toFixed(1)+'px,'+rect.top.toFixed(1)+'px);';
+    var inner = photo.cloneNode(true);
+    inner.style.cssText='width:100%;height:100%;margin:0;';
+    el.appendChild(inner);
+    document.body.appendChild(el);
+
+    var x=rect.left, y=rect.top;
+    var vx=(Math.random()-0.5)*7;
+    var vy=-(Math.random()*3+0.5);
+    var grav=0.48+Math.random()*0.28;
+    var ang=0, angV=(Math.random()-0.5)*5;
+    var op=1;
+
+    setTimeout(function(){
+      (function fall(){
+        vy+=grav; x+=vx; y+=vy; ang+=angV; angV*=0.985;
+        op=Math.max(0,op-0.013);
+        el.style.transform='translate('+x.toFixed(1)+'px,'+y.toFixed(1)+'px) rotate('+ang.toFixed(2)+'deg)';
+        el.style.opacity=op;
+        el.style.filter='brightness('+Math.max(0,(op*0.8)).toFixed(3)+')';
+        if(y<innerHeight+300&&op>0) requestAnimationFrame(fall);
+        else if(el.parentNode) el.parentNode.removeChild(el);
+      })();
+    }, i*55+Math.random()*80);
+  });
+}
+
 var gelLayers = Array.prototype.slice.call(document.querySelectorAll('.gel-layer'));
-var gelStates = gelLayers.map(function(){ return { cY:0 }; });
-var FLIP_VEL  = 7; /* px/frame avg Y-velocity to trigger flip */
+var gelStates = gelLayers.map(function(){ return {cY:0}; });
+var FLIP_VEL  = 6;
 
 gelLayers.forEach(function(layer, idx){
-  var depth = parseFloat(layer.dataset.gel)||20;
+  var depth      = parseFloat(layer.dataset.gel)||20;
+  var isCollect  = layer.classList.contains('members-grid');
 
-  /* drag offset — what the user has pulled it to */
-  var dragX=0, cX=0;
-  var dragY=0, cDragY=0;
-  /* scroll parallax — purely from page scroll, never touched by drag */
+  /* translate — drag only, always springs back to 0 */
+  var dragX=0, cX=0, dragY=0, cDragY=0;
+  /* parallax from scroll — additive, never touches drag */
   var parallaxY=0;
-  /* flip rotation — 0 or 180, springs smoothly */
+  /* flip rotation — 0 or 180, always around 50% 50% */
   var flipTarget=0, cFlipRX=0, flipped=false, flipping=false;
-  /* corner warp */
+  /* warp (fisheye tilt — NOT from changing transformOrigin) */
   var warpRX=0,cWarpRX=0, warpRY=0,cWarpRY=0;
-  var grabNX=0, grabNY=0;
+  /* jerk — quick upward snap on collective flip */
+  var jerkY=0, cJerkY=0;
   /* drag state */
   var drag=false, dsx=0,dsy=0, dtx=0,dty=0;
-  /* velocity samples — X and Y tracked separately */
-  var velSamples=[], lastMX=0, lastMY=0;
+  var velSamples=[], lastMY=0, lastMX=0;
   /* neighbor push */
   var pushY=0, cPushY=0;
 
+  /* lock transform-origin to center — belt and suspenders */
+  layer.style.transformOrigin='50% 50%';
+
   /* ── MOUSEDOWN ── */
-  layer.addEventListener('mousedown', function(e){
+  layer.addEventListener('mousedown',function(e){
     drag=true;
     dsx=e.clientX; dsy=e.clientY;
     dtx=dragX; dty=dragY;
     lastMX=e.clientX; lastMY=e.clientY;
     velSamples=[];
-    var r=layer.getBoundingClientRect();
-    grabNX=((e.clientX-r.left)/r.width -0.5)*2;
-    grabNY=((e.clientY-r.top) /r.height-0.5)*2;
-    var ox=(1-(grabNX+1)/2)*100, oy=(1-(grabNY+1)/2)*100;
-    layer.style.transformOrigin=ox+'% '+oy+'%';
+    /* transformOrigin stays 50% 50% — always */
     e.preventDefault();
   });
 
   /* ── MOUSEMOVE ── */
-  document.addEventListener('mousemove', function(e){
+  document.addEventListener('mousemove',function(e){
     if(!drag) return;
-    var dx=e.clientX-dsx, dy=e.clientY-dsy, lim=depth*5;
-    dragX = clamp(dtx+dx, -lim, lim);
-    dragY = clamp(dty+dy, -lim*.7, lim*.7);
-    /* corner warp from grab point */
-    var cx = (Math.abs(grabNX)>.45 && Math.abs(grabNY)>.45) ? 1.6 : 1;
-    warpRX = clamp(-dy*grabNY*0.16*Math.abs(grabNY)*cx, -50, 50);
-    warpRY = clamp( dx*grabNX*0.16*Math.abs(grabNX)*cx, -50, 50);
-    /* record Y velocity only */
-    velSamples.push({ vx: e.clientX-lastMX, vy: e.clientY-lastMY });
+    var dx=e.clientX-dsx, dy=e.clientY-dsy;
+    var lim=depth*5;
+    dragX=clamp(dtx+dx,-lim,lim);
+    dragY=clamp(dty+dy,-lim*.7,lim*.7);
+    /* warp tilt — creates fisheye-like distortion from center, no origin change */
+    warpRX=clamp(dy*0.045,-14,14);
+    warpRY=clamp(dx*0.045,-14,14);
+    velSamples.push({vx:e.clientX-lastMX, vy:e.clientY-lastMY});
     if(velSamples.length>6) velSamples.shift();
     lastMX=e.clientX; lastMY=e.clientY;
   });
 
-  /* ── MOUSEUP — decide move vs flip ── */
-  document.addEventListener('mouseup', function(){
-    if(!drag) return;
-    drag=false;
-    setTimeout(function(){ layer.style.transformOrigin='50% 50%'; }, 500);
-    if(!velSamples.length) return;
-    var avx=0, avy=0;
-    velSamples.forEach(function(s){ avx+=s.vx; avy+=s.vy; });
+  /* ── MOUSEUP — vertical fast flick = flip, else spring back ── */
+  document.addEventListener('mouseup',function(){
+    if(!drag) return; drag=false;
+    if(!velSamples.length){ dragX=0; dragY=0; return; }
+    var avx=0,avy=0;
+    velSamples.forEach(function(s){avx+=s.vx;avy+=s.vy;});
     avx/=velSamples.length; avy/=velSamples.length;
-    var absY=Math.abs(avy), absX=Math.abs(avx);
-    /* flip only when: Y-dominant AND fast enough */
-    if(absY >= FLIP_VEL && absY > absX*0.8 && !flipping){
+    /* flip: Y-dominant and fast */
+    if(Math.abs(avy)>=FLIP_VEL && Math.abs(avy)>Math.abs(avx)*0.75 && !flipping){
+      /* snap back to center before flipping */
+      dragX=0; dragY=0;
       triggerFlip();
+    } else {
+      dragX=0; dragY=0;
     }
-    /* release drag translation — spring back naturally */
-    dragX=0; dragY=0;
   });
 
   /* ── TOUCH ── */
-  layer.addEventListener('touchstart', function(e){
-    drag=true;
-    dsx=e.touches[0].clientX; dsy=e.touches[0].clientY;
-    dtx=dragX; dty=dragY;
-    lastMX=dsx; lastMY=dsy; velSamples=[];
-    var r=layer.getBoundingClientRect();
-    grabNX=((e.touches[0].clientX-r.left)/r.width-0.5)*2;
-    grabNY=((e.touches[0].clientY-r.top)/r.height-0.5)*2;
+  layer.addEventListener('touchstart',function(e){
+    drag=true; dsx=e.touches[0].clientX; dsy=e.touches[0].clientY;
+    dtx=dragX; dty=dragY; lastMX=dsx; lastMY=dsy; velSamples=[];
   },{passive:true});
-  document.addEventListener('touchmove', function(e){
+  document.addEventListener('touchmove',function(e){
     if(!drag)return;
-    var tx=e.touches[0].clientX, ty=e.touches[0].clientY;
-    dragX=clamp(dtx+(tx-dsx), -depth*4, depth*4);
-    dragY=clamp(dty+(ty-dsy), -depth*3, depth*3);
-    velSamples.push({vx:tx-lastMX, vy:ty-lastMY});
-    if(velSamples.length>6) velSamples.shift();
-    lastMX=tx; lastMY=ty;
+    var tx=e.touches[0].clientX,ty=e.touches[0].clientY;
+    dragX=clamp(dtx+(tx-dsx),-depth*4,depth*4);
+    dragY=clamp(dty+(ty-dsy),-depth*3,depth*3);
+    warpRX=clamp((ty-dsy)*0.045,-14,14);
+    warpRY=clamp((tx-dsx)*0.045,-14,14);
+    velSamples.push({vx:tx-lastMX,vy:ty-lastMY});
+    if(velSamples.length>6)velSamples.shift();
+    lastMX=tx;lastMY=ty;
   },{passive:true});
-  document.addEventListener('touchend', function(){
+  document.addEventListener('touchend',function(){
     if(!drag)return; drag=false;
-    if(!velSamples.length)return;
-    var avy=0, avx=0;
-    velSamples.forEach(function(s){ avy+=s.vy; avx+=s.vx; });
-    avy/=velSamples.length; avx/=velSamples.length;
-    if(Math.abs(avy)>=FLIP_VEL && Math.abs(avy)>Math.abs(avx)*0.8 && !flipping) triggerFlip();
-    dragX=0; dragY=0;
+    var avy=0,avx=0;
+    velSamples.forEach(function(s){avy+=s.vy;avx+=s.vx;});
+    if(velSamples.length){avy/=velSamples.length;avx/=velSamples.length;}
+    if(Math.abs(avy)>=FLIP_VEL&&Math.abs(avy)>Math.abs(avx)*0.75&&!flipping){
+      dragX=0; dragY=0; triggerFlip();
+    } else { dragX=0; dragY=0; }
   });
 
-  /* ── SCROLL — only updates parallax, never touches dragY ── */
-  window.addEventListener('scroll', function(){
+  /* ── SCROLL — parallax only, never resets drag ── */
+  window.addEventListener('scroll',function(){
     var r=layer.getBoundingClientRect();
-    parallaxY = -((r.top + r.height/2 - innerHeight/2) * depth / 900);
-    parallaxY = clamp(parallaxY, -depth*2.5, depth*2.5);
+    parallaxY=clamp(-((r.top+r.height/2-innerHeight/2)*depth/900),-depth*2.5,depth*2.5);
   },{passive:true});
 
-  /* ── FLIP — vertical rotateX, 0 ↔ 180 ── */
+  /* ── FLIP ── */
   function triggerFlip(){
     flipping=true; flipped=!flipped;
-    flipTarget = flipped ? 180 : 0;
-    setTimeout(function(){ flipping=false; }, 750);
+    flipTarget=flipped?180:0;
+    /* jerk up — slight upward snap, then spring back */
+    if(isCollect){
+      jerkY=-18;
+      setTimeout(function(){ jerkY=0; },90);
+      if(flipped) setTimeout(spawnPhotoFall,60);
+    }
+    setTimeout(function(){ flipping=false; },800);
   }
 
   /* ── SPRING LOOP ── */
   (function loop(){
     /* warp decays when not dragging */
-    if(!drag){ warpRX*=.80; warpRY*=.80; }
+    if(!drag){ warpRX*=.78; warpRY*=.78; }
 
-    /* flip springs smoothly to 0 or 180 — higher lerp = snappier flip */
-    cFlipRX += (flipTarget - cFlipRX) * 0.13;
+    /* flip springs to target — 0.13 lerp feels snappy not instant */
+    cFlipRX+=(flipTarget-cFlipRX)*0.13;
+
+    /* jerk — fast lerp so the snap is immediate, return is damped */
+    cJerkY+=(jerkY-cJerkY)*0.28;
 
     /* neighbor push */
     pushY=0;
-    var myR=layer.getBoundingClientRect(), myC=myR.top+myR.height/2;
+    var myR=layer.getBoundingClientRect(),myC=myR.top+myR.height/2;
     gelStates.forEach(function(st,j){
       if(j===idx)return;
-      var oR=gelLayers[j].getBoundingClientRect(), oC=oR.top+oR.height/2;
-      var sd=oC-myC, ad=Math.abs(sd)+1;
+      var oR=gelLayers[j].getBoundingClientRect(),oC=oR.top+oR.height/2;
+      var sd=oC-myC,ad=Math.abs(sd)+1;
       var inf=clamp(1-ad/1200,0,1); if(inf<.01)return;
-      pushY += (sd>0?-1:1)*st.cY*inf*0.32;
+      pushY+=(sd>0?-1:1)*st.cY*inf*0.32;
     });
-    cPushY += (pushY-cPushY)*0.018;
+    cPushY+=(pushY-cPushY)*0.018;
 
-    /* translate: drag springs back after release, parallax is additive */
-    var lf = drag ? 0.17 : 0.08;
-    cX    += (dragX - cX) * lf;
-    cDragY+= (dragY - cDragY) * lf;
-    var totalY = cDragY + parallaxY + cPushY;
+    /* translate */
+    var lf=drag?0.17:0.08;
+    cX    +=(dragX-cX)*lf;
+    cDragY+=(dragY-cDragY)*lf;
+    var totalY=cDragY+parallaxY+cPushY+cJerkY;
+    gelStates[idx].cY=totalY;
 
-    gelStates[idx].cY = totalY;
+    /* warp */
+    cWarpRX+=(warpRX-cWarpRX)*0.22;
+    cWarpRY+=(warpRY-cWarpRY)*0.22;
 
-    /* warp lerps in responsive */
-    cWarpRX += (warpRX-cWarpRX)*0.22;
-    cWarpRY += (warpRY-cWarpRY)*0.22;
+    /* fisheye: perspective shrinks as drag distance grows */
+    var dragMag=Math.sqrt(cX*cX+cDragY*cDragY);
+    var perspPx=drag ? Math.max(220,750-dragMag*2.2) : 750;
 
-    /* skew from stretch */
-    var skX=clamp((dragX-cX)*0.055,-6,6);
-    var skY=clamp((dragY-cDragY)*0.04,-4,4);
+    /* skew from stretch — wider than before for the drag distort feel */
+    var skX=clamp((dragX-cX)*0.07,-9,9);
+    var skY=clamp((dragY-cDragY)*0.05,-6,6);
 
-    /* total rotateX = flip + warp corner; rotateY = warp side */
     layer.style.transform=
+      'perspective('+perspPx.toFixed(0)+'px) '+
       'translate3d('+cX.toFixed(2)+'px,'+totalY.toFixed(2)+'px,0) '+
       'rotateX('+(cFlipRX+cWarpRX).toFixed(2)+'deg) '+
       'rotateY('+cWarpRY.toFixed(2)+'deg) '+
@@ -653,61 +697,24 @@ gelLayers.forEach(function(layer, idx){
   })();
 });
 
-/* ── MUSIC CARD — drag + vertical flip (Spotify ↔ SoundCloud) ── */
+/* ── MUSIC CARD — vertical flick to flip Spotify↔SoundCloud ── */
 (function(){
-  var stage   = document.getElementById('music-stage');
-  if(!stage) return;
-  var flipRX=0, cFlipRX=0, flipped=false, flipping=false;
-  var drag=false, dsy=0, dty=0;
-  var velSamples=[], lastMY=0;
-  var FLIP_V=7;
-
+  var stage=document.getElementById('music-stage'); if(!stage)return;
+  var flipRX=0,cFlipRX=0,flipped=false,flipping=false;
+  var drag=false,velSamples=[],lastMY=0;
+  var FLIP_V=6;
   function activeCard(){ return stage.querySelector('.music-card.active'); }
-
-  function triggerMusicFlip(){
-    flipping=true; flipped=!flipped;
-    flipRX=flipped?180:0;
-    setTimeout(function(){ flipping=false; },750);
-  }
-
-  stage.addEventListener('mousedown',function(e){
-    drag=true; dsy=e.clientY; dty=flipRX;
-    lastMY=e.clientY; velSamples=[];
-    e.preventDefault();
-  });
-  document.addEventListener('mousemove',function(e){
-    if(!drag)return;
-    velSamples.push(e.clientY-lastMY);
-    if(velSamples.length>6) velSamples.shift();
-    lastMY=e.clientY;
-  });
-  document.addEventListener('mouseup',function(){
-    if(!drag)return; drag=false;
-    if(!velSamples.length)return;
-    var avy=velSamples.reduce(function(a,v){return a+v;},0)/velSamples.length;
-    if(Math.abs(avy)>=FLIP_V && !flipping) triggerMusicFlip();
-  });
-  stage.addEventListener('touchstart',function(e){
-    drag=true; dsy=e.touches[0].clientY; lastMY=dsy; velSamples=[];
-  },{passive:true});
-  document.addEventListener('touchmove',function(e){
-    if(!drag)return;
-    velSamples.push(e.touches[0].clientY-lastMY);
-    if(velSamples.length>6) velSamples.shift();
-    lastMY=e.touches[0].clientY;
-  },{passive:true});
-  document.addEventListener('touchend',function(){
-    if(!drag)return; drag=false;
-    var avy=velSamples.length?velSamples.reduce(function(a,v){return a+v;},0)/velSamples.length:0;
-    if(Math.abs(avy)>=FLIP_V && !flipping) triggerMusicFlip();
-  });
-
-  /* spring loop for music flip */
+  function triggerMusicFlip(){ flipping=true; flipped=!flipped; flipRX=flipped?180:0; setTimeout(function(){flipping=false;},750); }
+  stage.addEventListener('mousedown',function(e){ drag=true; lastMY=e.clientY; velSamples=[]; e.preventDefault(); });
+  document.addEventListener('mousemove',function(e){ if(!drag)return; velSamples.push(e.clientY-lastMY); if(velSamples.length>6)velSamples.shift(); lastMY=e.clientY; });
+  document.addEventListener('mouseup',function(){ if(!drag)return; drag=false; var avy=velSamples.length?velSamples.reduce(function(a,v){return a+v;},0)/velSamples.length:0; if(Math.abs(avy)>=FLIP_V&&!flipping)triggerMusicFlip(); });
+  stage.addEventListener('touchstart',function(e){ drag=true; lastMY=e.touches[0].clientY; velSamples=[]; },{passive:true});
+  document.addEventListener('touchmove',function(e){ if(!drag)return; velSamples.push(e.touches[0].clientY-lastMY); if(velSamples.length>6)velSamples.shift(); lastMY=e.touches[0].clientY; },{passive:true});
+  document.addEventListener('touchend',function(){ if(!drag)return; drag=false; var avy=velSamples.length?velSamples.reduce(function(a,v){return a+v;},0)/velSamples.length:0; if(Math.abs(avy)>=FLIP_V&&!flipping)triggerMusicFlip(); });
   (function loop(){
-    cFlipRX += (flipRX-cFlipRX)*0.13;
+    cFlipRX+=(flipRX-cFlipRX)*0.13;
     var mc=activeCard();
-    if(mc) mc.style.transform=
-      'translateX(0) translateZ(0) rotateY(0) rotateX('+cFlipRX.toFixed(2)+'deg) scale(1)';
+    if(mc) mc.style.transform='translateX(0) translateZ(0) rotateY(0deg) rotateX('+cFlipRX.toFixed(2)+'deg) scale(1)';
     requestAnimationFrame(loop);
   })();
 })();
@@ -716,25 +723,22 @@ gelLayers.forEach(function(layer, idx){
 (function(){
   var cards=Array.prototype.slice.call(document.querySelectorAll('.music-card'));
   if(!cards.length)return;
-  var current=0, total=cards.length, busy=false;
+  var current=0,total=cards.length,busy=false;
   function setState(i,cls){ cards[i].className='music-card '+cls; cards[i].style.transform=''; }
   function navigate(dir){
     if(busy||total<2)return; busy=true;
     var next=(current+dir+total)%total;
-    var exitCls=dir>0?'exit-left':'exit-right';
-    var fromCls=dir>0?'next':'prev';
-    /* snap incoming to start position with no transition */
     cards[next].style.transition='none';
-    setState(next,fromCls);
-    cards[next].offsetHeight; /* reflow */
+    setState(next,dir>0?'next':'prev');
+    cards[next].offsetHeight;
     cards[next].style.transition='';
-    setState(current,exitCls);
+    setState(current,dir>0?'exit-left':'exit-right');
     setState(next,'active');
     var old=current;
     setTimeout(function(){ cards[old].className='music-card'; busy=false; },750);
     current=next;
   }
-  var pb=document.getElementById('music-prev'), nb=document.getElementById('music-next');
+  var pb=document.getElementById('music-prev'),nb=document.getElementById('music-next');
   if(pb) pb.addEventListener('click',function(){navigate(-1);});
   if(nb) nb.addEventListener('click',function(){navigate(1);});
 })();
