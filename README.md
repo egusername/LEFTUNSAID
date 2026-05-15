@@ -19,6 +19,6 @@ Website: https://leftunsaid.world/
 Follow us on Instagram: https://www.instagram.com/leftunsaid.mp3
 
 ```bat
-COMING SOON
+MORE HIDDEN FEATURES COMING SOON
 ```
 </div>
