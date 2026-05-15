@@ -20,5 +20,6 @@ Follow us on Instagram: https://www.instagram.com/leftunsaid.mp3
 
 ```bat
 MORE HIDDEN FEATURES COMING SOON
+(will include a minigame for 
 ```
 </div>
