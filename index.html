@@ -103,20 +103,22 @@
     .music-arrow { flex-shrink: 0; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; color: rgba(255,255,255,.25); font-size: 18px; font-family: 'Outfit', sans-serif; font-weight: 300; background: none; border: none; cursor: none; z-index: 10; transition: color .3s; user-select: none; }
     .music-arrow:hover { color: #fff; }
     .music-coverflow { cursor: none; }
-    .music-stage { flex: 1; perspective: 1400px; perspective-origin: center center; overflow: visible; position: relative; min-height: 420px; user-select: none; -webkit-user-select: none; }
+    .music-stage { flex: 1; perspective: 1400px; perspective-origin: center center; overflow: visible; position: relative; min-height: 400px; user-select: none; -webkit-user-select: none; }
     .music-card { position: absolute; inset: 0; transform-style: preserve-3d; transition: transform .72s cubic-bezier(.16,1,.3,1), opacity .5s ease; opacity: 0; pointer-events: none; transform: translateX(60%) translateZ(-320px) rotateY(-18deg) scale(.82); }
     .music-card.prev { opacity: .45; pointer-events: none; transform: translateX(-60%) translateZ(-320px) rotateY(18deg) scale(.82); }
     .music-card.active { opacity: 1; pointer-events: all; transform: translateX(0) translateZ(0) rotateY(0deg) scale(1); }
     .music-card.next { opacity: .45; pointer-events: none; transform: translateX(60%) translateZ(-320px) rotateY(-18deg) scale(.82); }
     .music-card.exit-left { opacity: 0; pointer-events: none; transform: translateX(-120%) translateZ(-500px) rotateY(35deg) scale(.6); }
     .music-card.exit-right { opacity: 0; pointer-events: none; transform: translateX(120%) translateZ(-500px) rotateY(-35deg) scale(.6); }
-    .card-face { position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden; display: grid; grid-template-columns: repeat(auto-fit, minmax(280px,1fr)); gap: 1px; background: var(--border); border: 1px solid var(--border); }
+    .card-face { position: absolute; top: 0; left: 0; right: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden; display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); }
     .card-face.back { transform: rotateX(180deg); background: #0a0a0a; }
     .music-card.flipped { transform: translateX(0) translateZ(0) rotateY(0deg) rotateX(180deg) scale(1); }
     .embed-cell { background: var(--bg); padding: 1.4rem; transition: background .4s; }
     .embed-cell:hover { background: rgba(255,255,255,.03); }
     .embed-cell iframe { display: block; width: 100%; border: none; border-radius: 8px; }
-    .platform-label { position: absolute; top: 1rem; right: 1.4rem; font-size: 9px; letter-spacing: .4em; text-transform: uppercase; color: rgba(255,255,255,.2); pointer-events: none; }
+    .card-face.back .embed-cell { overflow: hidden; }
+    .card-face.back .embed-cell iframe { width: 111%; height: 189px; transform: scale(0.9); transform-origin: top left; filter: brightness(0.92) invert(1) hue-rotate(180deg); }
+    .platform-label { position: absolute; top: 1rem; right: 1.4rem; color: rgba(255,255,255,.2); pointer-events: none; line-height: 0; }
     .flip-hint { text-align: center; margin-top: 1.2rem; font-size: 9px; letter-spacing: .35em; text-transform: uppercase; color: rgba(255,255,255,.14); }
 
     #collective { border-top: 1px solid var(--border); }
@@ -181,12 +183,13 @@
       .gallery-item:nth-child(6){grid-column:span 2;grid-row:span 2}
       .gallery-item:nth-child(7){grid-column:span 2}
       .gallery-item:nth-child(8){grid-column:span 2}
-      .music-stage { min-height:320px; }
+      .music-stage { min-height:500px; }
       .music-arrow { width:34px; height:34px; font-size:16px; }
       .embed-cell { padding:.9rem; }
       .embed-cell iframe { height:130px; }
       .flip-hint { font-size:8px; }
       .card-face { grid-template-columns: 1fr 1fr; }
+      .music-stage { min-height: 500px; }
       footer { padding:2.5rem 1.2rem; flex-direction:column; align-items:flex-start; gap:1.2rem; }
       footer img { height:22px; }
       .footer-links { gap:1.5rem; }
@@ -253,28 +256,17 @@
             <div class="embed-cell"><iframe src="https://open.spotify.com/embed/track/4TCd0F2CFdkZ6BKmwEmJIm?utm_source=generator&theme=0" height="152" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe></div>
             <div class="embed-cell"><iframe src="https://open.spotify.com/embed/album/20rFFtGxzPzs9sWiMUXwlL?utm_source=generator&theme=0" height="152" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe></div>
             <div class="embed-cell"><iframe src="https://open.spotify.com/embed/track/1BUHTUP47zAwdFTbaX72kg?utm_source=generator&theme=0" height="152" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe></div>
+            <div class="embed-cell"><iframe src="https://open.spotify.com/embed/track/1RdEHgFHTNlfyvn1danZj3?utm_source=generator&theme=0" height="152" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe></div>
+            <div class="embed-cell"><iframe src="https://open.spotify.com/embed/track/0lA5KduTVKboZkSwZhIT7M?utm_source=generator&theme=0" height="152" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe></div>
           </div>
           <div class="card-face back">
-            <span class="platform-label">Soundcloud</span>
-            <div class="embed-cell"><iframe width="100%" height="152" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//soundcloud.com/flxri/ketamine&color=%23111111&auto_play=false&hide_related=true&show_comments=false&show_user=true&show_reposts=false&show_teaser=false"></iframe></div>
-            <div class="embed-cell"><iframe width="100%" height="152" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//soundcloud.com/flxri/never-heard-of-me&color=%23111111&auto_play=false&hide_related=true&show_comments=false&show_user=true&show_reposts=false&show_teaser=false"></iframe></div>
-            <div class="embed-cell"><iframe width="100%" height="152" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//soundcloud.com/flxri/s-ft-ye-and-rich-the-kid&color=%23111111&auto_play=false&hide_related=true&show_comments=false&show_user=true&show_reposts=false&show_teaser=false"></iframe></div>
-            <div class="embed-cell"><iframe width="100%" height="152" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/placeholder4&color=%23111111&auto_play=false&hide_related=true&show_comments=false&show_user=true&show_reposts=false&show_teaser=false"></iframe></div>
-          </div>
-        </div>
-        <div class="music-card" id="mc-1">
-          <div class="card-face front">
-            <div class="embed-cell"><iframe src="https://open.spotify.com/embed/track/placeholder5?utm_source=generator&theme=0" height="152" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe></div>
-            <div class="embed-cell"><iframe src="https://open.spotify.com/embed/track/placeholder6?utm_source=generator&theme=0" height="152" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe></div>
-            <div class="embed-cell"><iframe src="https://open.spotify.com/embed/track/placeholder7?utm_source=generator&theme=0" height="152" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe></div>
-            <div class="embed-cell"><iframe src="https://open.spotify.com/embed/track/placeholder8?utm_source=generator&theme=0" height="152" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe></div>
-          </div>
-          <div class="card-face back">
-            <span class="platform-label">Soundcloud</span>
-            <div class="embed-cell"><iframe width="100%" height="152" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/placeholder5&color=%23111111&auto_play=false&hide_related=true&show_comments=false&show_user=true&show_reposts=false&show_teaser=false"></iframe></div>
-            <div class="embed-cell"><iframe width="100%" height="152" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/placeholder6&color=%23111111&auto_play=false&hide_related=true&show_comments=false&show_user=true&show_reposts=false&show_teaser=false"></iframe></div>
-            <div class="embed-cell"><iframe width="100%" height="152" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/placeholder7&color=%23111111&auto_play=false&hide_related=true&show_comments=false&show_user=true&show_reposts=false&show_teaser=false"></iframe></div>
-            <div class="embed-cell"><iframe width="100%" height="152" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/placeholder8&color=%23111111&auto_play=false&hide_related=true&show_comments=false&show_user=true&show_reposts=false&show_teaser=false"></iframe></div>
+            <span class="platform-label"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 15" width="22" height="14" fill="currentColor"><path d="M19 5a7 7 0 0 0-13.6 1.7A4.5 4.5 0 1 0 4.5 15H19a5 5 0 0 0 0-10z"/></svg></span>
+            <div class="embed-cell"><iframe width="100%" height="170" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//soundcloud.com/flxri/ketamine&color=%23111111&auto_play=false&hide_related=true&show_comments=false&show_user=true&show_reposts=false&show_teaser=false"></iframe></div>
+            <div class="embed-cell"><iframe width="100%" height="170" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//soundcloud.com/flxri/never-heard-of-me&color=%23111111&auto_play=false&hide_related=true&show_comments=false&show_user=true&show_reposts=false&show_teaser=false"></iframe></div>
+            <div class="embed-cell"><iframe width="100%" height="170" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//soundcloud.com/flxri/s-ft-ye-and-rich-the-kid&color=%23111111&auto_play=false&hide_related=true&show_comments=false&show_user=true&show_reposts=false&show_teaser=false"></iframe></div>
+            <div class="embed-cell"><iframe width="100%" height="170" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//soundcloud.com/pesokain/mtg-berimbau-arabe&color=%23111111&auto_play=false&hide_related=true&show_comments=false&show_user=true&show_reposts=false&show_teaser=false"></iframe></div>
+            <div class="embed-cell"><iframe width="100%" height="170" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//soundcloud.com/pesokain/mileage&color=%23111111&auto_play=false&hide_related=true&show_comments=false&show_user=true&show_reposts=false&show_teaser=false"></iframe></div>
+            <div class="embed-cell"><iframe width="100%" height="170" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//soundcloud.com/pesokain/heart-shaped-box-dnb-nxc-remix&color=%23111111&auto_play=false&hide_related=true&show_comments=false&show_user=true&show_reposts=false&show_teaser=false"></iframe></div>
           </div>
         </div>
       </div>
