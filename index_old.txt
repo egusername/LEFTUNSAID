@@ -11,11 +11,11 @@
     html { scroll-behavior: auto; }
     body { background: var(--bg); color: #fff; font-family: 'Outfit', sans-serif; font-weight: 300; overflow-x: hidden; cursor: none; }
 
-    /* CURSOR */
-    #cursor { position: fixed; width: 8px; height: 8px; background: #fff; border-radius: 50%; pointer-events: none; z-index: 9999; transform: translate(-50%,-50%); transition: width .25s, height .25s; mix-blend-mode: difference; }
-    #cursor-ring { position: fixed; width: 34px; height: 34px; border: 1px solid rgba(255,255,255,.35); border-radius: 50%; pointer-events: none; z-index: 9998; transform: translate(-50%,-50%); transition: width .45s cubic-bezier(.25,.46,.45,.94), height .45s cubic-bezier(.25,.46,.45,.94); mix-blend-mode: difference; }
+    #cursor { display: none; }
+    #cursor-ring { position: fixed; width: 34px; height: 34px; border: 1px solid rgba(255,255,255,.35); border-radius: 50%; pointer-events: none; z-index: 9998; transform: translate(-50%,-50%); transition: width .45s cubic-bezier(.25,.46,.45,.94), height .45s cubic-bezier(.25,.46,.45,.94), border-radius .25s cubic-bezier(.25,.46,.45,.94), opacity .3s ease; mix-blend-mode: difference; opacity: 0; }
+    a, button { cursor: none; }
+    #veil { position: fixed; inset: 0; background: #000; z-index: 999; pointer-events: none; opacity: 1; transition: opacity .3s ease; }
 
-    /* INTRO */
     #intro { position: fixed; inset: 0; background: #000; display: flex; align-items: center; justify-content: center; z-index: 1000; pointer-events: none; }
     #intro-stack { position: relative; width: 220px; height: 220px; opacity: 0; animation: introFade 3.2s ease forwards; }
     @keyframes introFade {
@@ -30,22 +30,18 @@
     #intro.done  { display: none; }
     #intro-lu-wrap { position: absolute; top: 50%; left: 50%; width: 71.5%; height: 71.5%; margin-top: -35.75%; margin-left: -35.75%; }
 
-    /* NOISE */
     #noise { position: fixed; inset: 0; z-index: 1; pointer-events: none; opacity: .022;
       background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
       background-size: 180px; }
 
-    /* MAIN */
     #main { opacity: 0; }
-    #main.visible { opacity: 1; transition: opacity .3s ease; }
+    #main.visible { opacity: 1; }
 
-    /* NAV */
     nav {
       position: fixed; top: 0; left: 0; right: 0; z-index: 100;
       display: flex; align-items: center; justify-content: space-between;
       padding: 1.5rem 3rem;
       background: linear-gradient(to bottom, rgba(0,0,0,0.9), transparent);
-      transition: transform .5s cubic-bezier(.16,1,.3,1);
     }
     nav a.nav-logo img { height: 102px; opacity: 0.9; display: block; }
     nav ul { list-style: none; display: flex; gap: 2.5rem; }
@@ -57,7 +53,6 @@
     }
     nav ul li a:hover { color: #fff; }
 
-    /* HERO */
     #hero {
       min-height: 100vh; display: flex; flex-direction: column;
       align-items: center; justify-content: center;
@@ -69,39 +64,22 @@
       pointer-events: none;
     }
     #hero-canvas { position: absolute; inset: 0; width: 100%; height: 100%; opacity: .1; z-index: 0; }
-
-    .hero-center {
-      position: relative; display: flex; align-items: center;
-      justify-content: center; width: 100%; flex: 1;
-    }
-    .hero-globe {
-      width: min(600px, 90vw); opacity: 0.07;
-      position: absolute; top: 50%; left: 50%;
-      transform-origin: 49.6% 47.2%; will-change: transform;
-    }
+    .hero-center { position: relative; display: flex; align-items: center; justify-content: center; width: 100%; flex: 1; }
+    .hero-globe { width: min(600px, 90vw); opacity: 0.07; position: absolute; top: 50%; left: 50%; transform-origin: 49.6% 47.2%; will-change: transform; }
     .hero-content { position: relative; text-align: center; z-index: 2; }
-    .hero-sub {
-      font-size: 11px; letter-spacing: 0.4em; text-transform: uppercase;
-      color: rgba(255,255,255,0.4);
-    }
+    .hero-sub { font-size: 11px; letter-spacing: 0.4em; text-transform: uppercase; color: rgba(255,255,255,0.4); }
     .scroll-hint {
-      position: absolute; bottom: 2.5rem; left: 50%;
-      transform: translateX(-50%);
+      position: absolute; bottom: 2.5rem; left: 50%; transform: translateX(-50%);
       display: flex; flex-direction: column; align-items: center; gap: 8px;
-      color: rgba(255,255,255,0.25); font-size: 10px;
-      letter-spacing: 0.3em; text-transform: uppercase; z-index: 2;
+      color: rgba(255,255,255,0.25); font-size: 10px; letter-spacing: 0.3em; text-transform: uppercase; z-index: 2;
     }
     .scroll-hint::after {
       content: ''; width: 1px; height: 40px;
       background: linear-gradient(to bottom, rgba(255,255,255,0.25), transparent);
       animation: scrollPulse 2s ease infinite;
     }
-    @keyframes scrollPulse {
-      0%, 100% { opacity: 0.3; }
-      50% { opacity: 1; }
-    }
+    @keyframes scrollPulse { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
 
-    /* REVEAL */
     .reveal { opacity: 0; transform: translateY(36px); transition: opacity .85s cubic-bezier(.16,1,.3,1), transform .85s cubic-bezier(.16,1,.3,1); }
     .reveal.in { opacity: 1; transform: translateY(0); }
     .reveal-delay-1 { transition-delay: .08s; }
@@ -109,42 +87,40 @@
     .reveal-delay-3 { transition-delay: .24s; }
     .reveal-delay-4 { transition-delay: .32s; }
 
-    /* SPLIT TEXT */
     .split-text .char { display: inline-block; opacity: 0; transform: translateY(.9em); transition: opacity .6s cubic-bezier(.16,1,.3,1), transform .6s cubic-bezier(.16,1,.3,1); }
     .split-text.in .char { opacity: 1; transform: translateY(0); }
 
-    /* SECTIONS */
     section { padding: 9rem 4rem; max-width: 1280px; margin: 0 auto; }
     .section-label { font-size: 9px; letter-spacing: .6em; text-transform: uppercase; color: rgba(255,255,255,.22); margin-bottom: 1rem; }
     .section-title { font-family: 'Syne', sans-serif; font-size: clamp(2rem,4.5vw,3.4rem); font-weight: 600; letter-spacing: -.01em; margin-bottom: 4.5rem; padding-bottom: 2rem; border-bottom: 1px solid var(--border); color: rgba(255,255,255,.9); }
 
-    /* GEL LAYER */
-    .gel-layer { position: relative; will-change: transform; transform-style: preserve-3d; cursor: grab; transform-origin: 50% 50%; }
-    .gel-layer:active { cursor: grabbing; }
+    .gel-layer { position: relative; will-change: transform; transform-style: preserve-3d; cursor: none; transform-origin: 50% 50%; }
+    .gel-layer:active { cursor: none; }
     .gel-layer::after { content: 'drag'; position: absolute; right: 0; top: -1.8rem; font-size: 9px; letter-spacing: .4em; text-transform: uppercase; color: rgba(255,255,255,.1); pointer-events: none; }
 
-    /* MUSIC */
     #music { border-top: 1px solid var(--border); }
     .music-coverflow { position: relative; display: flex; align-items: center; gap: 0; }
-    .music-arrow { flex-shrink: 0; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; color: rgba(255,255,255,.25); font-size: 18px; font-family: 'Outfit', sans-serif; font-weight: 300; background: none; border: 1px solid rgba(255,255,255,.08); cursor: pointer; z-index: 10; transition: color .3s, border-color .3s; user-select: none; }
-    .music-arrow:hover { color: #fff; border-color: rgba(255,255,255,.3); }
-    .music-stage { flex: 1; perspective: 1400px; perspective-origin: center center; overflow: hidden; position: relative; min-height: 260px; }
+    .music-arrow { flex-shrink: 0; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; color: rgba(255,255,255,.25); font-size: 18px; font-family: 'Outfit', sans-serif; font-weight: 300; background: none; border: none; cursor: none; z-index: 10; transition: color .3s; user-select: none; }
+    .music-arrow:hover { color: #fff; }
+    .music-coverflow { cursor: none; }
+    .music-stage { flex: 1; perspective: 1400px; perspective-origin: center center; overflow: visible; position: relative; min-height: 400px; user-select: none; -webkit-user-select: none; }
     .music-card { position: absolute; inset: 0; transform-style: preserve-3d; transition: transform .72s cubic-bezier(.16,1,.3,1), opacity .5s ease; opacity: 0; pointer-events: none; transform: translateX(60%) translateZ(-320px) rotateY(-18deg) scale(.82); }
     .music-card.prev { opacity: .45; pointer-events: none; transform: translateX(-60%) translateZ(-320px) rotateY(18deg) scale(.82); }
     .music-card.active { opacity: 1; pointer-events: all; transform: translateX(0) translateZ(0) rotateY(0deg) scale(1); }
     .music-card.next { opacity: .45; pointer-events: none; transform: translateX(60%) translateZ(-320px) rotateY(-18deg) scale(.82); }
     .music-card.exit-left { opacity: 0; pointer-events: none; transform: translateX(-120%) translateZ(-500px) rotateY(35deg) scale(.6); }
     .music-card.exit-right { opacity: 0; pointer-events: none; transform: translateX(120%) translateZ(-500px) rotateY(-35deg) scale(.6); }
-    .card-face { position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden; display: grid; grid-template-columns: repeat(auto-fit, minmax(280px,1fr)); gap: 1px; background: var(--border); border: 1px solid var(--border); }
+    .card-face { position: absolute; top: 0; left: 0; right: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden; display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); }
     .card-face.back { transform: rotateX(180deg); background: #0a0a0a; }
     .music-card.flipped { transform: translateX(0) translateZ(0) rotateY(0deg) rotateX(180deg) scale(1); }
     .embed-cell { background: var(--bg); padding: 1.4rem; transition: background .4s; }
     .embed-cell:hover { background: rgba(255,255,255,.03); }
     .embed-cell iframe { display: block; width: 100%; border: none; border-radius: 8px; }
-    .platform-label { position: absolute; top: 1rem; right: 1.4rem; font-size: 9px; letter-spacing: .4em; text-transform: uppercase; color: rgba(255,255,255,.2); pointer-events: none; }
+    .card-face.back .embed-cell { overflow: hidden; }
+    .card-face.back .embed-cell iframe { width: 111%; height: 189px; transform: scale(0.9); transform-origin: top left; filter: brightness(0.92) invert(1) hue-rotate(180deg); }
+    .platform-label { position: absolute; top: 1rem; right: 1.4rem; color: rgba(255,255,255,.2); pointer-events: none; line-height: 0; }
     .flip-hint { text-align: center; margin-top: 1.2rem; font-size: 9px; letter-spacing: .35em; text-transform: uppercase; color: rgba(255,255,255,.14); }
 
-    /* COLLECTIVE */
     #collective { border-top: 1px solid var(--border); }
     .members-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px,1fr)); gap: 1px; background: var(--border); border: 1px solid var(--border); }
     .member-card { background: var(--bg); padding: 2.2rem; position: relative; overflow: hidden; transition: background .5s; }
@@ -159,7 +135,6 @@
     .member-role { font-size: 10px; letter-spacing: .3em; text-transform: uppercase; color: rgba(255,255,255,.28); }
     .member-number { position: absolute; top: 2rem; right: 2rem; font-size: 10px; color: rgba(255,255,255,.1); }
 
-    /* MEDIA */
     #media { border-top: 1px solid var(--border); }
     .gallery-grid { display: grid; grid-template-columns: repeat(12,1fr); grid-template-rows: repeat(3,200px); gap: 2px; }
     .gallery-item { background: rgba(255,255,255,.03); overflow: hidden; position: relative; cursor: none; }
@@ -175,54 +150,31 @@
     .gallery-item:hover img { transform: scale(1.06); opacity: 1; }
     .gallery-placeholder { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: rgba(255,255,255,.05); font-size: 9px; letter-spacing: .4em; text-transform: uppercase; border: 1px solid rgba(255,255,255,.035); }
 
-    /* FOOTER */
     footer { border-top: 1px solid var(--border); padding: 4.5rem 4rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 2rem; }
     footer img { height: 28px; opacity: .28; }
     footer p { font-size: 10px; color: rgba(255,255,255,.18); letter-spacing: .2em; }
     .footer-links { display: flex; gap: 2.5rem; }
     .footer-links a { font-size: 10px; color: rgba(255,255,255,.22); text-decoration: none; letter-spacing: .25em; text-transform: uppercase; transition: color .3s; }
-    .footer-links a:hover { color: rgba(255,255,255,.7); }
+    .footer-links a:hover { color: rgba(255, 255, 255, 0.7); }
 
-    /* ── MOBILE ── */
     @media(max-width:768px){
       body { cursor:auto; }
       #cursor,#cursor-ring { display:none; }
-
-      /* nav */
       nav { padding:1rem 1.2rem; }
       nav a.nav-logo img { height:60px; }
       nav ul { gap:1.2rem; }
       nav ul li a { font-size:10px; letter-spacing:.12em; }
-
-      /* sections: tighter padding, no edge-to-edge */
       section { padding:4rem 1.2rem; max-width:100%; }
-
-      /* section title scales down */
       .section-title { font-size:clamp(1.4rem,5vw,2rem); margin-bottom:2.5rem; padding-bottom:1.2rem; }
-
-      /* hero */
-      #hero-logo-float { width:240px; height:240px; }
       #hero { min-height:100svh; }
       .hero-sub { font-size:9px; letter-spacing:.3em; }
       .scroll-hint { bottom:1.8rem; }
-
-      /* ── MEMBERS GRID — 2 cols, proportional cards ── */
-      .members-grid {
-        grid-template-columns: repeat(2,1fr);
-        gap:1px;
-      }
+      .members-grid { grid-template-columns: repeat(2,1fr); gap:1px; }
       .member-card { padding:1rem; }
       .member-name { font-size:.78rem; letter-spacing:.06em; }
       .member-role { font-size:9px; }
       .member-number { top:1rem; right:1rem; font-size:9px; }
-
-      /* ── GALLERY — 3-col mosaic preserved, smaller rows ── */
-      .gallery-grid {
-        grid-template-columns: repeat(6,1fr);
-        grid-template-rows: repeat(3,110px);
-        gap:2px;
-      }
-      /* re-map spans to 6-column grid (halved from 12) */
+      .gallery-grid { grid-template-columns: repeat(6,1fr); grid-template-rows: repeat(3,110px); gap:2px; }
       .gallery-item:nth-child(1){grid-column:span 3;grid-row:span 2}
       .gallery-item:nth-child(2){grid-column:span 2}
       .gallery-item:nth-child(3){grid-column:span 1}
@@ -231,30 +183,20 @@
       .gallery-item:nth-child(6){grid-column:span 2;grid-row:span 2}
       .gallery-item:nth-child(7){grid-column:span 2}
       .gallery-item:nth-child(8){grid-column:span 2}
-
-      /* ── MUSIC ── */
-      .music-stage { min-height:200px; }
+      .music-stage { min-height:500px; }
       .music-arrow { width:34px; height:34px; font-size:16px; }
       .embed-cell { padding:.9rem; }
       .embed-cell iframe { height:130px; }
       .flip-hint { font-size:8px; }
-      .card-face {
-        grid-template-columns: 1fr 1fr;
-      }
-
-      /* footer */
+      .card-face { grid-template-columns: 1fr 1fr; }
+      .music-stage { min-height: 500px; }
       footer { padding:2.5rem 1.2rem; flex-direction:column; align-items:flex-start; gap:1.2rem; }
       footer img { height:22px; }
       .footer-links { gap:1.5rem; }
     }
-
-    /* very small phones */
     @media(max-width:390px){
       .members-grid { grid-template-columns: repeat(2,1fr); }
-      .gallery-grid {
-        grid-template-columns: repeat(4,1fr);
-        grid-template-rows: repeat(3,90px);
-      }
+      .gallery-grid { grid-template-columns: repeat(4,1fr); grid-template-rows: repeat(3,90px); }
       .gallery-item:nth-child(1){grid-column:span 2;grid-row:span 2}
       .gallery-item:nth-child(2){grid-column:span 1}
       .gallery-item:nth-child(3){grid-column:span 1}
@@ -272,19 +214,14 @@
 <div id="cursor-ring"></div>
 <div id="noise"></div>
 
-<!-- INTRO -->
 <div id="intro">
   <div id="intro-stack">
-    <div id="intro-globe-wrap">
-      <img id="intro-globe" src="logo_globe.png" alt="leftunsaid" />
-    </div>
-    <div id="intro-lu-wrap">
-      <img id="intro-lu" src="logo_lu.png" alt="" aria-hidden="true" />
-    </div>
+    <div id="intro-globe-wrap"><img id="intro-globe" src="logo_globe.png" alt="leftunsaid" /></div>
+    <div id="intro-lu-wrap"><img id="intro-lu" src="logo_lu.png" alt="" aria-hidden="true" /></div>
   </div>
 </div>
+<div id="veil"></div>
 
-<!-- MAIN -->
 <div id="main">
   <nav>
     <a href="/" class="nav-logo"><img src="logo_lu.png" alt="LU" /></a>
@@ -310,37 +247,26 @@
   <section id="music">
     <p class="section-label reveal">Featured</p>
     <h2 class="section-title split-text">Music</h2>
-    <div class="music-coverflow reveal">
+    <div class="music-coverflow reveal" data-gel="20">
       <button class="music-arrow" id="music-prev" aria-label="Previous">&#8249;</button>
       <div class="music-stage" id="music-stage">
         <div class="music-card active" id="mc-0">
           <div class="card-face front">
-            <div class="embed-cell"><iframe src="https://open.spotify.com/embed/track/placeholder1?utm_source=generator&theme=0" height="152" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe></div>
-            <div class="embed-cell"><iframe src="https://open.spotify.com/embed/track/placeholder2?utm_source=generator&theme=0" height="152" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe></div>
-            <div class="embed-cell"><iframe src="https://open.spotify.com/embed/track/placeholder3?utm_source=generator&theme=0" height="152" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe></div>
-            <div class="embed-cell"><iframe src="https://open.spotify.com/embed/track/placeholder4?utm_source=generator&theme=0" height="152" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe></div>
+            <div class="embed-cell"><iframe src="https://open.spotify.com/embed/track/1aDIsrcSt1ORVaWHEVivlf?utm_source=generator&theme=0" height="152" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe></div>
+            <div class="embed-cell"><iframe src="https://open.spotify.com/embed/track/4TCd0F2CFdkZ6BKmwEmJIm?utm_source=generator&theme=0" height="152" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe></div>
+            <div class="embed-cell"><iframe src="https://open.spotify.com/embed/album/20rFFtGxzPzs9sWiMUXwlL?utm_source=generator&theme=0" height="152" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe></div>
+            <div class="embed-cell"><iframe src="https://open.spotify.com/embed/track/1BUHTUP47zAwdFTbaX72kg?utm_source=generator&theme=0" height="152" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe></div>
+            <div class="embed-cell"><iframe src="https://open.spotify.com/embed/track/1RdEHgFHTNlfyvn1danZj3?utm_source=generator&theme=0" height="152" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe></div>
+            <div class="embed-cell"><iframe src="https://open.spotify.com/embed/track/0lA5KduTVKboZkSwZhIT7M?utm_source=generator&theme=0" height="152" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe></div>
           </div>
           <div class="card-face back">
-            <span class="platform-label">Soundcloud</span>
-            <div class="embed-cell"><iframe width="100%" height="152" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/placeholder1&color=%23111111&auto_play=false&hide_related=true&show_comments=false&show_user=true&show_reposts=false&show_teaser=false"></iframe></div>
-            <div class="embed-cell"><iframe width="100%" height="152" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/placeholder2&color=%23111111&auto_play=false&hide_related=true&show_comments=false&show_user=true&show_reposts=false&show_teaser=false"></iframe></div>
-            <div class="embed-cell"><iframe width="100%" height="152" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/placeholder3&color=%23111111&auto_play=false&hide_related=true&show_comments=false&show_user=true&show_reposts=false&show_teaser=false"></iframe></div>
-            <div class="embed-cell"><iframe width="100%" height="152" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/placeholder4&color=%23111111&auto_play=false&hide_related=true&show_comments=false&show_user=true&show_reposts=false&show_teaser=false"></iframe></div>
-          </div>
-        </div>
-        <div class="music-card next" id="mc-1">
-          <div class="card-face front">
-            <div class="embed-cell"><iframe src="https://open.spotify.com/embed/track/placeholder5?utm_source=generator&theme=0" height="152" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe></div>
-            <div class="embed-cell"><iframe src="https://open.spotify.com/embed/track/placeholder6?utm_source=generator&theme=0" height="152" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe></div>
-            <div class="embed-cell"><iframe src="https://open.spotify.com/embed/track/placeholder7?utm_source=generator&theme=0" height="152" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe></div>
-            <div class="embed-cell"><iframe src="https://open.spotify.com/embed/track/placeholder8?utm_source=generator&theme=0" height="152" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe></div>
-          </div>
-          <div class="card-face back">
-            <span class="platform-label">Soundcloud</span>
-            <div class="embed-cell"><iframe width="100%" height="152" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/placeholder5&color=%23111111&auto_play=false&hide_related=true&show_comments=false&show_user=true&show_reposts=false&show_teaser=false"></iframe></div>
-            <div class="embed-cell"><iframe width="100%" height="152" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/placeholder6&color=%23111111&auto_play=false&hide_related=true&show_comments=false&show_user=true&show_reposts=false&show_teaser=false"></iframe></div>
-            <div class="embed-cell"><iframe width="100%" height="152" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/placeholder7&color=%23111111&auto_play=false&hide_related=true&show_comments=false&show_user=true&show_reposts=false&show_teaser=false"></iframe></div>
-            <div class="embed-cell"><iframe width="100%" height="152" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/placeholder8&color=%23111111&auto_play=false&hide_related=true&show_comments=false&show_user=true&show_reposts=false&show_teaser=false"></iframe></div>
+            <span class="platform-label"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 15" width="22" height="14" fill="currentColor"><path d="M19 5a7 7 0 0 0-13.6 1.7A4.5 4.5 0 1 0 4.5 15H19a5 5 0 0 0 0-10z"/></svg></span>
+            <div class="embed-cell"><iframe width="100%" height="170" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//soundcloud.com/flxri/ketamine&color=%23111111&auto_play=false&hide_related=true&show_comments=false&show_user=true&show_reposts=false&show_teaser=false"></iframe></div>
+            <div class="embed-cell"><iframe width="100%" height="170" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//soundcloud.com/flxri/never-heard-of-me&color=%23111111&auto_play=false&hide_related=true&show_comments=false&show_user=true&show_reposts=false&show_teaser=false"></iframe></div>
+            <div class="embed-cell"><iframe width="100%" height="170" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//soundcloud.com/flxri/s-ft-ye-and-rich-the-kid&color=%23111111&auto_play=false&hide_related=true&show_comments=false&show_user=true&show_reposts=false&show_teaser=false"></iframe></div>
+            <div class="embed-cell"><iframe width="100%" height="170" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//soundcloud.com/pesokain/mtg-berimbau-arabe&color=%23111111&auto_play=false&hide_related=true&show_comments=false&show_user=true&show_reposts=false&show_teaser=false"></iframe></div>
+            <div class="embed-cell"><iframe width="100%" height="170" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//soundcloud.com/pesokain/mileage&color=%23111111&auto_play=false&hide_related=true&show_comments=false&show_user=true&show_reposts=false&show_teaser=false"></iframe></div>
+            <div class="embed-cell"><iframe width="100%" height="170" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//soundcloud.com/pesokain/heart-shaped-box-dnb-nxc-remix&color=%23111111&auto_play=false&hide_related=true&show_comments=false&show_user=true&show_reposts=false&show_teaser=false"></iframe></div>
           </div>
         </div>
       </div>
@@ -393,14 +319,35 @@
 (function(){
 
 /* CURSOR */
+var isMobile=('ontouchstart' in window)&&!window.matchMedia('(pointer:fine)').matches;
 var cur=document.getElementById('cursor'),rng=document.getElementById('cursor-ring');
-var mx=innerWidth/2,my=innerHeight/2,rx=mx,ry=my;
-document.addEventListener('mousemove',function(e){mx=e.clientX;my=e.clientY;cur.style.left=mx+'px';cur.style.top=my+'px';});
-(function rl(){rx+=(mx-rx)*.09;ry+=(my-ry)*.09;rng.style.left=rx+'px';rng.style.top=ry+'px';requestAnimationFrame(rl);})();
-document.querySelectorAll('a,.member-card,.gallery-item').forEach(function(el){
-  el.addEventListener('mouseenter',function(){cur.style.width='5px';cur.style.height='5px';rng.style.width='54px';rng.style.height='54px';});
-  el.addEventListener('mouseleave',function(){cur.style.width='8px';cur.style.height='8px';rng.style.width='34px';rng.style.height='34px';});
-});
+if(isMobile){
+  rng.style.display='none';
+  document.body.style.cursor='auto';
+}else{
+  var mx=innerWidth/2,my=innerHeight/2,rx=mx,ry=my;
+  document.addEventListener('mousemove',function(e){mx=e.clientX;my=e.clientY;});
+  (function rl(){rx+=(mx-rx)*.22;ry+=(my-ry)*.22;rng.style.left=rx+'px';rng.style.top=ry+'px';requestAnimationFrame(rl);})();
+  function ringReset(){rng.style.width='34px';rng.style.height='34px';rng.style.borderRadius='50%';}
+  /* draggable areas → bevelled square */
+  document.querySelectorAll('.gel-layer,.music-coverflow,.music-stage').forEach(function(el){
+    el.addEventListener('mouseenter',function(){rng.style.width='36px';rng.style.height='36px';rng.style.borderRadius='12px';});
+    el.addEventListener('mouseleave',ringReset);
+  });
+  /* redirect links → larger circle, and only for actual links */
+  document.querySelectorAll('a').forEach(function(el){
+    el.addEventListener('mouseenter',function(){rng.style.width='68px';rng.style.height='68px';rng.style.borderRadius='50%';});
+    el.addEventListener('mouseleave',ringReset);
+  });
+  /* keep ring tracking over iframes — overlay intercepts mousemove so cursor ring follows */
+  document.querySelectorAll('.embed-cell').forEach(function(cell){
+    cell.style.position='relative';
+    var ov=document.createElement('div');
+    ov.className='iframe-overlay';
+    ov.style.cssText='position:absolute;inset:0;z-index:2;cursor:none;';
+    cell.appendChild(ov);
+  });
+}
 
 /* HELPERS */
 function clamp(v,a,b){return Math.max(a,Math.min(b,v));}
@@ -408,34 +355,33 @@ function lerp(a,b,t){return a+(b-a)*t;}
 function easeInOut(t){return t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;}
 
 /* INTRO */
-var INTRO_DUR=3200, introStart=null, introDone=false;
+var INTRO_DUR=3200,introStart=null,introDone=false;
 var introGlobe=document.getElementById('intro-globe');
 var introLU=document.getElementById('intro-lu');
 function introEase(t){return t<0.5?2*t*t:-1+(4-2*t)*t;}
 
-/* Hero globe — slow ramp-up spin */
 var heroGlobe=document.getElementById('hero-globe');
-var heroAngle=0, heroSpeed=0;
-var HERO_TARGET_SPEED=0.018, HERO_RAMP=6000, heroRampStart=null;
+var heroAngle=0,heroSpeed=0;
+var HERO_TARGET_SPEED=0.018,HERO_RAMP=6000,heroRampStart=null;
 
 function introTick(ts){
-  if(!introStart) introStart=ts;
+  if(!introStart)introStart=ts;
   var t=Math.min((ts-introStart)/INTRO_DUR,1);
   introGlobe.style.transform='rotate('+(introEase(t)*720)+'deg)';
   introLU.style.transform='rotate('+(introEase(t)*-360)+'deg)';
-
-  /* hero globe ramps up from zero — starts invisible but angle is accumulating */
-  if(!heroRampStart) heroRampStart=ts;
+  if(!heroRampStart)heroRampStart=ts;
   var rampT=Math.min((ts-heroRampStart)/HERO_RAMP,1);
   var k=4;
   heroSpeed=HERO_TARGET_SPEED*(Math.exp(k*rampT)-1)/(Math.exp(k)-1);
   heroAngle+=heroSpeed*16.67;
-  if(heroGlobe) heroGlobe.style.transform='translate(-50%,-50%) rotate('+heroAngle+'deg)';
-
+  if(heroGlobe)heroGlobe.style.transform='translate(-50%,-50%) rotate('+heroAngle+'deg)';
   if(t>=1&&!introDone){
     introDone=true;
     document.getElementById('intro').classList.add('done');
     document.getElementById('main').classList.add('visible');
+    var veil=document.getElementById('veil');
+    if(veil){veil.style.opacity='0';setTimeout(function(){veil.style.display='none';},350);}
+    if(!isMobile){rng.style.opacity='1';}
     initCanvas();
   }
   requestAnimationFrame(introTick);
@@ -445,11 +391,11 @@ requestAnimationFrame(introTick);
 /* PARTICLE CANVAS */
 var canvasInited=false;
 function initCanvas(){
-  if(canvasInited)return; canvasInited=true;
+  if(canvasInited)return;canvasInited=true;
   var canvas=document.getElementById('hero-canvas'),ctx=canvas.getContext('2d'),pts=[],CW,CH;
   function rsz(){CW=canvas.width=canvas.offsetWidth;CH=canvas.height=canvas.offsetHeight;}
-  rsz(); window.addEventListener('resize',rsz);
-  for(var i=0;i<55;i++) pts.push({x:Math.random()*CW,y:Math.random()*CH,vx:(Math.random()-.5)*.14,vy:(Math.random()-.5)*.14,a:Math.random()});
+  rsz();window.addEventListener('resize',rsz);
+  for(var i=0;i<55;i++)pts.push({x:Math.random()*CW,y:Math.random()*CH,vx:(Math.random()-.5)*.14,vy:(Math.random()-.5)*.14,a:Math.random()});
   (function dp(){
     ctx.clearRect(0,0,CW,CH);
     pts.forEach(function(p){p.x+=p.vx;p.y+=p.vy;if(p.x<0)p.x=CW;if(p.x>CW)p.x=0;if(p.y<0)p.y=CH;if(p.y>CH)p.y=0;ctx.beginPath();ctx.arc(p.x,p.y,p.a*.9+.2,0,Math.PI*2);ctx.fillStyle='rgba(255,255,255,'+(p.a*.5)+')';ctx.fill();});
@@ -459,52 +405,6 @@ function initCanvas(){
 }
 
 
-
-/* ── PHOTO FALL ──
-   Clones each .member-photo and flies the clone.
-   Original stays hidden in place (visibility:hidden) → card keeps its exact size. */
-function spawnPhotoFall(){
-  var grid=document.querySelector('.members-grid');
-  if(!grid)return;
-  var photos=Array.prototype.slice.call(grid.querySelectorAll('.member-photo'));
-  photos.forEach(function(photo,i){
-    var rect=photo.getBoundingClientRect();
-    if(!rect.width)return;
-
-    /* clone first (while still in DOM for accurate rect) */
-    var clone=photo.cloneNode(true);
-    /* hide original in-place — card keeps exact same size, no collapse */
-    photo.style.visibility='hidden';
-
-    /* position clone at exact screen coords */
-    clone.style.cssText=
-      'position:fixed;top:0;left:0;margin:0;pointer-events:none;z-index:800;'+
-      'width:'+rect.width+'px;height:'+rect.height+'px;'+
-      'box-sizing:border-box;overflow:hidden;transition:none;visibility:visible;'+
-      'transform:translate('+rect.left.toFixed(1)+'px,'+rect.top.toFixed(1)+'px);';
-    document.body.appendChild(clone);
-
-    var x=rect.left,y=rect.top;
-    var vx=(Math.random()-0.5)*8;
-    var vy=-(Math.random()*3+1);
-    var grav=0.5+Math.random()*0.3;
-    var ang=0,angV=(Math.random()-0.5)*5;
-    var op=1;
-
-    setTimeout(function(){
-      (function fall(){
-        vy+=grav;x+=vx;y+=vy;ang+=angV;angV*=0.985;
-        op=Math.max(0,op-0.012);
-        clone.style.transform='translate('+x.toFixed(1)+'px,'+y.toFixed(1)+'px) rotate('+ang.toFixed(2)+'deg)';
-        clone.style.opacity=op;
-        clone.style.filter='brightness('+Math.max(0,op*0.75).toFixed(3)+')';
-        if(y<innerHeight+400&&op>0)requestAnimationFrame(fall);
-        else if(clone.parentNode)clone.parentNode.removeChild(clone);
-      })();
-    },i*45+Math.random()*70);
-  });
-}
-
 /* GEL LAYERS */
 var gelLayers=Array.prototype.slice.call(document.querySelectorAll('.gel-layer'));
 var gelStates=gelLayers.map(function(){return{cY:0};});
@@ -513,57 +413,75 @@ var FLIP_VEL=6;
 gelLayers.forEach(function(layer,idx){
   var depth=parseFloat(layer.dataset.gel)||20;
   var isCollect=layer.classList.contains('members-grid');
+  var noFlip=!!layer.dataset.noFlip;
   var dragX=0,cX=0,dragY=0,cDragY=0,parallaxY=0;
   var flipTarget=0,cFlipRX=0,flipped=false,flipping=false;
   var warpRX=0,cWarpRX=0,warpRY=0,cWarpRY=0;
   var jerkY=0,cJerkY=0;
-  var drag=false,dsx=0,dsy=0,dtx=0,dty=0;
+  var drag=false,dragging=false,dsx=0,dsy=0,dtx=0,dty=0;
   var velSamples=[],lastMY=0,lastMX=0;
+  var DRAG_THRESH=8;
   var pushY=0,cPushY=0;
+  var grabRelX=0,grabRelY=0;
   layer.style.transformOrigin='50% 50%';
 
   layer.addEventListener('mousedown',function(e){
-    drag=true;dsx=e.clientX;dsy=e.clientY;dtx=dragX;dty=dragY;
+    drag=true;dragging=false;dsx=e.clientX;dsy=e.clientY;dtx=dragX;dty=dragY;
+    var r=layer.getBoundingClientRect();
+    grabRelX=clamp((e.clientX-(r.left+r.width/2))/(r.width/2+1),-1,1);
+    grabRelY=clamp((e.clientY-(r.top+r.height/2))/(r.height/2+1),-1,1);
     lastMX=e.clientX;lastMY=e.clientY;velSamples=[];e.preventDefault();
   });
   document.addEventListener('mousemove',function(e){
     if(!drag)return;
     var dx=e.clientX-dsx,dy=e.clientY-dsy,lim=depth*5;
-    dragX=clamp(dtx+dx,-lim,lim);dragY=clamp(dty+dy,-lim*.7,lim*.7);
-    warpRX=clamp(dy*0.045,-14,14);warpRY=clamp(dx*0.045,-14,14);
     velSamples.push({vx:e.clientX-lastMX,vy:e.clientY-lastMY});
     if(velSamples.length>6)velSamples.shift();
     lastMX=e.clientX;lastMY=e.clientY;
+    if(!dragging&&Math.sqrt(dx*dx+dy*dy)>DRAG_THRESH)dragging=true;
+    if(!dragging)return;
+    dragX=clamp(dtx+dx,-lim,lim);dragY=clamp(dty+dy,-lim*.7,lim*.7);
+    warpRX=clamp(dy*0.045-dx*grabRelY*0.03,-14,14);
+    warpRY=clamp(-dx*0.045+dy*grabRelX*0.03,-14,14);
   });
   document.addEventListener('mouseup',function(){
     if(!drag)return;drag=false;
+    if(!dragging){dragX=0;dragY=0;velSamples=[];return;}
     if(!velSamples.length){dragX=0;dragY=0;return;}
     var avx=0,avy=0;
     velSamples.forEach(function(s){avx+=s.vx;avy+=s.vy;});
     avx/=velSamples.length;avy/=velSamples.length;
-    if(Math.abs(avy)>=FLIP_VEL&&Math.abs(avy)>Math.abs(avx)*0.75&&!flipping){
-      dragX=0;dragY=0;triggerFlip();
+    if(Math.abs(avy)>=FLIP_VEL&&Math.abs(avy)>Math.abs(avx)*0.75&&!flipping&&!noFlip){
+      dragX=0;dragY=0;triggerFlip(avy);
     }else{dragX=0;dragY=0;}
   });
   layer.addEventListener('touchstart',function(e){
-    drag=true;dsx=e.touches[0].clientX;dsy=e.touches[0].clientY;
+    drag=true;dragging=false;dsx=e.touches[0].clientX;dsy=e.touches[0].clientY;
+    var r=layer.getBoundingClientRect();
+    grabRelX=clamp((dsx-(r.left+r.width/2))/(r.width/2+1),-1,1);
+    grabRelY=clamp((dsy-(r.top+r.height/2))/(r.height/2+1),-1,1);
     dtx=dragX;dty=dragY;lastMX=dsx;lastMY=dsy;velSamples=[];
   },{passive:true});
   document.addEventListener('touchmove',function(e){
     if(!drag)return;
     var tx=e.touches[0].clientX,ty=e.touches[0].clientY;
-    dragX=clamp(dtx+(tx-dsx),-depth*4,depth*4);dragY=clamp(dty+(ty-dsy),-depth*3,depth*3);
-    warpRX=clamp((ty-dsy)*0.045,-14,14);warpRY=clamp((tx-dsx)*0.045,-14,14);
+    var tdx=tx-dsx,tdy=ty-dsy;
     velSamples.push({vx:tx-lastMX,vy:ty-lastMY});
     if(velSamples.length>6)velSamples.shift();
     lastMX=tx;lastMY=ty;
+    if(!dragging&&Math.sqrt(tdx*tdx+tdy*tdy)>DRAG_THRESH)dragging=true;
+    if(!dragging)return;
+    dragX=clamp(dtx+tdx,-depth*4,depth*4);dragY=clamp(dty+tdy,-depth*3,depth*3);
+    warpRX=clamp(tdy*0.045-tdx*grabRelY*0.03,-14,14);
+    warpRY=clamp(-tdx*0.045+tdy*grabRelX*0.03,-14,14);
   },{passive:true});
   document.addEventListener('touchend',function(){
     if(!drag)return;drag=false;
+    if(!dragging){dragX=0;dragY=0;velSamples=[];return;}
     var avy=0,avx=0;
     velSamples.forEach(function(s){avy+=s.vy;avx+=s.vx;});
     if(velSamples.length){avy/=velSamples.length;avx/=velSamples.length;}
-    if(Math.abs(avy)>=FLIP_VEL&&Math.abs(avy)>Math.abs(avx)*0.75&&!flipping){dragX=0;dragY=0;triggerFlip();}
+    if(Math.abs(avy)>=FLIP_VEL&&Math.abs(avy)>Math.abs(avx)*0.75&&!flipping&&!noFlip){dragX=0;dragY=0;triggerFlip(avy);}
     else{dragX=0;dragY=0;}
   });
   window.addEventListener('scroll',function(){
@@ -571,18 +489,36 @@ gelLayers.forEach(function(layer,idx){
     parallaxY=clamp(-((r.top+r.height/2-innerHeight/2)*depth/900),-depth*2.5,depth*2.5);
   },{passive:true});
 
-  function triggerFlip(){
-    flipping=true;flipped=!flipped;flipTarget=flipped?180:0;
+  function triggerFlip(dir){
+    flipping=true;flipped=!flipped;flipTarget+=dir<0?180:-180;
     if(isCollect){
-      jerkY=-18;setTimeout(function(){jerkY=0;},90);
-      if(flipped)setTimeout(spawnPhotoFall,60);
+      jerkY=dir<0?-18:18;setTimeout(function(){jerkY=0;},90);
+      if(flipped){
+        /* ── Snapshot photo positions NOW, before the flip rotates anything ──
+           offsetWidth = true CSS square size (ignores 3D transforms)
+           getBoundingClientRect().center = viewport centre (approximately correct
+           even with mild transforms, and the grid is still near-flat at t=0) */
+        var photos=Array.prototype.slice.call(layer.querySelectorAll('.member-photo'));
+        var snaps=photos.map(function(ph){
+          var r=ph.getBoundingClientRect();
+          var sz=ph.offsetWidth;  /* true CSS width — square by aspect-ratio:1 */
+          return{
+            cx: r.left+r.width/2,   /* viewport centre x */
+            cy: r.top +r.height/2,  /* viewport centre y */
+            sz: sz
+          };
+        });
+        /* 300ms delay — user asked for it; snapshots already captured above */
+        setTimeout(function(){spawnPhotoFall(photos,snaps);},300);
+      }
     }
     setTimeout(function(){flipping=false;},800);
   }
 
   (function loop(){
+    var sm=isCollect?0.7:1;
     if(!drag){warpRX*=.78;warpRY*=.78;}
-    cFlipRX+=(flipTarget-cFlipRX)*0.13;
+    cFlipRX+=(flipTarget-cFlipRX)*(0.13*sm);
     cJerkY+=(jerkY-cJerkY)*0.28;
     pushY=0;
     var myR=layer.getBoundingClientRect(),myC=myR.top+myR.height/2;
@@ -594,11 +530,11 @@ gelLayers.forEach(function(layer,idx){
       pushY+=(sd>0?-1:1)*st.cY*inf*0.32;
     });
     cPushY+=(pushY-cPushY)*0.018;
-    var lf=drag?0.17:0.08;
+    var lf=(drag?0.17:0.08)*sm;
     cX+=(dragX-cX)*lf;cDragY+=(dragY-cDragY)*lf;
     var totalY=cDragY+parallaxY+cPushY+cJerkY;
     gelStates[idx].cY=totalY;
-    cWarpRX+=(warpRX-cWarpRX)*0.22;cWarpRY+=(warpRY-cWarpRY)*0.22;
+    cWarpRX+=(warpRX-cWarpRX)*(0.22*sm);cWarpRY+=(warpRY-cWarpRY)*(0.22*sm);
     var dragMag=Math.sqrt(cX*cX+cDragY*cDragY);
     var perspPx=drag?Math.max(220,750-dragMag*2.2):750;
     var skX=clamp((dragX-cX)*0.07,-9,9),skY=clamp((dragY-cDragY)*0.05,-6,6);
@@ -612,6 +548,82 @@ gelLayers.forEach(function(layer,idx){
   })();
 });
 
+/* MUSIC COVERFLOW DRAG */
+(function(){
+  var cov=document.querySelector('.music-coverflow');if(!cov)return;
+  var depth=parseFloat(cov.dataset.gel)||20;
+  var dragX=0,cX=0,dragY=0,cDragY=0,parallaxY=0;
+  var warpRX=0,cWarpRX=0,warpRY=0,cWarpRY=0;
+  var drag=false,dragging=false,dsx=0,dsy=0,dtx=0,dty=0;
+  var grabRelX=0,grabRelY=0;
+  var DRAG_THRESH=8;
+  cov.style.transformOrigin='50% 50%';
+  cov.addEventListener('mousedown',function(e){
+    if(e.target.closest('.music-arrow'))return;
+    drag=true;dragging=false;dsx=e.clientX;dsy=e.clientY;dtx=dragX;dty=dragY;
+    var r=cov.getBoundingClientRect();
+    grabRelX=clamp((e.clientX-(r.left+r.width/2))/(r.width/2+1),-1,1);
+    grabRelY=clamp((e.clientY-(r.top+r.height/2))/(r.height/2+1),-1,1);
+    e.preventDefault();
+  });
+  document.addEventListener('mousemove',function(e){
+    if(!drag)return;
+    var dx=e.clientX-dsx,dy=e.clientY-dsy,lim=depth*5;
+    if(!dragging&&Math.sqrt(dx*dx+dy*dy)>DRAG_THRESH)dragging=true;
+    if(!dragging)return;
+    dragX=clamp(dtx+dx,-lim,lim);dragY=clamp(dty+dy,-lim*.7,lim*.7);
+    warpRX=clamp(dy*0.045-dx*grabRelY*0.03,-14,14);
+    warpRY=clamp(-dx*0.045+dy*grabRelX*0.03,-14,14);
+  });
+  document.addEventListener('mouseup',function(){
+    if(!drag)return;
+    var wasClick=!dragging;
+    drag=false;dragging=false;dragX=0;dragY=0;
+    if(wasClick){
+      var ovs=cov.querySelectorAll('.iframe-overlay');
+      ovs.forEach(function(o){o.style.pointerEvents='none';});
+      setTimeout(function(){ovs.forEach(function(o){o.style.pointerEvents='';});},800);
+    }
+  });
+  cov.addEventListener('touchstart',function(e){
+    drag=true;dragging=false;dsx=e.touches[0].clientX;dsy=e.touches[0].clientY;dtx=dragX;dty=dragY;
+    var r=cov.getBoundingClientRect();
+    grabRelX=clamp((dsx-(r.left+r.width/2))/(r.width/2+1),-1,1);
+    grabRelY=clamp((dsy-(r.top+r.height/2))/(r.height/2+1),-1,1);
+  },{passive:true});
+  document.addEventListener('touchmove',function(e){
+    if(!drag)return;
+    var tdx=e.touches[0].clientX-dsx,tdy=e.touches[0].clientY-dsy;
+    if(!dragging&&Math.sqrt(tdx*tdx+tdy*tdy)>DRAG_THRESH)dragging=true;
+    if(!dragging)return;
+    dragX=clamp(dtx+tdx,-depth*4,depth*4);dragY=clamp(dty+tdy,-depth*3,depth*3);
+    warpRX=clamp(tdy*0.045-tdx*grabRelY*0.03,-14,14);
+    warpRY=clamp(-tdx*0.045+tdy*grabRelX*0.03,-14,14);
+  },{passive:true});
+  document.addEventListener('touchend',function(){if(!drag)return;drag=false;dragging=false;dragX=0;dragY=0;});
+  window.addEventListener('scroll',function(){
+    var r=cov.getBoundingClientRect();
+    parallaxY=clamp(-((r.top+r.height/2-innerHeight/2)*depth/900),-depth*2.5,depth*2.5);
+  },{passive:true});
+  (function loop(){
+    if(!drag){warpRX*=.78;warpRY*=.78;}
+    var lf=drag?0.17:0.08;
+    cX+=(dragX-cX)*lf;cDragY+=(dragY-cDragY)*lf;
+    cWarpRX+=(warpRX-cWarpRX)*0.22;cWarpRY+=(warpRY-cWarpRY)*0.22;
+    var totalY=cDragY+parallaxY;
+    var dragMag=Math.sqrt(cX*cX+cDragY*cDragY);
+    var perspPx=drag?Math.max(220,750-dragMag*2.2):750;
+    var skX=clamp((dragX-cX)*0.07,-9,9),skY=clamp((dragY-cDragY)*0.05,-6,6);
+    cov.style.transform=
+      'perspective('+perspPx.toFixed(0)+'px) '+
+      'translate3d('+cX.toFixed(2)+'px,'+totalY.toFixed(2)+'px,0) '+
+      'rotateX('+cWarpRX.toFixed(2)+'deg) '+
+      'rotateY('+cWarpRY.toFixed(2)+'deg) '+
+      'skewX('+skX.toFixed(2)+'deg) skewY('+skY.toFixed(2)+'deg)';
+    requestAnimationFrame(loop);
+  })();
+})();
+
 /* MUSIC CARD FLIP */
 (function(){
   var stage=document.getElementById('music-stage');if(!stage)return;
@@ -619,13 +631,13 @@ gelLayers.forEach(function(layer,idx){
   var drag=false,velSamples=[],lastMY=0;
   var FLIP_V=6;
   function activeCard(){return stage.querySelector('.music-card.active');}
-  function triggerMusicFlip(){flipping=true;flipped=!flipped;flipRX=flipped?180:0;setTimeout(function(){flipping=false;},750);}
+  function triggerMusicFlip(dir){flipping=true;flipped=!flipped;flipRX+=dir<0?180:-180;setTimeout(function(){flipping=false;},750);}
   stage.addEventListener('mousedown',function(e){drag=true;lastMY=e.clientY;velSamples=[];e.preventDefault();});
   document.addEventListener('mousemove',function(e){if(!drag)return;velSamples.push(e.clientY-lastMY);if(velSamples.length>6)velSamples.shift();lastMY=e.clientY;});
-  document.addEventListener('mouseup',function(){if(!drag)return;drag=false;var avy=velSamples.length?velSamples.reduce(function(a,v){return a+v;},0)/velSamples.length:0;if(Math.abs(avy)>=FLIP_V&&!flipping)triggerMusicFlip();});
+  document.addEventListener('mouseup',function(){if(!drag)return;drag=false;var avy=velSamples.length?velSamples.reduce(function(a,v){return a+v;},0)/velSamples.length:0;if(Math.abs(avy)>=FLIP_V&&!flipping)triggerMusicFlip(avy);});
   stage.addEventListener('touchstart',function(e){drag=true;lastMY=e.touches[0].clientY;velSamples=[];},{passive:true});
   document.addEventListener('touchmove',function(e){if(!drag)return;velSamples.push(e.touches[0].clientY-lastMY);if(velSamples.length>6)velSamples.shift();lastMY=e.touches[0].clientY;},{passive:true});
-  document.addEventListener('touchend',function(){if(!drag)return;drag=false;var avy=velSamples.length?velSamples.reduce(function(a,v){return a+v;},0)/velSamples.length:0;if(Math.abs(avy)>=FLIP_V&&!flipping)triggerMusicFlip();});
+  document.addEventListener('touchend',function(){if(!drag)return;drag=false;var avy=velSamples.length?velSamples.reduce(function(a,v){return a+v;},0)/velSamples.length:0;if(Math.abs(avy)>=FLIP_V&&!flipping)triggerMusicFlip(avy);});
   (function loop(){
     cFlipRX+=(flipRX-cFlipRX)*0.13;
     var mc=activeCard();
@@ -670,9 +682,7 @@ document.querySelectorAll('.split-text').forEach(function(el){
   so.observe(el);
 });
 
-/* NAV HIDE */
-var nav=document.querySelector('nav'),lsy=0;
-window.addEventListener('scroll',function(){var c=window.scrollY;nav.style.transform=(c>lsy&&c>100)?'translateY(-100%)':'translateY(0)';lsy=c;},{passive:true});
+/* NAV HIDE — disabled, navbar stays fixed */
 
 /* SMOOTH ANCHORS */
 document.querySelectorAll('a[href^="#"]').forEach(function(a){
